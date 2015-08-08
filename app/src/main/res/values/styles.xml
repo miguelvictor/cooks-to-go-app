@@ -1,0 +1,25 @@
+<resources>
+
+    <style name="AppTheme" parent="AppTheme.Base">
+
+    </style>
+
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+    </style>
+
+    <style name="ToolbarTheme">
+        <item name="android:textColorPrimary">@color/textColorPrimaryWhite</item>
+    </style>
+
+    <style name="PopupTheme">
+        <item name="android:textColorPrimary">@color/textColorPrimaryBlack</item>
+    </style>
+
+    <color name="textColorPrimaryWhite">#ffffff</color>
+    <color name="textColorPrimaryBlack">#000000</color>
+</resources>
