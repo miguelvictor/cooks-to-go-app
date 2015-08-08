@@ -6,4 +6,7 @@
     <string name="drawer_close">Drawer Close</string>
     <string name="drawer_open">Drawer Open</string>
     <string name="action_search">Search</string>
+    <string name="title_activity_help">HelpActivity</string>
+    <string name="title_activity_feedback">FeedbackActivity</string>
+    <string name="title_activity_recipe_search">RecipeSearchActivity</string>
 </resources>

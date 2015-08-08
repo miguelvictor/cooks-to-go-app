@@ -1,6 +1,7 @@
 package team.jcandfriends.cookstogo;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v4.app.FragmentTransaction;
@@ -64,6 +65,20 @@ public final class Utils {
 
         ListView secondaryOptions = (ListView) activity.findViewById(R.id.secondaryOptions);
         secondaryOptions.setAdapter(new SecondaryOptionsAdapter(Constants.SECONDARY_OPTIONS));
+
+        secondaryOptions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent;
+                if (position == 0) {
+                    intent = new Intent(activity, HelpActivity.class);
+                } else {
+                    intent = new Intent(activity, FeedbackActivity.class);
+                }
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                activity.startActivity(intent);
+            }
+        });
     }
 
     private static void setItemAsSelected(AppCompatActivity activity, View view, int position) {
