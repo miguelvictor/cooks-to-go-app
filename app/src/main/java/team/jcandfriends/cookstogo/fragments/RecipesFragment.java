@@ -18,6 +18,10 @@ import team.jcandfriends.cookstogo.adapters.RecipeTypesAdapter;
 public class RecipesFragment extends ExtendedFragment {
 
     public static final String LABEL = "Recipes";
+    public static final String LAST_VIEWED_RECIPE_TYPE = "last_viewed_recipe_type";
+
+    private ViewPager viewPager;
+    private boolean isList = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,7 +33,7 @@ public class RecipesFragment extends ExtendedFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipes, container, false);
 
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         viewPager.setAdapter(new RecipeTypesAdapter(getActivity().getSupportFragmentManager()));
 
         MaterialTabs materialTabs = (MaterialTabs) view.findViewById(R.id.materialTabs);
@@ -47,7 +51,14 @@ public class RecipesFragment extends ExtendedFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_toggle_view:
+                if (isList) {
+                    isList = false;
+                    item.setIcon(R.mipmap.ic_view_agenda_white_24dp);
+                } else {
+                    isList = true;
+                    item.setIcon(R.mipmap.ic_view_quilt_white_24dp);
+                }
                 return true;
             case R.id.action_search:
                 Intent intent = new Intent(getActivity(), RecipeSearchActivity.class);
@@ -64,4 +75,18 @@ public class RecipesFragment extends ExtendedFragment {
         return LABEL;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            viewPager.setCurrentItem(savedInstanceState.getInt(LAST_VIEWED_RECIPE_TYPE));
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(LAST_VIEWED_RECIPE_TYPE, viewPager.getCurrentItem());
+    }
 }

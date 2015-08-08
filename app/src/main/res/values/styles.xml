@@ -21,8 +21,4 @@
         <item name="android:textColorPrimary">@color/textColorPrimaryBlack</item>
     </style>
 
-    <style name="ActivityNoTransition" parent="android:Theme">
-        <item name="android:windowAnimationStyle">@null</item>
-    </style>
-
 </resources>

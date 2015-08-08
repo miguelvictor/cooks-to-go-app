@@ -15,6 +15,7 @@ import team.jcandfriends.cookstogo.RecipeSearchActivity;
 public class VirtualBasketFragment extends ExtendedFragment {
 
     public static final String LABEL = "Virtual Basket";
+    private boolean isList = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,14 @@ public class VirtualBasketFragment extends ExtendedFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_toggle_view:
+                if (isList) {
+                    isList = false;
+                    item.setIcon(R.mipmap.ic_view_agenda_white_24dp);
+                } else {
+                    isList = true;
+                    item.setIcon(R.mipmap.ic_view_quilt_white_24dp);
+                }
                 return true;
             case R.id.action_search:
                 Intent intent = new Intent(getActivity(), RecipeSearchActivity.class);
