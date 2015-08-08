@@ -15,6 +15,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import team.jcandfriends.cookstogo.adapters.PrimaryOptionsAdapter;
+import team.jcandfriends.cookstogo.adapters.SecondaryOptionsAdapter;
+import team.jcandfriends.cookstogo.fragments.ExtendedFragment;
+import team.jcandfriends.cookstogo.fragments.HomeFragment;
+import team.jcandfriends.cookstogo.fragments.IngredientsFragment;
+import team.jcandfriends.cookstogo.fragments.RecipesFragment;
+import team.jcandfriends.cookstogo.fragments.SettingsFragment;
+import team.jcandfriends.cookstogo.fragments.VirtualBasketFragment;
+
 public final class Utils {
 
     public static void setUpUi(final AppCompatActivity activity) {
@@ -28,7 +37,7 @@ public final class Utils {
         drawerToggle.syncState();
 
         ListView primaryOptions = (ListView) activity.findViewById(R.id.primaryOptions);
-        primaryOptions.setAdapter(new Adapters.PrimaryOptionsAdapter(Constants.PRIMARY_OPTIONS, Constants.PRIMARY_OPTIONS_ICONS));
+        primaryOptions.setAdapter(new PrimaryOptionsAdapter(Constants.PRIMARY_OPTIONS, Constants.PRIMARY_OPTIONS_ICONS));
         primaryOptions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             int previouslySelectedItem = 0;
@@ -46,7 +55,7 @@ public final class Utils {
         });
 
         // setting up the first item on the sidebar
-        Fragments.ExtendedFragment defaultFragment = getFragmentAt(0);
+        ExtendedFragment defaultFragment = getFragmentAt(0);
         activity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, defaultFragment)
@@ -54,7 +63,7 @@ public final class Utils {
         activity.getSupportActionBar().setTitle(defaultFragment.getFragmentTitle());
 
         ListView secondaryOptions = (ListView) activity.findViewById(R.id.secondaryOptions);
-        secondaryOptions.setAdapter(new Adapters.SecondaryOptionsAdapter(Constants.SECONDARY_OPTIONS));
+        secondaryOptions.setAdapter(new SecondaryOptionsAdapter(Constants.SECONDARY_OPTIONS));
     }
 
     private static void setItemAsSelected(AppCompatActivity activity, View view, int position) {
@@ -63,7 +72,7 @@ public final class Utils {
         ((TextView) view.findViewById(R.id.label)).setTextColor(Colors.PRIMARY_COLOR);
 
         FragmentTransaction ftx = activity.getSupportFragmentManager().beginTransaction();
-        Fragments.ExtendedFragment fragment = getFragmentAt(position);
+        ExtendedFragment fragment = getFragmentAt(position);
         ftx.replace(R.id.container, fragment);
         ftx.commit();
         activity.getSupportActionBar().setTitle(fragment.getFragmentTitle());
@@ -75,18 +84,18 @@ public final class Utils {
         ((TextView) view.findViewById(R.id.label)).setTextColor(Colors.BLACK_87);
     }
 
-    private static Fragments.ExtendedFragment getFragmentAt(int position) {
+    private static ExtendedFragment getFragmentAt(int position) {
         switch (position) {
             case 0:
-                return new Fragments.HomeFragment();
+                return new HomeFragment();
             case 1:
-                return new Fragments.RecipesFragment();
+                return new RecipesFragment();
             case 2:
-                return new Fragments.IngredientsFragment();
+                return new IngredientsFragment();
             case 3:
-                return new Fragments.VirtualBasketFragment();
+                return new VirtualBasketFragment();
         }
-        return new Fragments.SettingsFragment();
+        return new SettingsFragment();
     }
 
 }

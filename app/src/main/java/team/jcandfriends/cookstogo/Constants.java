@@ -1,6 +1,6 @@
 package team.jcandfriends.cookstogo;
 
-public class Constants {
+public final class Constants {
 
     public static final String[] PRIMARY_OPTIONS = {
             "Home",
@@ -21,6 +21,15 @@ public class Constants {
     public static final String[] SECONDARY_OPTIONS = {
             "Help",
             "Feedback"
+    };
+
+    public static final String[] RECIPE_TYPES = {
+            "Appetizer",
+            "Salad",
+            "Main Dish",
+            "Dessert",
+            "Breakfast",
+            "Lunch"
     };
 
     public static final int SECONDARY_OPTIONS_ICON = R.mipmap.ic_info_white_18dp;

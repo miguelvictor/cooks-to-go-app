@@ -14,6 +14,7 @@
 
     <style name="ToolbarTheme">
         <item name="android:textColorPrimary">@color/textColorPrimaryWhite</item>
+        <item name="android:textColorSecondary">@color/textColorPrimaryWhite</item>
     </style>
 
     <style name="PopupTheme">
