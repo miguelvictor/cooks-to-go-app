@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- Main Content -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,13 +22,39 @@
 
     </LinearLayout>
 
+    <!-- Application Drawer -->
     <LinearLayout
         android:id="@+id/drawer"
-        android:layout_gravity="start"
         android:layout_width="@dimen/sidebar_width"
         android:layout_height="match_parent"
-        android:background="#00ff00"
+        android:layout_gravity="start"
+        android:background="@color/white"
         android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="136dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/colorPrimary" />
+
+        <ListView
+            android:id="@+id/primaryOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="#ccc" />
+
+        <ListView
+            android:id="@+id/secondaryOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null" />
 
     </LinearLayout>
 

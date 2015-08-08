@@ -20,6 +20,4 @@
         <item name="android:textColorPrimary">@color/textColorPrimaryBlack</item>
     </style>
 
-    <color name="textColorPrimaryWhite">#ffffff</color>
-    <color name="textColorPrimaryBlack">#000000</color>
 </resources>
