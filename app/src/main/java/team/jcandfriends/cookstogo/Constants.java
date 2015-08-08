@@ -2,6 +2,8 @@ package team.jcandfriends.cookstogo;
 
 public final class Constants {
 
+    public static final String VIEW_TYPE = "view_type";
+
     public static final String[] PRIMARY_OPTIONS = {
             "Home",
             "Recipes",

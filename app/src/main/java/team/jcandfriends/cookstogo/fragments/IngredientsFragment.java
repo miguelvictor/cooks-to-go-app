@@ -9,8 +9,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import team.jcandfriends.cookstogo.Constants;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.RecipeSearchActivity;
+import team.jcandfriends.cookstogo.Utils;
 
 public class IngredientsFragment extends ExtendedFragment {
 
@@ -31,6 +33,15 @@ public class IngredientsFragment extends ExtendedFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_ingredients, menu);
+
+        MenuItem toggleViewItem = menu.findItem(R.id.action_toggle_view);
+        boolean isList = Utils.getPersistedBoolean(getActivity(), Constants.VIEW_TYPE, true);
+
+        if (!isList) {
+            this.isList = false;
+            toggleViewItem.setIcon(R.mipmap.ic_view_agenda_white_24dp);
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -41,9 +52,11 @@ public class IngredientsFragment extends ExtendedFragment {
                 if (isList) {
                     isList = false;
                     item.setIcon(R.mipmap.ic_view_agenda_white_24dp);
+                    Utils.persistBoolean(getActivity(), Constants.VIEW_TYPE, false);
                 } else {
                     isList = true;
                     item.setIcon(R.mipmap.ic_view_quilt_white_24dp);
+                    Utils.persistBoolean(getActivity(), Constants.VIEW_TYPE, true);
                 }
                 return true;
             case R.id.action_search:
