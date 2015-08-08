@@ -1,5 +1,6 @@
 package team.jcandfriends.cookstogo;
 
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ public final class Adapters {
 
     public static class PrimaryOptionsAdapter extends BaseAdapter {
 
+        private boolean done = false;
         private String[] items;
         private int[] itemIcons;
 
@@ -47,8 +49,18 @@ public final class Adapters {
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_primary_option, parent, false);
             }
 
-            ((TextView) convertView.findViewById(R.id.label)).setText(items[position]);
-            ((ImageView) convertView.findViewById(R.id.icon)).setImageResource(itemIcons[position]);
+            TextView label = (TextView) convertView.findViewById(R.id.label);
+            ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
+
+            if (!done && position == 0) {
+                convertView.setBackgroundColor(Colors.BLACK_5);
+                label.setTextColor(Colors.PRIMARY_COLOR);
+                icon.setColorFilter(Colors.PRIMARY_COLOR, PorterDuff.Mode.SRC_IN);
+                done = true;
+            }
+
+            label.setText(items[position]);
+            icon.setImageResource(itemIcons[position]);
 
             return convertView;
         }

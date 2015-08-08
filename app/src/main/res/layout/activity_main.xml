@@ -48,7 +48,7 @@
             android:layout_height="1dp"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
-            android:background="#ccc" />
+            android:background="@color/black12" />
 
         <ListView
             android:id="@+id/secondaryOptions"
