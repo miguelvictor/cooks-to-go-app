@@ -3,9 +3,12 @@ package team.jcandfriends.cookstogo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import team.jcandfriends.cookstogo.adapters.IngredientTypesAdapter;
 
 public class IngredientsActivity extends BaseActivity {
 
@@ -18,10 +21,13 @@ public class IngredientsActivity extends BaseActivity {
         setUpUI();
         setDrawerSelectedItem(R.id.navigation_ingredients);
 
+        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+        IngredientTypesAdapter adapter = new IngredientTypesAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        for (String label : Constants.INGREDIENT_TYPES) {
-            tabLayout.addTab(tabLayout.newTab().setText(label));
-        }
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabsFromPagerAdapter(adapter);
     }
 
     @Override
@@ -35,11 +41,11 @@ public class IngredientsActivity extends BaseActivity {
             case R.id.action_toggle_view:
                 if (isList) {
                     isList = false;
-                    item.setIcon(R.mipmap.ic_view_agenda_white_24dp);
+                    item.setIcon(R.mipmap.ic_view_agenda);
                     Utils.persistBoolean(this, Constants.VIEW_TYPE, false);
                 } else {
                     isList = true;
-                    item.setIcon(R.mipmap.ic_view_quilt_white_24dp);
+                    item.setIcon(R.mipmap.ic_view_quilt);
                     Utils.persistBoolean(this, Constants.VIEW_TYPE, true);
                 }
                 return true;
@@ -58,7 +64,7 @@ public class IngredientsActivity extends BaseActivity {
 
         if (!isList) {
             this.isList = false;
-            toggleViewItem.setIcon(R.mipmap.ic_view_agenda_white_24dp);
+            toggleViewItem.setIcon(R.mipmap.ic_view_agenda);
         }
 
         return true;

@@ -3,9 +3,18 @@ package team.jcandfriends.cookstogo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import org.json.JSONObject;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
+
+import team.jcandfriends.cookstogo.adapters.RecipeTypesAdapter;
 
 public class RecipesActivity extends BaseActivity {
 
@@ -16,11 +25,32 @@ public class RecipesActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes);
         setUpUI();
+        setUpTabs();
+
+        if (Utils.hasInternet(this)) {
+            Utils.showSnackbar(this, "Grabbing yummy recipes ...");
+            try {
+                GrabJsonTask task = new GrabJsonTask();
+                task.execute(new URL(Constants.URL_RECIPES_ALL));
+                JSONObject obj = task.get();
+                Data.initializeData(obj);
+                Utils.showSnackbar(this, "Got the recipes XD");
+            } catch (MalformedURLException | InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Utils.showSnackbar(this, "No connection");
+        }
+    }
+
+    private void setUpTabs() {
+        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+        RecipeTypesAdapter adapter = new RecipeTypesAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        for (String label : Constants.RECIPE_TYPES) {
-            tabLayout.addTab(tabLayout.newTab().setText(label));
-        }
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabsFromPagerAdapter(adapter);
     }
 
     @Override
@@ -33,7 +63,7 @@ public class RecipesActivity extends BaseActivity {
 
         if (!isList) {
             this.isList = false;
-            toggleViewItem.setIcon(R.mipmap.ic_view_agenda_white_24dp);
+            toggleViewItem.setIcon(R.mipmap.ic_view_agenda);
         }
 
         return true;
@@ -50,11 +80,11 @@ public class RecipesActivity extends BaseActivity {
             case R.id.action_toggle_view:
                 if (isList) {
                     isList = false;
-                    item.setIcon(R.mipmap.ic_view_agenda_white_24dp);
+                    item.setIcon(R.mipmap.ic_view_agenda);
                     Utils.persistBoolean(this, Constants.VIEW_TYPE, false);
                 } else {
                     isList = true;
-                    item.setIcon(R.mipmap.ic_view_quilt_white_24dp);
+                    item.setIcon(R.mipmap.ic_view_quilt);
                     Utils.persistBoolean(this, Constants.VIEW_TYPE, true);
                 }
                 return true;

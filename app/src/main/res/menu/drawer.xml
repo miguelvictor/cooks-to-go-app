@@ -5,30 +5,30 @@
         <item
             android:id="@+id/navigation_recipes"
             android:checked="true"
-            android:icon="@mipmap/ic_info_white_24dp"
+            android:icon="@mipmap/ic_recipes"
             android:title="@string/navigation_recipes" />
         <item
             android:id="@+id/navigation_ingredients"
-            android:icon="@mipmap/ic_info_white_24dp"
+            android:icon="@mipmap/ic_ingredients"
             android:title="@string/navigation_ingredients" />
         <item
             android:id="@+id/navigation_virtual_basket"
-            android:icon="@mipmap/ic_info_white_24dp"
+            android:icon="@mipmap/ic_virtual_basket"
             android:title="@string/navigation_virtual_basket" />
         <item
             android:id="@+id/navigation_settings"
-            android:icon="@mipmap/ic_info_white_24dp"
+            android:icon="@mipmap/ic_settings"
             android:title="@string/navigation_settings" />
     </group>
 
     <group android:id="@+id/secondary_drawer_menu" android:checkableBehavior="single">
         <item
             android:id="@+id/navigation_help"
-            android:icon="@mipmap/ic_info_white_24dp"
+            android:icon="@mipmap/ic_help"
             android:title="@string/navigation_help" />
         <item
             android:id="@+id/navigation_feedback"
-            android:icon="@mipmap/ic_info_white_24dp"
+            android:icon="@mipmap/ic_sms"
             android:title="@string/navigation_feedback" />
     </group>
 

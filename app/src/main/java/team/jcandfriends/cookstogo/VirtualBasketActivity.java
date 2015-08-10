@@ -28,7 +28,7 @@ public class VirtualBasketActivity extends BaseActivity {
 
         if (!isList) {
             this.isList = false;
-            toggleViewItem.setIcon(R.mipmap.ic_view_agenda_white_24dp);
+            toggleViewItem.setIcon(R.mipmap.ic_view_agenda);
         }
 
         return true;
@@ -45,11 +45,11 @@ public class VirtualBasketActivity extends BaseActivity {
             case R.id.action_toggle_view:
                 if (isList) {
                     isList = false;
-                    item.setIcon(R.mipmap.ic_view_agenda_white_24dp);
+                    item.setIcon(R.mipmap.ic_view_agenda);
                     Utils.persistBoolean(this, Constants.VIEW_TYPE, false);
                 } else {
                     isList = true;
-                    item.setIcon(R.mipmap.ic_view_quilt_white_24dp);
+                    item.setIcon(R.mipmap.ic_view_quilt);
                     Utils.persistBoolean(this, Constants.VIEW_TYPE, true);
                 }
                 return true;

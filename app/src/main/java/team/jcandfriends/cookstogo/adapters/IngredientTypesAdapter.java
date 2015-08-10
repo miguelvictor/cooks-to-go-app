@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import team.jcandfriends.cookstogo.Constants;
+import team.jcandfriends.cookstogo.fragments.IngredientTypeFragment;
 
 public class IngredientTypesAdapter extends FragmentPagerAdapter {
 
@@ -14,7 +15,7 @@ public class IngredientTypesAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return new Fragment();
+        return new IngredientTypeFragment();
     }
 
     @Override

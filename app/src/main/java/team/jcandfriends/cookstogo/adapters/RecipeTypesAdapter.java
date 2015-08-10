@@ -15,7 +15,7 @@ public class RecipeTypesAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return new RecipeTypeFragment();
+        return RecipeTypeFragment.newInstance(position);
     }
 
     @Override
