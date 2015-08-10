@@ -1,8 +1,5 @@
 package team.jcandfriends.cookstogo;
 
-import android.app.SearchManager;
-import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;

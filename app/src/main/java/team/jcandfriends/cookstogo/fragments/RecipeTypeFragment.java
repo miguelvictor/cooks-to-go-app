@@ -12,7 +12,6 @@ import android.widget.ListView;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.RecipeActivity;
 import team.jcandfriends.cookstogo.adapters.RecipeAdapter;
-import team.jcandfriends.cookstogo.adapters.RecipeTypesAdapter;
 
 public final class RecipeTypeFragment extends Fragment {
 

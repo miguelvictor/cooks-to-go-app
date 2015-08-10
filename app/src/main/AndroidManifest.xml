@@ -15,22 +15,16 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data android:name=".RecipeSearchActivity"
-                android:resource="@xml/searchable" />
         </activity>
 
         <activity
             android:name=".IngredientsActivity"
             android:label="@string/title_activity_ingredients">
-            <meta-data android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
         </activity>
 
         <activity
             android:name=".VirtualBasketActivity"
             android:label="@string/title_activity_virtual_basket">
-            <meta-data android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
         </activity>
 
         <activity

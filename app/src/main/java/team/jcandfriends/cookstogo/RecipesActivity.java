@@ -9,6 +9,8 @@ import android.view.MenuItem;
 
 public class RecipesActivity extends BaseActivity {
 
+    private boolean isList = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +28,14 @@ public class RecipesActivity extends BaseActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_recipes, menu);
 
+        MenuItem toggleViewItem = menu.findItem(R.id.action_toggle_view);
+        boolean isList = Utils.getPersistedBoolean(this, Constants.VIEW_TYPE, true);
+
+        if (!isList) {
+            this.isList = false;
+            toggleViewItem.setIcon(R.mipmap.ic_view_agenda_white_24dp);
+        }
+
         return true;
     }
 
@@ -36,6 +46,17 @@ public class RecipesActivity extends BaseActivity {
                 Intent intent = new Intent(this, RecipeSearchActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
+                return true;
+            case R.id.action_toggle_view:
+                if (isList) {
+                    isList = false;
+                    item.setIcon(R.mipmap.ic_view_agenda_white_24dp);
+                    Utils.persistBoolean(this, Constants.VIEW_TYPE, false);
+                } else {
+                    isList = true;
+                    item.setIcon(R.mipmap.ic_view_quilt_white_24dp);
+                    Utils.persistBoolean(this, Constants.VIEW_TYPE, true);
+                }
                 return true;
         }
 
