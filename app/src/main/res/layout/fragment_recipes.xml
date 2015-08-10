@@ -5,17 +5,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <io.karim.MaterialTabs
-        android:id="@+id/materialTabs"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/white70"
-        app:mtIndicatorColor="@color/colorAccent"
-        app:mtIndicatorHeight="5dp"
-        app:mtPaddingMiddle="false"
-        app:mtSameWeightTabs="true"
-        app:mtTextColorSelected="@color/white" />
+    <!--<io.karim.MaterialTabs-->
+        <!--android:id="@+id/materialTabs"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="48dp"-->
+        <!--android:background="@color/color_primary"-->
+        <!--android:textColor="@color/white70"-->
+        <!--app:mtIndicatorColor="@color/colorAccent"-->
+        <!--app:mtIndicatorHeight="5dp"-->
+        <!--app:mtPaddingMiddle="false"-->
+        <!--app:mtSameWeightTabs="true"-->
+        <!--app:mtTextColorSelected="@color/white" />-->
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"

@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.karim.MaterialTabs;
 import team.jcandfriends.cookstogo.Constants;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.RecipeSearchActivity;
@@ -37,9 +36,6 @@ public class RecipesFragment extends ExtendedFragment {
 
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         viewPager.setAdapter(new RecipeTypesAdapter(getActivity().getSupportFragmentManager()));
-
-        MaterialTabs materialTabs = (MaterialTabs) view.findViewById(R.id.materialTabs);
-        materialTabs.setViewPager(viewPager);
 
         return view;
     }

@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="team.jcandfriends.cookstogo.RecipeActivity">
+
+    <item
+        android:id="@+id/action_favorite"
+        android:icon="@mipmap/ic_favorite_white_24dp"
+        android:title="@string/action_favorite"
+        app:showAsAction="ifRoom" />
+
+</menu>

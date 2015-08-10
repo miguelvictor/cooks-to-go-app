@@ -11,9 +11,10 @@
         android:background="@color/white">
 
         <EditText
-            android:id="@+id/search_input"
+            android:id="@+id/search_field"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:maxLines="1"
             android:hint="Search" />
 
 

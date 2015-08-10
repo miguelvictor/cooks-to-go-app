@@ -2,6 +2,7 @@ package team.jcandfriends.cookstogo.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,11 +14,15 @@ import team.jcandfriends.cookstogo.Constants;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.RecipeSearchActivity;
 import team.jcandfriends.cookstogo.Utils;
+import team.jcandfriends.cookstogo.adapters.IngredientTypesAdapter;
+import team.jcandfriends.cookstogo.adapters.RecipeTypesAdapter;
 
 public class IngredientsFragment extends ExtendedFragment {
 
     public static final String LABEL = "Ingredients";
+
     private boolean isList = false;
+    private ViewPager viewPager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,7 +32,12 @@ public class IngredientsFragment extends ExtendedFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_ingredients, container, false);
+        View view = inflater.inflate(R.layout.fragment_ingredients, container, false);
+
+        viewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        viewPager.setAdapter(new IngredientTypesAdapter(getActivity().getSupportFragmentManager()));
+
+        return view;
     }
 
     @Override

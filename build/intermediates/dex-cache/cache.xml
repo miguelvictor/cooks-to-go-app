@@ -2,16 +2,11 @@
 <items version="2" >
 
     <item
-        jar="/home/johnlibron/.gradle/caches/modules-2/files-2.1/com.nineoldandroids/library/2.4.0/e9b63380f3a242dbdbf103a2355ad7e43bad17cb/library-2.4.0.jar"
-        jumboMode="false" revision="22.0.1" sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
-        <dex
-            dex="/home/johnlibron/AndroidStudioProjects/CooksToGo/app/build/intermediates/pre-dexed/debug/library-2.4.0-b12ced26bac1899ca78dc652b655731e8713f53c.jar" />
-    </item>
-    <item
-        jar="/home/johnlibron/AndroidStudioProjects/CooksToGo/app/build/intermediates/exploded-aar/io.karim/materialtabs/2.0.2/jars/classes.jar"
-        jumboMode="false" revision="22.0.1" sha1="9f479d359413f050c682912af0f5e1fc7e5e6d07">
-        <dex
-            dex="/home/johnlibron/AndroidStudioProjects/CooksToGo/app/build/intermediates/pre-dexed/debug/classes-7d0b34977d0e51cec10495f5f38bd2eeffb3854e.jar" />
+        jar="/home/johnlibron/AndroidStudioProjects/CooksToGo/app/build/intermediates/exploded-aar/com.android.support/design/22.2.1/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="1821601ddbec5ff125653097812823388700af74">
+        <dex dex="/home/johnlibron/AndroidStudioProjects/CooksToGo/app/build/intermediates/pre-dexed/debug/classes-32af86b2f5802c5910eeb27a8ff347ad13f839b2.jar" />
     </item>
 
 </items>
