@@ -105,7 +105,7 @@ public final class Utils {
      * @return The persisted JSONArray or null if key is not found
      */
     public static JSONArray getPersistedJSONArray(Context context, String key) {
-        String jsonArray = getPersistedString(context, key, null);
+        String jsonArray = getPersistedString(context, key, "");
         try {
             return new JSONArray(jsonArray);
         } catch (JSONException e) {
