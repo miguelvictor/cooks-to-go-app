@@ -17,7 +17,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     protected ActionBarDrawerToggle drawerToggle;
     protected NavigationView navigationView;
 
-    protected void setUpUI () {
+    protected Toolbar setUpUI() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -50,6 +50,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         navigationView.setNavigationItemSelectedListener(this);
 
         drawerToggle.syncState();
+
+        return toolbar;
     }
 
     @Override

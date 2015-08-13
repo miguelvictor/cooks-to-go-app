@@ -22,7 +22,7 @@ public class IngredientsActivity extends BaseActivity {
         setDrawerSelectedItem(R.id.navigation_ingredients);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-        IngredientTypesAdapter adapter = new IngredientTypesAdapter(getSupportFragmentManager());
+        IngredientTypesAdapter adapter = new IngredientTypesAdapter(this, getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);

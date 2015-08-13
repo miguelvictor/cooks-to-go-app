@@ -8,12 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import org.json.JSONObject;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.ExecutionException;
-
 import team.jcandfriends.cookstogo.adapters.RecipeTypesAdapter;
 
 public class RecipesActivity extends BaseActivity {
@@ -26,26 +20,11 @@ public class RecipesActivity extends BaseActivity {
         setContentView(R.layout.activity_recipes);
         setUpUI();
         setUpTabs();
-
-        if (Utils.hasInternet(this)) {
-            Utils.showSnackbar(this, "Grabbing yummy recipes ...");
-            try {
-                GrabJsonTask task = new GrabJsonTask();
-                task.execute(new URL(Constants.URL_RECIPES_ALL));
-                JSONObject obj = task.get();
-                Data.initializeData(obj);
-                Utils.showSnackbar(this, "Got the recipes XD");
-            } catch (MalformedURLException | InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Utils.showSnackbar(this, "No connection");
-        }
     }
 
     private void setUpTabs() {
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-        RecipeTypesAdapter adapter = new RecipeTypesAdapter(getSupportFragmentManager());
+        RecipeTypesAdapter adapter = new RecipeTypesAdapter(this, getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);

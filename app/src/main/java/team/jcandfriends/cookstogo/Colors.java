@@ -13,7 +13,4 @@ public final class Colors {
     public static final int BLACK_54 = Color.argb(138, 0, 0, 0);
     public static final int BLACK_87 = Color.argb(222, 0, 0, 0);
 
-    private Colors() {
-    }
-
 }

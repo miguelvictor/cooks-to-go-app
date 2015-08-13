@@ -9,11 +9,4 @@
         android:title="@string/action_search"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/action_toggle_view"
-        android:icon="@mipmap/ic_view_quilt"
-        android:orderInCategory="100"
-        android:title="@string/action_toggle_view"
-        app:showAsAction="ifRoom" />
-
 </menu>

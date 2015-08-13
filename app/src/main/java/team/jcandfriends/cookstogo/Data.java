@@ -1,9 +1,6 @@
 package team.jcandfriends.cookstogo;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,52 +8,48 @@ import org.json.JSONObject;
 
 public final class Data {
 
-    private static Database database = null;
+    public static final String PERSISTENT_RECIPE_TYPES = "persistent_recipe_types";
+    public static final String PERSISTENT_INGREDIENT_TYPES = "persistent_ingredient_types";
 
-    public static void initializeRecipeTypes(Context context, String json) {
-        ensureDatabase(context);
-        try {
-            JSONObject obj = new JSONObject(json);
-            JSONArray types = obj.getJSONArray("results");
+    private static JSONArray recipeTypes;
+    private static JSONArray ingredientTypes;
 
-            for (int i = 0; i < types.length(); i++) {
-                obj = types.getJSONObject(i);
+    public static boolean isSafeToProceed(Context context) {
+        return Utils.persistedKeyExists(context, PERSISTENT_RECIPE_TYPES, PERSISTENT_INGREDIENT_TYPES);
+    }
+
+    public static JSONArray getRecipeTypes(Context context) {
+        if (recipeTypes == null) {
+            if (Utils.persistedKeyExists(context, PERSISTENT_RECIPE_TYPES)) {
+                recipeTypes = Utils.getPersistedJSONArray(context, PERSISTENT_RECIPE_TYPES);
+            } else {
+                throw new RuntimeException("Attempt to get recipeTypes but recipeTypes was not initialized maybe because initializeData() was not called or initializeData() has thrown a JSONException");
             }
-        } catch (JSONException e) {
-            Log.d(Constants.APP_DEBUG, "Exception occurred while initializing recipe types.");
         }
+
+        return recipeTypes;
     }
 
-    public static void initializeIngredientTypes(Context context, String json) {
-        ensureDatabase(context);
+    public static JSONArray getIngredientTypes(Context context) {
+        if (ingredientTypes == null) {
+            if (Utils.persistedKeyExists(context, PERSISTENT_INGREDIENT_TYPES)) {
+                ingredientTypes = Utils.getPersistedJSONArray(context, PERSISTENT_INGREDIENT_TYPES);
+            } else {
+                throw new RuntimeException("Attempt to get ingredientTypes but ingredientTypes was not initialized maybe because initializeData() was not called or initializeData() has thrown a JSONException");
+            }
+        }
+
+        return ingredientTypes;
     }
 
-    private static void ensureDatabase(Context context) {
-        if (database == null) {
-            database = new Database(context, DatabaseConstants.DATABASE_NAME, null, DatabaseConstants.DATABASE_VERSION);
-        }
+    public static void initializeRecipeTypes(Context context, JSONObject object) throws JSONException {
+        recipeTypes = object.getJSONArray("results");
+        Utils.persistJSONArray(context, PERSISTENT_RECIPE_TYPES, recipeTypes);
     }
 
-    private static class Database extends SQLiteOpenHelper {
-
-        public Database(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-            super(context, name, factory, version);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.beginTransaction();
-            db.execSQL(DatabaseConstants.RECIPE_TYPE_CREATE);
-            db.execSQL(DatabaseConstants.INGREDIENT_TYPE_CREATE);
-            db.endTransaction();
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.beginTransaction();
-            db.execSQL("DROP TABLE IF EXISTS " + DatabaseConstants.RECIPE_TYPE_TABLE);
-            db.execSQL("DROP TABLE IF EXISTS " + DatabaseConstants.INGREDIENT_TYPE_TABLE);
-            db.endTransaction();
-        }
+    public static void initializeIngredientTypes(Context context, JSONObject object) throws JSONException {
+        ingredientTypes = object.getJSONArray(Api.RECIPETYPE_RESULTS);
+        Utils.persistJSONArray(context, PERSISTENT_INGREDIENT_TYPES, ingredientTypes);
     }
+
 }

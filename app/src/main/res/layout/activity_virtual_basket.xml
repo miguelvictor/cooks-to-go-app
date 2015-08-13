@@ -19,10 +19,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/color_primary"
+                app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/PopupTheme"
                 app:theme="@style/ToolbarTheme" />
 
         </android.support.design.widget.AppBarLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <include
+            android:id="@+id/empty_view"
+            layout="@layout/empty_list_view" />
 
     </android.support.design.widget.CoordinatorLayout>
 

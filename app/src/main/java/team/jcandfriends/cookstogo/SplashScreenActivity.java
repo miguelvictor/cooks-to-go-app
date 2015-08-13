@@ -4,15 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.TextView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class SplashScreenActivity extends Activity {
 
@@ -21,44 +18,54 @@ public class SplashScreenActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        new InitializerTask().execute(Constants.URL_RECIPES_ALL);
+        if (Data.isSafeToProceed(this)) {
+            startActivity(new Intent(SplashScreenActivity.this, RecipesActivity.class));
+            finish();
+        } else {
+            if (Utils.hasInternet(this)) {
+                new InitializerTask().execute();
+            } else {
+                ((TextView) findViewById(R.id.output)).setText("Sorry, CooksToGo needs internet.");
+            }
+        }
     }
 
-    private class InitializerTask extends AsyncTask<String, Void, JSONObject> {
+    private class InitializerTask extends AsyncTask<Void, Void, JSONObject[]> {
 
         @Override
-        protected JSONObject doInBackground(String... params) {
+        protected JSONObject[] doInBackground(Void... params) {
             try {
-                URL url = new URL(params[0]);
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod(Constants.REQUEST_METHOD_GET);
-                con.setDoInput(true);
-                con.setConnectTimeout(Constants.CONNECT_TIMEOUT);
-                con.setReadTimeout(Constants.READ_TIMEOUT);
-                con.connect();
-
-                switch (con.getResponseCode()) {
-                    case 200:
-                    case 201:
-                        StringBuilder response = new StringBuilder();
-                        BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                        String line;
-                        while ((line = br.readLine()) != null)
-                            response.append(line);
-                        Log.d(Constants.APP_DEBUG, response.toString());
-                        break;
-                }
+                JSONObject[] objects = new JSONObject[2];
+                JSONGrabber grabber = new JSONGrabber(Api.RECIPE_TYPES);
+                objects[0] = grabber.grab();
+                grabber.reuseConnection(Api.INGREDIENT_TYPES);
+                objects[1] = grabber.grab();
+                return objects;
             } catch (IOException e) {
+                Utils.log("IOException while grabbing latest recipe types.");
                 e.printStackTrace();
             }
             return null;
         }
 
         @Override
-        protected void onPostExecute(JSONObject jsonObject) {
+        protected void onPostExecute(JSONObject[] jsonObject) {
             super.onPostExecute(jsonObject);
-            startActivity(new Intent(SplashScreenActivity.this, RecipesActivity.class));
-            finish();
+
+            if (null != jsonObject) {
+                try {
+                    Data.initializeRecipeTypes(SplashScreenActivity.this, jsonObject[0]);
+                    Data.initializeIngredientTypes(SplashScreenActivity.this, jsonObject[1]);
+                    startActivity(new Intent(SplashScreenActivity.this, RecipesActivity.class));
+                    finish();
+                } catch (JSONException e) {
+                    Utils.log("JSONException while initializing data on the Data singleton.");
+                    e.printStackTrace();
+                }
+            } else {
+                Utils.log("JSONObject is null. Finishing activity ...");
+                finish();
+            }
         }
     }
 

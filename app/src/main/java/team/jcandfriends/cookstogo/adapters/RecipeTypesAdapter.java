@@ -1,30 +1,38 @@
 package team.jcandfriends.cookstogo.adapters;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import team.jcandfriends.cookstogo.Constants;
+import org.json.JSONArray;
+
+import team.jcandfriends.cookstogo.Api;
+import team.jcandfriends.cookstogo.Data;
 import team.jcandfriends.cookstogo.fragments.RecipeTypeFragment;
 
 public class RecipeTypesAdapter extends FragmentPagerAdapter {
 
-    public RecipeTypesAdapter(FragmentManager fm) {
+    private JSONArray recipeTypes;
+
+    public RecipeTypesAdapter(Context context, FragmentManager fm) {
         super(fm);
+        recipeTypes = Data.getRecipeTypes(context);
     }
 
     @Override
     public Fragment getItem(int position) {
-        return RecipeTypeFragment.newInstance(position);
+        JSONArray recipes = recipeTypes.optJSONObject(position).optJSONArray(Api.RECIPETYPE_RECIPES);
+        return RecipeTypeFragment.newInstance(recipes);
     }
 
     @Override
     public int getCount() {
-        return Constants.RECIPE_TYPES.length;
+        return recipeTypes.length();
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return Constants.RECIPE_TYPES[position];
+        return recipeTypes.optJSONObject(position).optString(Api.RECIPETYPE_NAME);
     }
 }
