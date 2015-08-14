@@ -56,6 +56,7 @@ public final class Api {
      */
     public static final String STEP_INSTRUCTION = "instruction";
     public static final String STEP_SEQUENCE = "sequence";
+    public static final String RECIPE_ICON = "icon";
 
     public static String getRecipeUrl(int recipeId) throws MalformedURLException {
         return RECIPES + recipeId + '/';

@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -37,7 +39,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     @Override
     public void onBindViewHolder(final RecipeViewHolder holder, final int position) {
         final JSONObject obj = recipes.optJSONObject(position);
-        holder.icon.setImageResource(R.drawable.circle);
+
+        ImageLoader.getInstance().displayImage(obj.optString(Api.RECIPE_ICON), holder.icon);
         holder.name.setText(obj.optString(Api.RECIPE_NAME));
         holder.description.setText(obj.optString(Api.RECIPE_DESCRIPTION));
     }

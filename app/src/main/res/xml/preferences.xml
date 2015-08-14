@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_use_cache"
+        android:summary="Allow faster loading of data"
+        android:title="Cache Data" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_recipe_image_cache"
+        android:summary="Enable faster loading of images"
+        android:title="Cache Images" />
+
+
+</PreferenceScreen>

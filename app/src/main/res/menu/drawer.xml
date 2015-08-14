@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:id="@+id/primary_drawer_menu" android:checkableBehavior="single">
+    <group
+        android:id="@+id/primary_drawer_menu"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/navigation_recipes"
             android:checked="true"
@@ -21,7 +23,9 @@
             android:title="@string/navigation_settings" />
     </group>
 
-    <group android:id="@+id/secondary_drawer_menu" android:checkableBehavior="single">
+    <group
+        android:id="@+id/secondary_drawer_menu"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/navigation_help"
             android:icon="@mipmap/ic_help"

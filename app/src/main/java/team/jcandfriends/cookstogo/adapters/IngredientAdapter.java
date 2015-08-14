@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -30,7 +32,8 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
     @Override
     public void onBindViewHolder(IngredientViewHolder holder, int position) {
         JSONObject ingredient = ingredients.optJSONObject(position);
-        holder.avatar.setImageResource(R.drawable.circle);
+
+        ImageLoader.getInstance().displayImage(ingredient.optString(Api.RECIPE_ICON), holder.avatar);
         holder.name.setText(ingredient.optString(Api.INGREDIENT_NAME));
     }
 

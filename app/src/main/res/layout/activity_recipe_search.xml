@@ -14,8 +14,9 @@
             android:id="@+id/search_field"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:hint="Search" />
+            android:hint="Search"
+
+            android:maxLines="1" />
 
 
     </android.support.v7.widget.Toolbar>

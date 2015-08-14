@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.R;
@@ -32,19 +31,15 @@ public class VirtualBasketItemsAdapter extends RecyclerView.Adapter<VirtualBaske
 
     @Override
     public void onBindViewHolder(VirtualBasketItemViewHolder holder, int position) {
-        try {
-            JSONObject obj = items.getJSONObject(position);
-            holder.ingredientName.setText(
-                    obj.getString(VirtualBasketContainer.VIRTUAL_INGREDIENT)
-            );
-            holder.ingredientDescription.setText(
-                    obj.getInt(VirtualBasketContainer.VIRTUAL_QUANTITY) + " " +
-                            obj.getString(VirtualBasketContainer.VIRTUAL_UNIT_OF_MEASURE) + " of " +
-                            obj.getString(VirtualBasketContainer.VIRTUAL_INGREDIENT)
-            );
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        JSONObject obj = items.optJSONObject(position);
+        holder.ingredientName.setText(
+                obj.optString(VirtualBasketContainer.VIRTUAL_INGREDIENT)
+        );
+        holder.ingredientDescription.setText(
+                obj.optInt(VirtualBasketContainer.VIRTUAL_QUANTITY) + " " +
+                        obj.optString(VirtualBasketContainer.VIRTUAL_UNIT_OF_MEASURE) + " of " +
+                        obj.optString(VirtualBasketContainer.VIRTUAL_INGREDIENT)
+        );
     }
 
     @Override

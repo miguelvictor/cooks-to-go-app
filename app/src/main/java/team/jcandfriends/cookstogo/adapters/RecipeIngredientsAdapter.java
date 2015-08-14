@@ -31,8 +31,7 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
     public void onBindViewHolder(IngredientOnRecipeViewHolder holder, int position) {
         final JSONObject ingredient = recipeComponents.optJSONObject(position);
         final StringBuilder name = new StringBuilder();
-        name
-                .append(ingredient.optInt(Api.RECIPE_COMPONENT_QUANTITY))
+        name.append(ingredient.optInt(Api.RECIPE_COMPONENT_QUANTITY))
                 .append(" ")
                 .append(ingredient.optJSONObject(Api.RECIPE_COMPONENT_UNIT_OF_MEASURE).optString(Api.UNIT_OF_MEASURE_NAME))
                 .append(" of ")

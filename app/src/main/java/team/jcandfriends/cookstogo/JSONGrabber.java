@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class JSONGrabber {
+public final class JSONGrabber {
 
     private URL url;
     private HttpURLConnection connection;
