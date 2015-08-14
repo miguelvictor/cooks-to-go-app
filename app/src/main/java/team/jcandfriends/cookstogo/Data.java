@@ -1,6 +1,7 @@
 package team.jcandfriends.cookstogo;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,7 +11,8 @@ public final class Data {
 
     public static final String PERSISTENT_RECIPE_TYPES = "persistent_recipe_types";
     public static final String PERSISTENT_INGREDIENT_TYPES = "persistent_ingredient_types";
-
+    private static final String RECIPE_CACHE = "recipe_cache";
+    private static final String RECIPE_CACHE_PREFIX = "recipe";
     private static JSONArray recipeTypes;
     private static JSONArray ingredientTypes;
 
@@ -48,8 +50,26 @@ public final class Data {
     }
 
     public static void initializeIngredientTypes(Context context, JSONObject object) throws JSONException {
-        ingredientTypes = object.getJSONArray(Api.RECIPETYPE_RESULTS);
+        ingredientTypes = object.getJSONArray(Api.RECIPE_TYPE_RESULTS);
         Utils.persistJSONArray(context, PERSISTENT_INGREDIENT_TYPES, ingredientTypes);
+    }
+
+    public static boolean hasCachedRecipe(Context context, int recipeId) {
+        SharedPreferences recipeCache = context.getSharedPreferences(RECIPE_CACHE, Context.MODE_PRIVATE);
+        return recipeCache.getAll().containsKey(RECIPE_CACHE_PREFIX + recipeId);
+    }
+
+    public static void cacheRecipe(Context context, JSONObject recipe) {
+        SharedPreferences recipeCache = context.getSharedPreferences(RECIPE_CACHE, Context.MODE_PRIVATE);
+        recipeCache
+                .edit()
+                .putString(RECIPE_CACHE_PREFIX + recipe.optInt(Api.RECIPE_PK), recipe.toString())
+                .apply();
+    }
+
+    public static JSONObject getCachedRecipe(Context context, int recipeId) throws JSONException {
+        SharedPreferences recipeCache = context.getSharedPreferences(RECIPE_CACHE, Context.MODE_PRIVATE);
+        return new JSONObject(recipeCache.getString(RECIPE_CACHE_PREFIX + recipeId, ""));
     }
 
 }

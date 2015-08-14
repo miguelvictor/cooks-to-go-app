@@ -9,13 +9,16 @@ import team.jcandfriends.cookstogo.fragments.RecipeComponentFragment;
 
 public class RecipeComponentsAdapter extends FragmentPagerAdapter {
 
-    public RecipeComponentsAdapter(FragmentManager fm) {
+    private int recipeId;
+
+    public RecipeComponentsAdapter(FragmentManager fm, int recipeId) {
         super(fm);
+        this.recipeId = recipeId;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return new RecipeComponentFragment();
+        return RecipeComponentFragment.newInstance(position, recipeId);
     }
 
     @Override

@@ -22,7 +22,7 @@ public class RecipeTypesAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        JSONArray recipes = recipeTypes.optJSONObject(position).optJSONArray(Api.RECIPETYPE_RECIPES);
+        JSONArray recipes = recipeTypes.optJSONObject(position).optJSONArray(Api.RECIPE_TYPE_RECIPES);
         return RecipeTypeFragment.newInstance(recipes);
     }
 
@@ -33,6 +33,6 @@ public class RecipeTypesAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return recipeTypes.optJSONObject(position).optString(Api.RECIPETYPE_NAME);
+        return recipeTypes.optJSONObject(position).optString(Api.RECIPE_TYPE_NAME);
     }
 }

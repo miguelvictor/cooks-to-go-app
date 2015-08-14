@@ -44,6 +44,8 @@ public class SplashScreenActivity extends Activity {
             } catch (IOException e) {
                 Utils.log("IOException while grabbing latest recipe types.");
                 e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
             return null;
         }

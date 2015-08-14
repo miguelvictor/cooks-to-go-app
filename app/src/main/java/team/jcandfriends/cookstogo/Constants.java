@@ -26,10 +26,23 @@ public final class Constants {
      */
     public static final String VIEW_TYPE = "view_type";
 
+    /**
+     * Recipe Activity Constants
+     */
+    public static final int RECIPE_SUMMARY = R.layout.fragment_recipe_summary;
+    public static final int RECIPE_INGREDIENTS = R.layout.fragment_recipe_ingredients;
+    public static final int RECIPE_METHODS = R.layout.fragment_recipe_methods;
+
+    public static final String RECIPE_COMPONENT_POSITION = "recipe_component_position";
     public static final String[] RECIPE_COMPONENTS = {
             "Summary",
             "Ingredients",
             "Method"
     };
 
+    /**
+     * Extras used in switching activities
+     */
+    public static final String EXTRA_RECIPE_JSON = "extra_recipe_json";
+    public static final String EXTRA_RECIPE_ID = "recipe_id";
 }

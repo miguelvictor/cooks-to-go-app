@@ -13,8 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
+import team.jcandfriends.cookstogo.Constants;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.RecipeActivity;
+
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
 
@@ -29,12 +31,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     @Override
     public RecipeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recipe, parent, false);
-        return new RecipeViewHolder(itemView, activity);
+        return new RecipeViewHolder(itemView, activity, recipes);
     }
 
     @Override
-    public void onBindViewHolder(RecipeViewHolder holder, int position) {
-        JSONObject obj = recipes.optJSONObject(position);
+    public void onBindViewHolder(final RecipeViewHolder holder, final int position) {
+        final JSONObject obj = recipes.optJSONObject(position);
         holder.icon.setImageResource(R.drawable.circle);
         holder.name.setText(obj.optString(Api.RECIPE_NAME));
         holder.description.setText(obj.optString(Api.RECIPE_DESCRIPTION));
@@ -52,16 +54,21 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         TextView name;
         TextView description;
 
-        public RecipeViewHolder(View itemView, final Activity activity) {
+        public RecipeViewHolder(View itemView, final Activity activity, final JSONArray recipes) {
             super(itemView);
             this.view = itemView;
             this.icon = (ImageView) itemView.findViewById(R.id.avatar);
             this.name = (TextView) itemView.findViewById(R.id.primary_text);
             this.description = (TextView) itemView.findViewById(R.id.secondary_text);
+
+            itemView.setClickable(true);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    activity.startActivity(new Intent(activity, RecipeActivity.class));
+                    final Intent intent = new Intent(activity, RecipeActivity.class);
+                    final int recipeId = recipes.optJSONObject(getLayoutPosition()).optInt(Api.RECIPE_PK);
+                    intent.putExtra(Constants.EXTRA_RECIPE_ID, recipeId);
+                    activity.startActivity(intent);
                 }
             });
         }

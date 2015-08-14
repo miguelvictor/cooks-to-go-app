@@ -1,28 +1,40 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="team.jcandfriends.cookstogo.RecipeActivity">
+    android:id="@+id/coordinator_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <include layout="@layout/toolbar" android:id="@+id/toolbar" />
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <!--<io.karim.MaterialTabs-->
-        <!--android:id="@+id/materialTabs"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="48dp"-->
-        <!--android:background="@color/color_primary"-->
-        <!--android:textColor="@color/white70"-->
-        <!--app:mtIndicatorColor="@color/colorAccent"-->
-        <!--app:mtIndicatorHeight="5dp"-->
-        <!--app:mtPaddingMiddle="false"-->
-        <!--app:mtSameWeightTabs="true"-->
-        <!--app:mtTextColorSelected="@color/white" />-->
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_primary"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/PopupTheme"
+            app:theme="@style/ToolbarTheme" />
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/color_accent"
+            app:tabIndicatorHeight="@dimen/tab_indicator_height"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/white70" />
+
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/viewPager"
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

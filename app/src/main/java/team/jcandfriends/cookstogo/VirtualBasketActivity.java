@@ -80,6 +80,7 @@ public class VirtualBasketActivity extends BaseActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
         checkAdapterIsEmpty(adapter);
     }
 

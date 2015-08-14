@@ -26,11 +26,16 @@
     <string name="title_activity_virtual_basket">Virtual Basket</string>
     <string name="title_activity_settings">Settings</string>
 
+    <!-- Search -->
     <string name="search_hint">Search</string>
     <string name="action_clear_search_text">Clear Search</string>
 
     <!-- Navigation items -->
     <string name="navigation_help">Help</string>
     <string name="navigation_feedback">Feedback</string>
+
+    <!-- Empty List -->
+    <string name="empty_list_label">No items in here</string>
+    <string name="empty_list_content_description">Empty List</string>
 
 </resources>

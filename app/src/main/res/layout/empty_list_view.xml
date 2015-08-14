@@ -9,14 +9,17 @@
     android:visibility="gone">
 
     <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/circle" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/empty_list_content_description"
+        android:src="@mipmap/ic_splash_icon" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="No items in here" />
+        android:text="@string/empty_list_label"
+        android:textColor="@color/white70"
+        android:textSize="18sp" />
 
 </LinearLayout>

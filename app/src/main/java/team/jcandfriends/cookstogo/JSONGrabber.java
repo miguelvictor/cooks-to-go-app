@@ -38,42 +38,37 @@ public class JSONGrabber {
         connection.setDoInput(Constants.DO_INPUT);
     }
 
-    public JSONObject grab() {
+    public JSONObject grab() throws IOException, JSONException {
         InputStream is = null;
         JSONObject object = null;
 
-        try {
-            Log.d(Constants.APP_DEBUG, "Attempting to connect to " + url);
-            connection.connect();
+        Log.d(Constants.APP_DEBUG, "Attempting to connect to " + url);
+        connection.connect();
 
-            Log.d(Constants.APP_DEBUG, "Connection to " + url + " established.");
-            StringBuilder response = new StringBuilder();
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                String line;
-                is = connection.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        Log.d(Constants.APP_DEBUG, "Connection to " + url + " established.");
+        StringBuilder response = new StringBuilder();
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String line;
+            is = connection.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-                while ((line = br.readLine()) != null)
-                    response.append(line);
+            while ((line = br.readLine()) != null)
+                response.append(line);
 
-                Log.d(Constants.APP_DEBUG, "Response: " + response);
-                object = new JSONObject(response.toString());
-            } else {
-                Log.d(Constants.APP_DEBUG, "HTTP_CONNECTION: " + connection.getResponseCode());
+            Log.d(Constants.APP_DEBUG, "Response: " + response);
+            object = new JSONObject(response.toString());
+        } else {
+            Log.d(Constants.APP_DEBUG, "HTTP_CONNECTION: " + connection.getResponseCode());
+        }
+        if (is != null) {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException | JSONException e) {
-            Log.d(Constants.APP_DEBUG, "Caught exception : " + e.getMessage());
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                connection.disconnect();
-            }
+        }
+        if (connection != null) {
+            connection.disconnect();
         }
 
         return object;

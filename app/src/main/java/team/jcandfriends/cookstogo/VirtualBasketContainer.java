@@ -31,16 +31,23 @@ public class VirtualBasketContainer {
         data.put(object);
     }
 
-    public static void updateItem(JSONObject object) {
+    public static void removeItem(JSONObject object) {
         if (null == data) {
             throw new RuntimeException("Attempted to add JSONObject when static data is null.");
         }
     }
 
-    public static void removeItem(JSONObject object) {
-        if (null == data) {
-            throw new RuntimeException("Attempted to add JSONObject when static data is null.");
+    private static int getItemIndex(JSONObject object) {
+        int length = data.length();
+        JSONObject item;
+
+        for (int i = 0; i < length; i++) {
+            item = data.optJSONObject(i);
+            if (item.equals(object)) {
+                return i;
+            }
         }
+        return -1;
     }
 
     public static JSONArray getData() {
@@ -59,5 +66,6 @@ public class VirtualBasketContainer {
  * "ingredient": "meat",
  * "ingredientId": 7
  * }
+ * hannah n
  * ]
  **/

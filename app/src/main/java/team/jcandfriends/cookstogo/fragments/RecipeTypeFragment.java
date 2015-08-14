@@ -40,6 +40,7 @@ public final class RecipeTypeFragment extends Fragment {
 
         recipes.setLayoutManager(new LinearLayoutManager(getActivity()));
         recipes.setItemAnimator(new DefaultItemAnimator());
+
         return recipes;
     }
 
