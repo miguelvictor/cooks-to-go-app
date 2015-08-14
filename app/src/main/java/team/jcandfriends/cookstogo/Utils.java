@@ -1,6 +1,7 @@
 package team.jcandfriends.cookstogo;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
@@ -10,7 +11,9 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 public final class Utils {
 
@@ -123,7 +126,7 @@ public final class Utils {
      * Wrapper function for the Snackbar.make()
      *
      * @param activity The activity that must have a coordinator layout
-     * @param message The message that will be shown
+     * @param message  The message that will be shown
      */
     public static void showSnackbar(BaseActivity activity, String message) {
 
@@ -139,6 +142,16 @@ public final class Utils {
      */
     public static void log(String message) {
         Log.d(Constants.APP_DEBUG, message);
+    }
+
+    public static void persistStringSet(Context context, String key, Set<String> strings) {
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+        pm.edit().putStringSet(key, strings).apply();
+    }
+
+    public static Set<String> getPersistedStringArray(Context context, String key) {
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+        return pm.getStringSet(key, Collections.<String>emptySet());
     }
 
 }
