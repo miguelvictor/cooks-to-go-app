@@ -1,19 +1,29 @@
 package team.jcandfriends.cookstogo;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.Collections;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Set;
 
 public final class Utils {
 
@@ -116,6 +126,14 @@ public final class Utils {
         }
     }
 
+    /**
+     * Checks if the device is currently connected to any network. The function name hasInternet
+     * does not conform to the function of this function XD because it doesn't check if it is
+     * indeed connected to the internet.
+     *
+     * @param context The activity
+     * @return true of the device is currently connected to any network, otherwise, false
+     */
     public static boolean hasInternet(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -144,14 +162,71 @@ public final class Utils {
         Log.d(Constants.APP_DEBUG, message);
     }
 
-    public static void persistStringSet(Context context, String key, Set<String> strings) {
-        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
-        pm.edit().putStringSet(key, strings).apply();
+    /**
+     * Decorates the android.support.v7.widget.Toolbar and the android.support.design.widget.TabLayout
+     * to a swatch generated based on the bitmap parameter. Note that the id of the toolbar must be
+     * 'toolbar' and the id of the TabLayout must be 'tab_layout' in order for this method to work.
+     * This method uses reflection because Google hasn't provided a public method for changing the
+     * tabLayout's indicator color programmatically even though a private method can be seen if one
+     * can see the decompiled version of the TabLayout class. This method doesn't cache the Method object,
+     * use only when you want to sacrifice performance for appearance.
+     *
+     * @param activity The activity where the Toolbar and the TabLayout lives
+     * @param bitmap   The bitmap where the swatch will be based on
+     */
+    public static void decorateToolbarAndTabs(Activity activity, Bitmap bitmap) {
+        Palette p = Palette.from(bitmap).generate();
+        Palette.Swatch vibrantSwatch = p.getVibrantSwatch();
+        Palette.Swatch vibrantLightSwatch = p.getLightVibrantSwatch();
+
+        if (vibrantSwatch != null && vibrantLightSwatch != null) {
+            int primaryColor = vibrantSwatch.getRgb();
+            Toolbar toolbar = ((TabsToolbarGettable) activity).getToolbar();
+            toolbar.setBackgroundColor(primaryColor);
+            TabLayout tabs = ((TabsToolbarGettable) activity).getTabLabout();
+            tabs.setBackgroundColor(primaryColor);
+            try {
+                Field field = TabLayout.class.getDeclaredField("mTabStrip");
+                field.setAccessible(true);
+                Object ob = field.get(tabs);
+                Class<?> c = Class.forName("android.support.design.widget.TabLayout$SlidingTabStrip");
+                Method method = c.getDeclaredMethod("setSelectedIndicatorColor", int.class);
+                method.setAccessible(true);
+                method.invoke(ob, vibrantLightSwatch.getRgb());
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public static Set<String> getPersistedStringArray(Context context, String key) {
-        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
-        return pm.getStringSet(key, Collections.<String>emptySet());
-    }
+    /**
+     * Returns a rounded version of the given bitmap
+     *
+     * @param bitmap The bitmap that will be masked with a circle frame
+     * @return The rounded bitmap
+     */
+    public static Bitmap getRoundedBitmap(Bitmap bitmap) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
 
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2,
+                bitmap.getWidth() / 2, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        return output;
+    }
 }

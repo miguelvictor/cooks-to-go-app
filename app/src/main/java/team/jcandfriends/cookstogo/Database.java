@@ -11,10 +11,47 @@ public final class Database {
     public static final int DB_VERSION = 1;
 
     public static final String DB_NAME = "CooksToGo";
+
+    /**
+     * Table Names
+     */
     public static final String RECIPE_SEARCH_HISTORY = "recipe_search_history";
     public static final String INGREDIENT_SEARCH_HISTORY = "ingredient_search_history";
 
+    /**
+     * Table Fields
+     */
+    public static final int SEARCH_HISTORY_QUERY = 1;
+
     private static SQLiteDatabase db;
+
+    public static void addRecipeSearchHistory(Context context, String query) {
+        if (db == null || !db.isOpen()) {
+            db = new DatabaseOpenHelper(context).getWritableDatabase();
+        }
+
+        ContentValues cv = new ContentValues();
+        cv.put("query", query);
+        db.insert(RECIPE_SEARCH_HISTORY, null, cv);
+    }
+
+    public static String[] allRecipeSearchHistory(Context context) {
+        if (db == null || !db.isOpen()) {
+            db = new DatabaseOpenHelper(context).getWritableDatabase();
+        }
+
+        Cursor cursor = db.rawQuery("select * from " + RECIPE_SEARCH_HISTORY, null);
+        String results[] = new String[cursor.getCount()];
+
+        for (int i = 0; i < results.length; i++) {
+            cursor.move(i);
+            results[i] = cursor.getString(SEARCH_HISTORY_QUERY);
+        }
+
+        cursor.close();
+
+        return results;
+    }
 
     private static final class DatabaseOpenHelper extends SQLiteOpenHelper {
 
@@ -43,28 +80,5 @@ public final class Database {
         }
     }
 
-    public static class RecipeSearchHistory {
-
-        private static int getNextId(String table) {
-            if (null == db)
-                throw new RuntimeException("Call to getNextId() when database is null");
-
-            Cursor cursor = db.rawQuery("select max(id) from " + table, null);
-            final int nextId = cursor.getInt(0) + 1;
-            cursor.close();
-            // todo : make this work even if no records exist
-            return nextId;
-        }
-
-        public static void add(Context context, String query) {
-            if (db == null || !db.isOpen()) {
-                db = new DatabaseOpenHelper(context).getWritableDatabase();
-            }
-
-            ContentValues cv = new ContentValues();
-            // todo : insert the 'query' text
-        }
-
-    }
 
 }

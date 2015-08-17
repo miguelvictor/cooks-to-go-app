@@ -16,6 +16,8 @@ public final class Api {
      * Relating to the Recipe Model
      */
     public static final String RECIPE_PK = "pk";
+    public static final String RECIPE_ICON = "icon";
+    public static final String RECIPE_BANNER = "banner";
     public static final String RECIPE_NAME = "name";
     public static final String RECIPE_DESCRIPTION = "description";
     public static final String RECIPE_RECIPE_COMPONENTS = "recipe_components";
@@ -56,7 +58,6 @@ public final class Api {
      */
     public static final String STEP_INSTRUCTION = "instruction";
     public static final String STEP_SEQUENCE = "sequence";
-    public static final String RECIPE_ICON = "icon";
 
     public static String getRecipeUrl(int recipeId) throws MalformedURLException {
         return RECIPES + recipeId + '/';

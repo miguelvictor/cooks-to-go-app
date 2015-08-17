@@ -5,7 +5,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import team.jcandfriends.cookstogo.Constants;
-import team.jcandfriends.cookstogo.fragments.RecipeComponentFragment;
+import team.jcandfriends.cookstogo.fragments.RecipeIngredientsFragment;
+import team.jcandfriends.cookstogo.fragments.RecipeStepsFragment;
+import team.jcandfriends.cookstogo.fragments.RecipeSummaryFragment;
 
 public class RecipeComponentsAdapter extends FragmentPagerAdapter {
 
@@ -18,7 +20,14 @@ public class RecipeComponentsAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return RecipeComponentFragment.newInstance(position, recipeId);
+        switch (position) {
+            case 0:
+                return RecipeSummaryFragment.newInstance(position, recipeId);
+            case 1:
+                return RecipeIngredientsFragment.newInstance(position, recipeId);
+            default:
+                return RecipeStepsFragment.newInstance(position, recipeId);
+        }
     }
 
     @Override

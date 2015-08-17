@@ -18,12 +18,14 @@ public class SplashScreenActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        if (Data.isSafeToProceed(this)) {
-            startActivity(new Intent(SplashScreenActivity.this, RecipesActivity.class));
-            finish();
+        if (Utils.hasInternet(this)) {
+            Utils.log("Internet available: Fetching latest Recipe and Ingredient types");
+            new InitializerTask().execute();
         } else {
-            if (Utils.hasInternet(this)) {
-                new InitializerTask().execute();
+            Utils.log("Internet unavailable: Displaying cached data");
+            if (Data.isSafeToProceed(this)) {
+                startActivity(new Intent(SplashScreenActivity.this, RecipesActivity.class));
+                finish();
             } else {
                 ((TextView) findViewById(R.id.output)).setText("Sorry, CooksToGo needs internet.");
             }

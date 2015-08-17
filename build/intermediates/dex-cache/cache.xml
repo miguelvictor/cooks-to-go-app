@@ -2,11 +2,10 @@
 <items version="2" >
 
     <item
-        jar="/home/johnlibron/.gradle/caches/modules-2/files-2.1/com.nostra13.universalimageloader/universal-image-loader/1.9.4/dd9eeb557650c4ad7394df23f0f5cf27a7cfc697/universal-image-loader-1.9.4.jar"
-        jumboMode="false"
-        revision="22.0.1" sha1="dd9eeb557650c4ad7394df23f0f5cf27a7cfc697">
+        jar="/home/johnlibron/AndroidStudioProjects/CooksToGo/app/build/intermediates/exploded-aar/com.android.support/palette-v7/22.2.1/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="d3aba1c188fea5ee83ebbcb458be29d1cc0ef483">
         <dex
-            dex="/home/johnlibron/AndroidStudioProjects/CooksToGo/app/build/intermediates/pre-dexed/debug/universal-image-loader-1.9.4-9a9d2294b45972cf5fdc9e534809a4aa2d1c8394.jar" />
+            dex="/home/johnlibron/AndroidStudioProjects/CooksToGo/app/build/intermediates/pre-dexed/debug/classes-d56d1846fc663e1a57088af181b5bbf810150193.jar" />
     </item>
 
 </items>
