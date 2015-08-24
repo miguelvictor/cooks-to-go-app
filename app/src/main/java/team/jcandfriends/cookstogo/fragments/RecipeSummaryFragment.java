@@ -47,7 +47,6 @@ public class RecipeSummaryFragment extends Fragment {
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     ImageView banner = (ImageView) finalSummaryView.findViewById(R.id.recipe_banner);
                     banner.setImageBitmap(loadedImage);
-
                     Utils.decorateToolbarAndTabs(getActivity(), loadedImage);
                 }
             });

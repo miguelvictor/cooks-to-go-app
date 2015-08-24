@@ -9,6 +9,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import team.jcandfriends.cookstogo.adapters.RecipeComponentsAdapter;
 
 public final class RecipeActivity extends AppCompatActivity implements TabsToolbarGettable {
@@ -30,6 +33,13 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
 
         final int recipeId = getIntent().getIntExtra(Constants.EXTRA_RECIPE_ID, -1);
         setupLayout(recipeId);
+
+        try {
+            JSONObject recipe = Data.getCachedRecipe(this, recipeId);
+            actionBar.setTitle(recipe.optString(Api.RECIPE_NAME));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setupLayout(int recipeId) {

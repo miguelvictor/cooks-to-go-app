@@ -34,12 +34,13 @@ public class IngredientTypeFragment extends Fragment {
         RecyclerView ingredients = (RecyclerView) inflater.inflate(R.layout.fragment_ingredient_type, container, false);
         try {
             JSONArray ingredientObjects = new JSONArray(args.getString(Constants.INGREDIENTS_IN_FRAGMENT));
-            ingredients.setAdapter(new IngredientAdapter(ingredientObjects));
+            ingredients.setAdapter(new IngredientAdapter(getActivity(), ingredientObjects));
         } catch (JSONException e) {
             Utils.log("JSONException occurred while instantiating JSONArray that contains the ingredients in that fragment.");
         }
         ingredients.setLayoutManager(new LinearLayoutManager(getActivity()));
         ingredients.setItemAnimator(new DefaultItemAnimator());
+
         return ingredients;
     }
 

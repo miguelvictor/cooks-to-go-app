@@ -1,7 +1,5 @@
 package team.jcandfriends.cookstogo;
 
-import java.net.MalformedURLException;
-
 /**
  * Class that contains all keys in the JSON string returned by the axasas.
  */
@@ -33,7 +31,11 @@ public final class Api {
     /**
      * Relating to the Ingredient Model
      */
+    public static final String INGREDIENT_PK = "pk";
     public static final String INGREDIENT_NAME = "name";
+    public static final String INGREDIENT_ICON = "icon";
+    public static final String INGREDIENT_BANNER = "banner";
+    public static final String INGREDIENT_DESCRIPTION = "description";
 
     /**
      * Relating to the IngredientType Model
@@ -59,8 +61,11 @@ public final class Api {
     public static final String STEP_INSTRUCTION = "instruction";
     public static final String STEP_SEQUENCE = "sequence";
 
-    public static String getRecipeUrl(int recipeId) throws MalformedURLException {
+    public static String getRecipeUrl(int recipeId) {
         return RECIPES + recipeId + '/';
     }
 
+    public static String getIngredientUrl(int ingredientId) {
+        return INGREDIENTS + ingredientId + '/';
+    }
 }

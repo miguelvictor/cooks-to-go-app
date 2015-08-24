@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -147,7 +148,6 @@ public final class Utils {
      * @param message  The message that will be shown
      */
     public static void showSnackbar(BaseActivity activity, String message) {
-
         Snackbar
                 .make(activity.findViewById(R.id.coordinator_layout), message, Snackbar.LENGTH_SHORT)
                 .show();
@@ -179,6 +179,8 @@ public final class Utils {
         Palette.Swatch vibrantSwatch = p.getVibrantSwatch();
         Palette.Swatch vibrantLightSwatch = p.getLightVibrantSwatch();
 
+        Utils.log("Vibrant swatch is null : " + (vibrantSwatch == null));
+        Utils.log("Vibrant light swatch is null : " + (vibrantLightSwatch == null));
         if (vibrantSwatch != null && vibrantLightSwatch != null) {
             int primaryColor = vibrantSwatch.getRgb();
             Toolbar toolbar = ((TabsToolbarGettable) activity).getToolbar();
@@ -186,22 +188,27 @@ public final class Utils {
             TabLayout tabs = ((TabsToolbarGettable) activity).getTabLabout();
             tabs.setBackgroundColor(primaryColor);
             try {
-                Field field = TabLayout.class.getDeclaredField("mTabStrip");
-                field.setAccessible(true);
-                Object ob = field.get(tabs);
+                Field tabStripField = TabLayout.class.getDeclaredField("mTabStrip");
+                tabStripField.setAccessible(true);
                 Class<?> c = Class.forName("android.support.design.widget.TabLayout$SlidingTabStrip");
-                Method method = c.getDeclaredMethod("setSelectedIndicatorColor", int.class);
-                method.setAccessible(true);
-                method.invoke(ob, vibrantLightSwatch.getRgb());
+                Method changeIndicatorColor = c.getDeclaredMethod("setSelectedIndicatorColor", int.class);
+                changeIndicatorColor.setAccessible(true);
+                Object object = tabStripField.get(tabs);
+                changeIndicatorColor.invoke(object, vibrantLightSwatch.getRgb());
             } catch (NoSuchFieldException e) {
+                Utils.log("NoSuchFieldException : " + e.getMessage());
                 e.printStackTrace();
             } catch (NoSuchMethodException e) {
+                Utils.log("NoSuchMethodException : " + e.getMessage());
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
+                Utils.log("InvocationTargetException : " + e.getMessage());
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
+                Utils.log("IllegalAccessException : " + e.getMessage());
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
+                Utils.log("ClassNotFoundException : " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -229,4 +236,14 @@ public final class Utils {
         canvas.drawBitmap(bitmap, rect, rect, paint);
         return output;
     }
+
+    public static String capitalize(String string) {
+        String[] words = string.trim().split(" ");
+
+        for (int i = 0; i < words.length; i++)
+            words[i] = Character.toUpperCase(words[i].charAt(0)) + words[i].substring(1);
+
+        return String.valueOf(TextUtils.concat(words));
+    }
+
 }

@@ -1,5 +1,6 @@
 package team.jcandfriends.cookstogo.adapters;
 
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,11 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.R;
+import team.jcandfriends.cookstogo.Utils;
 
 public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredientsAdapter.IngredientOnRecipeViewHolder> {
 
@@ -28,7 +33,7 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
     }
 
     @Override
-    public void onBindViewHolder(IngredientOnRecipeViewHolder holder, int position) {
+    public void onBindViewHolder(final IngredientOnRecipeViewHolder holder, int position) {
         final JSONObject ingredient = recipeComponents.optJSONObject(position);
         final StringBuilder name = new StringBuilder();
         name.append(ingredient.optInt(Api.RECIPE_COMPONENT_QUANTITY))
@@ -38,6 +43,17 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
                 .append(ingredient.optJSONObject(Api.RECIPE_COMPONENT_INGREDIENT).optString(Api.INGREDIENT_NAME).toLowerCase());
 
         holder.name.setText(name);
+
+        ImageLoader.getInstance().loadImage(ingredient.optString(Api.INGREDIENT_ICON), new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                super.onLoadingComplete(imageUri, view, loadedImage);
+
+                if (null != loadedImage) {
+                    holder.avatar.setImageBitmap(Utils.getRoundedBitmap(loadedImage));
+                }
+            }
+        });
     }
 
     @Override
