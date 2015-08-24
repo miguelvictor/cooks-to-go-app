@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,12 +46,22 @@ public class RecipeIngredientsFragment extends Fragment {
 
         try {
             recipe = Data.getCachedRecipe(getActivity(), args.getInt(Constants.EXTRA_RECIPE_ID));
+            final JSONArray ingredients = recipe.optJSONArray(Api.RECIPE_RECIPE_COMPONENTS);
+
             view = inflater.inflate(R.layout.fragment_recipe_ingredients, container, false);
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-            RecipeIngredientsAdapter ingredientsAdapter = new RecipeIngredientsAdapter(recipe.optJSONArray(Api.RECIPE_RECIPE_COMPONENTS));
+            RecipeIngredientsAdapter ingredientsAdapter = new RecipeIngredientsAdapter(ingredients);
             recyclerView.setAdapter(ingredientsAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             recyclerView.setHasFixedSize(true);
+            Utils.setOnItemClickListener(recyclerView, new Utils.SimpleClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    JSONObject ingredient = ingredients.optJSONObject(position).optJSONObject(Api.RECIPE_COMPONENT_INGREDIENT);
+                    Utils.log("Starting Ingredient Activity : " + ingredient);
+                    Utils.startIngredientActivity(getActivity(), ingredient.optInt(Api.INGREDIENT_PK), ingredient.optString(Api.INGREDIENT_NAME));
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }

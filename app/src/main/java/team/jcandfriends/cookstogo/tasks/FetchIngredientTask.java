@@ -15,8 +15,13 @@ public class FetchIngredientTask extends AsyncTask<Integer, Void, JSONObject> {
 
     private Callbacks callbacks;
 
-    public FetchIngredientTask(Callbacks callbacks) {
+    private FetchIngredientTask(Callbacks callbacks) {
         this.callbacks = callbacks;
+    }
+
+    public static void start(int ingredientId, FetchIngredientTask.Callbacks callbacks) {
+        FetchIngredientTask task = new FetchIngredientTask(callbacks);
+        task.execute(ingredientId);
     }
 
     @Override

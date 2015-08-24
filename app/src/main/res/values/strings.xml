@@ -46,5 +46,7 @@
     <string name="dialog_no_internet_header">No connection</string>
     <string name="dialog_no_internet_subheader">You need to connect to internet and open the recipe for us to cache the data so you can view it offline.</string>
     <string name="dialog_neutral_button_label">Okay</string>
+    <string name="dialog_recipe_loading_subheader">Fetching recipe ...</string>
+    <string name="dialog_recipe_loading_header">Loading</string>
 
 </resources>

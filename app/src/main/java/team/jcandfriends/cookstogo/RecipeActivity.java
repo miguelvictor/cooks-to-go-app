@@ -13,8 +13,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.adapters.RecipeComponentsAdapter;
+import team.jcandfriends.cookstogo.interfaces.TabsToolbarGettable;
 
 public final class RecipeActivity extends AppCompatActivity implements TabsToolbarGettable {
+
+    public static final String EXTRA_RECIPE_PK = "extra_recipe_pk";
+    public static final String EXTRA_RECIPE_NAME = "extra_recipe_name";
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -31,7 +35,7 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        final int recipeId = getIntent().getIntExtra(Constants.EXTRA_RECIPE_ID, -1);
+        final int recipeId = getIntent().getIntExtra(EXTRA_RECIPE_PK, -1);
         setupLayout(recipeId);
 
         try {
@@ -74,7 +78,7 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
     }
 
     @Override
-    public TabLayout getTabLabout() {
+    public TabLayout getTabLayout() {
         return tabLayout;
     }
 }

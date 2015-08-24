@@ -1,5 +1,7 @@
 package team.jcandfriends.cookstogo;
 
+import org.json.JSONObject;
+
 /**
  * Class that contains all keys in the JSON string returned by the axasas.
  */
@@ -40,14 +42,15 @@ public final class Api {
     /**
      * Relating to the IngredientType Model
      */
-    public static final String INGREDIENTTYPE_NAME = "name";
-    public static final String INGREDIENTTYPE_INGREDIENTS = "ingredients";
+    public static final String INGREDIENT_TYPE_NAME = "name";
+    public static final String INGREDIENT_TYPE_INGREDIENTS = "ingredients";
 
     /**
      * Relating to the RecipeComponent Model
      */
     public static final String RECIPE_COMPONENT_INGREDIENT = "ingredient";
     public static final String RECIPE_COMPONENT_QUANTITY = "quantity";
+    public static final String RECIPE_COMPONENT_ADJECTIVE = "adjective";
     public static final String RECIPE_COMPONENT_UNIT_OF_MEASURE = "unit_of_measure";
 
     /**
@@ -67,5 +70,26 @@ public final class Api {
 
     public static String getIngredientUrl(int ingredientId) {
         return INGREDIENTS + ingredientId + '/';
+    }
+
+    public static String getIngredientReadableName(JSONObject ingredient) {
+        StringBuilder sb = new StringBuilder();
+
+        // if (self.quantity).is_integer():
+        /*if (ingredient.)
+            string = "%s " % str(int(self.quantity))
+        else:
+            string = "%s " % str(self.quantity)
+
+        if self.unit_of_measure.name != 'generic':
+            string += "%s of " % p.plural(self.unit_of_measure.name, int(self.quantity))
+
+        if self.adjective:
+            string += "%s " % self.adjective*/
+        return sb.toString();
+    }
+
+    private static String normalizeIngredientQuantity(double quantity) {
+        return "";
     }
 }

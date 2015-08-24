@@ -47,8 +47,6 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
         ImageLoader.getInstance().loadImage(ingredient.optString(Api.INGREDIENT_ICON), new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                super.onLoadingComplete(imageUri, view, loadedImage);
-
                 if (null != loadedImage) {
                     holder.avatar.setImageBitmap(Utils.getRoundedBitmap(loadedImage));
                 }
@@ -70,6 +68,8 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
             super(itemView);
             avatar = (ImageView) itemView.findViewById(R.id.avatar);
             name = (TextView) itemView.findViewById(R.id.primary_text);
+
+            itemView.setClickable(true);
         }
     }
 

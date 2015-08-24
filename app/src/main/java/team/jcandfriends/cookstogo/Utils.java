@@ -2,6 +2,7 @@ package team.jcandfriends.cookstogo;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -14,9 +15,12 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +29,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+
+import team.jcandfriends.cookstogo.interfaces.TabsToolbarGettable;
+import team.jcandfriends.cookstogo.interfaces.ToolbarGettable;
 
 public final class Utils {
 
@@ -185,7 +192,7 @@ public final class Utils {
             int primaryColor = vibrantSwatch.getRgb();
             Toolbar toolbar = ((TabsToolbarGettable) activity).getToolbar();
             toolbar.setBackgroundColor(primaryColor);
-            TabLayout tabs = ((TabsToolbarGettable) activity).getTabLabout();
+            TabLayout tabs = ((TabsToolbarGettable) activity).getTabLayout();
             tabs.setBackgroundColor(primaryColor);
             try {
                 Field tabStripField = TabLayout.class.getDeclaredField("mTabStrip");
@@ -214,6 +221,18 @@ public final class Utils {
         }
     }
 
+    public static void decorateToolbar(Activity activity, Bitmap bitmap) {
+        Palette p = Palette.from(bitmap).generate();
+        Palette.Swatch vibrantSwatch = p.getVibrantSwatch();
+        Utils.log("Vibrant swatch is null : " + (vibrantSwatch == null));
+
+        if (vibrantSwatch != null) {
+            int primaryColor = vibrantSwatch.getRgb();
+            Toolbar toolbar = ((ToolbarGettable) activity).getToolbar();
+            toolbar.setBackgroundColor(primaryColor);
+        }
+    }
+
     /**
      * Returns a rounded version of the given bitmap
      *
@@ -238,12 +257,91 @@ public final class Utils {
     }
 
     public static String capitalize(String string) {
-        String[] words = string.trim().split(" ");
+        if (null != string && !string.isEmpty()) {
+            return Character.toUpperCase(string.charAt(0)) + string.substring(1);
+        }
+        return string;
+    }
 
-        for (int i = 0; i < words.length; i++)
-            words[i] = Character.toUpperCase(words[i].charAt(0)) + words[i].substring(1);
+    public static String normalizeQuantity() {
+        return "";
+    }
 
-        return String.valueOf(TextUtils.concat(words));
+    public static void setOnItemClickListener(final RecyclerView recyclerView, final CustomClickListener listener) {
+        final GestureDetector detector = new GestureDetector(recyclerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
+
+                if (null != view) {
+                    int position = recyclerView.getChildLayoutPosition(view);
+                    listener.onClick(view, position);
+                    return true;
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
+
+                if (null != view) {
+                    int position = recyclerView.getChildLayoutPosition(view);
+                    listener.onLongClick(view, position);
+                }
+            }
+        });
+
+        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                return detector.onTouchEvent(e);
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
+    }
+
+    public static void startRecipeActivity(Activity activity, int id, String recipeName) {
+        Intent intent = new Intent(activity, RecipeActivity.class);
+        intent.putExtra(RecipeActivity.EXTRA_RECIPE_PK, id);
+        intent.putExtra(RecipeActivity.EXTRA_RECIPE_NAME, recipeName);
+        activity.startActivity(intent);
+    }
+
+    public static void startIngredientActivity(Activity activity, int id, String ingredientName) {
+        Intent intent = new Intent(activity, IngredientActivity.class);
+        intent.putExtra(IngredientActivity.EXTRA_INGREDIENT_PK, id);
+        intent.putExtra(IngredientActivity.EXTRA_INGREDIENT_NAME, ingredientName);
+        activity.startActivity(intent);
+    }
+
+    public interface CustomClickListener {
+        void onClick(View view, int position);
+
+        void onLongClick(View view, int position);
+    }
+
+    public static class SimpleClickListener implements CustomClickListener {
+
+        @Override
+        public void onClick(View view, int position) {
+
+        }
+
+        @Override
+        public void onLongClick(View view, int position) {
+
+        }
     }
 
 }

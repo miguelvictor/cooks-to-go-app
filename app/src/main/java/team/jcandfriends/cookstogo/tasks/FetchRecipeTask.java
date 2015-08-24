@@ -15,8 +15,13 @@ public class FetchRecipeTask extends AsyncTask<Integer, Void, JSONObject> {
 
     private Callbacks callbacks;
 
-    public FetchRecipeTask(Callbacks callbacks) {
+    private FetchRecipeTask(Callbacks callbacks) {
         this.callbacks = callbacks;
+    }
+
+    public static void start(int recipeId, Callbacks callbacks) {
+        FetchRecipeTask task = new FetchRecipeTask(callbacks);
+        task.execute(recipeId);
     }
 
     @Override
@@ -46,7 +51,6 @@ public class FetchRecipeTask extends AsyncTask<Integer, Void, JSONObject> {
     public interface Callbacks {
 
         void onPreExecute();
-
         void onPostExecute(JSONObject recipe);
 
     }

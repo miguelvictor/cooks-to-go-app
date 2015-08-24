@@ -1,7 +1,10 @@
 package team.jcandfriends.cookstogo.fragments;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,11 +14,15 @@ import android.view.ViewGroup;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.Constants;
+import team.jcandfriends.cookstogo.Data;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
 import team.jcandfriends.cookstogo.adapters.RecipeAdapter;
+import team.jcandfriends.cookstogo.tasks.FetchRecipeTask;
 
 public final class RecipeTypeFragment extends Fragment {
 
@@ -30,16 +37,62 @@ public final class RecipeTypeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle args = getArguments();
-
         RecyclerView recipes = (RecyclerView) inflater.inflate(R.layout.fragment_recipe_type, container, false);
+
         try {
-            recipes.setAdapter(new RecipeAdapter(getActivity(), new JSONArray(args.getString(Constants.RECIPES_IN_FRAGMENT))));
+            final JSONArray recipesArray = new JSONArray(args.getString(Constants.RECIPES_IN_FRAGMENT));
+            recipes.setAdapter(new RecipeAdapter(recipesArray));
+            recipes.setLayoutManager(new LinearLayoutManager(getActivity()));
+            recipes.setItemAnimator(new DefaultItemAnimator());
+            recipes.setHasFixedSize(true);
+            Utils.setOnItemClickListener(recipes, new Utils.SimpleClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    final Activity activity = getActivity();
+
+                    JSONObject recipe = recipesArray.optJSONObject(position);
+                    final int recipeId = recipe.optInt(Api.RECIPE_PK);
+                    final String recipeName = recipe.optString(Api.RECIPE_NAME);
+
+                    if (Utils.hasInternet(activity)) {
+                        final AlertDialog dialog = new AlertDialog.Builder(activity)
+                                .setTitle(R.string.dialog_recipe_loading_header)
+                                .setMessage(R.string.dialog_recipe_loading_subheader)
+                                .setCancelable(false)
+                                .create();
+                        FetchRecipeTask.start(recipeId, new FetchRecipeTask.Callbacks() {
+                            @Override
+                            public void onPreExecute() {
+                                dialog.show();
+                            }
+
+                            @Override
+                            public void onPostExecute(JSONObject recipe) {
+                                dialog.dismiss();
+                                Data.cacheRecipe(activity, recipe);
+                                Utils.startRecipeActivity(activity, recipeId, recipeName);
+                            }
+                        });
+                    } else if (Data.hasCachedRecipe(activity, recipeId)) {
+                        Utils.startRecipeActivity(activity, recipeId, recipeName);
+                    } else {
+                        new AlertDialog.Builder(activity)
+                                .setTitle(R.string.dialog_no_internet_header)
+                                .setMessage(R.string.dialog_no_internet_subheader)
+                                .setNeutralButton(R.string.dialog_neutral_button_label, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .create()
+                                .show();
+                    }
+                }
+            });
         } catch (JSONException e) {
             Utils.log("JSONException occurred while instantiating JSONArray that contains the recipes in that fragment.");
         }
-
-        recipes.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recipes.setItemAnimator(new DefaultItemAnimator());
 
         return recipes;
     }

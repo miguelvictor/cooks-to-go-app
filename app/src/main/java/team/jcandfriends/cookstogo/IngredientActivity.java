@@ -18,10 +18,14 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class IngredientActivity extends AppCompatActivity {
+import team.jcandfriends.cookstogo.interfaces.ToolbarGettable;
+
+public class IngredientActivity extends AppCompatActivity implements ToolbarGettable {
 
     public static final String EXTRA_INGREDIENT_NAME = "extra_ingredient_name";
     public static final String EXTRA_INGREDIENT_PK = "extra_ingredient_pk";
+
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +35,7 @@ public class IngredientActivity extends AppCompatActivity {
         Intent data = getIntent();
         String ingredientName = data.getStringExtra(EXTRA_INGREDIENT_NAME);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -51,7 +55,7 @@ public class IngredientActivity extends AppCompatActivity {
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     banner.setImageBitmap(loadedImage);
-                    Utils.decorateToolbarAndTabs(IngredientActivity.this, loadedImage);
+                    Utils.decorateToolbar(IngredientActivity.this, loadedImage);
                 }
             });
         } catch (JSONException e) {
@@ -77,5 +81,10 @@ public class IngredientActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Toolbar getToolbar() {
+        return toolbar;
     }
 }
