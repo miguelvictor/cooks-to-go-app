@@ -11,6 +11,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -21,6 +22,8 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +36,9 @@ import java.util.Map;
 import team.jcandfriends.cookstogo.interfaces.TabsToolbarGettable;
 import team.jcandfriends.cookstogo.interfaces.ToolbarGettable;
 
+/**
+ * Class that contains all utility methods for common tasks.
+ */
 public final class Utils {
 
     /**
@@ -115,7 +121,8 @@ public final class Utils {
      * @param jsonArray The value that will be persisted
      */
     public static void persistJSONArray(Context context, String key, JSONArray jsonArray) {
-        persistString(context, key, jsonArray.toString());
+        String toPersist = jsonArray == null ? "" : jsonArray.toString();
+        persistString(context, key, toPersist);
     }
 
     /**
@@ -185,42 +192,77 @@ public final class Utils {
         Palette p = Palette.from(bitmap).generate();
         Palette.Swatch vibrantSwatch = p.getVibrantSwatch();
         Palette.Swatch vibrantLightSwatch = p.getLightVibrantSwatch();
+        Palette.Swatch vibrantDarkSwatch = p.getDarkVibrantSwatch();
 
-        Utils.log("Vibrant swatch is null : " + (vibrantSwatch == null));
-        Utils.log("Vibrant light swatch is null : " + (vibrantLightSwatch == null));
-        if (vibrantSwatch != null && vibrantLightSwatch != null) {
+        if (vibrantSwatch != null && vibrantLightSwatch != null && vibrantDarkSwatch != null) {
             int primaryColor = vibrantSwatch.getRgb();
             Toolbar toolbar = ((TabsToolbarGettable) activity).getToolbar();
             toolbar.setBackgroundColor(primaryColor);
             TabLayout tabs = ((TabsToolbarGettable) activity).getTabLayout();
             tabs.setBackgroundColor(primaryColor);
-            try {
-                Field tabStripField = TabLayout.class.getDeclaredField("mTabStrip");
-                tabStripField.setAccessible(true);
-                Class<?> c = Class.forName("android.support.design.widget.TabLayout$SlidingTabStrip");
-                Method changeIndicatorColor = c.getDeclaredMethod("setSelectedIndicatorColor", int.class);
-                changeIndicatorColor.setAccessible(true);
-                Object object = tabStripField.get(tabs);
-                changeIndicatorColor.invoke(object, vibrantLightSwatch.getRgb());
-            } catch (NoSuchFieldException e) {
-                Utils.log("NoSuchFieldException : " + e.getMessage());
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                Utils.log("NoSuchMethodException : " + e.getMessage());
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                Utils.log("InvocationTargetException : " + e.getMessage());
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                Utils.log("IllegalAccessException : " + e.getMessage());
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                Utils.log("ClassNotFoundException : " + e.getMessage());
-                e.printStackTrace();
-            }
+            setTabIndicatorColor(tabs, vibrantLightSwatch.getRgb());
+            setStatusBarColor(activity, vibrantDarkSwatch.getRgb());
         }
     }
 
+    /**
+     * Changes the color of the status bar. This has no effect if invoked on a version of android
+     * that is below API Level 21 (Lollipop)
+     *
+     * @param activity       The activity
+     * @param statusBarColor The color to use
+     */
+    public static void setStatusBarColor(Activity activity, int statusBarColor) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = activity.getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(statusBarColor);
+        }
+    }
+
+    /**
+     * Helper method to change the indicator color of Material Tabs. This is implemented
+     * using Java's reflection API because this method is private in the implementation of
+     * TabLayout.
+     *
+     * @param tabs  The TabLayout which indicator's color will be changed
+     * @param color The color to use
+     */
+    public static void setTabIndicatorColor(TabLayout tabs, int color) {
+        try {
+            Field tabStripField = TabLayout.class.getDeclaredField("mTabStrip");
+            tabStripField.setAccessible(true);
+            Class<?> c = Class.forName("android.support.design.widget.TabLayout$SlidingTabStrip");
+            Method changeIndicatorColor = c.getDeclaredMethod("setSelectedIndicatorColor", int.class);
+            changeIndicatorColor.setAccessible(true);
+            Object object = tabStripField.get(tabs);
+            changeIndicatorColor.invoke(object, color);
+        } catch (NoSuchFieldException e) {
+            Utils.log("NoSuchFieldException : " + e.getMessage());
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            Utils.log("NoSuchMethodException : " + e.getMessage());
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            Utils.log("InvocationTargetException : " + e.getMessage());
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            Utils.log("IllegalAccessException : " + e.getMessage());
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            Utils.log("ClassNotFoundException : " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Changes the background color of the toolbar to the vibrant swatch which is
+     * generated by the Palette class from the given bitmap.
+     *
+     * @param activity The activity
+     * @param bitmap   The bitmap which to load colors from
+     */
     public static void decorateToolbar(Activity activity, Bitmap bitmap) {
         Palette p = Palette.from(bitmap).generate();
         Palette.Swatch vibrantSwatch = p.getVibrantSwatch();
@@ -256,6 +298,12 @@ public final class Utils {
         return output;
     }
 
+    /**
+     * Capitalizes the first character of the string
+     *
+     * @param string The string that will be capitalized
+     * @return The capitalized string
+     */
     public static String capitalize(String string) {
         if (null != string && !string.isEmpty()) {
             return Character.toUpperCase(string.charAt(0)) + string.substring(1);
@@ -263,10 +311,13 @@ public final class Utils {
         return string;
     }
 
-    public static String normalizeQuantity() {
-        return "";
-    }
-
+    /**
+     * Helper method to set the item click listener on the RecyclerView which is obviously not
+     * available to the core RecyclerView class.
+     *
+     * @param recyclerView The object which the item click listener will be attached
+     * @param listener The callbacks which will be invoked appropriately
+     */
     public static void setOnItemClickListener(final RecyclerView recyclerView, final CustomClickListener listener) {
         final GestureDetector detector = new GestureDetector(recyclerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -311,6 +362,14 @@ public final class Utils {
         });
     }
 
+    /**
+     * Wrapper to start the RecipeActivity with extras which is put in the Intent object.
+     * Extras include the recipe id and name
+     *
+     * @param activity The activity that requested this action
+     * @param id The recipe id
+     * @param recipeName The recipe name
+     */
     public static void startRecipeActivity(Activity activity, int id, String recipeName) {
         Intent intent = new Intent(activity, RecipeActivity.class);
         intent.putExtra(RecipeActivity.EXTRA_RECIPE_PK, id);
@@ -318,6 +377,14 @@ public final class Utils {
         activity.startActivity(intent);
     }
 
+    /**
+     * Wrapper to start the IngredientActivity with extras which is put in the Intent object.
+     * Extras include the ingredient id and name
+     *
+     * @param activity The activity that requested this action
+     * @param id The ingredient id
+     * @param ingredientName The ingredient name
+     */
     public static void startIngredientActivity(Activity activity, int id, String ingredientName) {
         Intent intent = new Intent(activity, IngredientActivity.class);
         intent.putExtra(IngredientActivity.EXTRA_INGREDIENT_PK, id);
@@ -325,12 +392,18 @@ public final class Utils {
         activity.startActivity(intent);
     }
 
+    /**
+     * The interface that is used in the setOnItemClickListener function above.
+     */
     public interface CustomClickListener {
         void onClick(View view, int position);
 
         void onLongClick(View view, int position);
     }
 
+    /**
+     * Convenience class that implements the CustomClickListener with blank implementations.
+     */
     public static class SimpleClickListener implements CustomClickListener {
 
         @Override

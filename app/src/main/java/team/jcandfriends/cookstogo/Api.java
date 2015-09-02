@@ -64,14 +64,32 @@ public final class Api {
     public static final String STEP_INSTRUCTION = "instruction";
     public static final String STEP_SEQUENCE = "sequence";
 
+    /**
+     * Returns the URL of the REST service which serves recipes by id
+     *
+     * @param recipeId The recipe to get
+     * @return the URL of the REST service which serves recipes by id
+     */
     public static String getRecipeUrl(int recipeId) {
         return RECIPES + recipeId + '/';
     }
 
+    /**
+     * Returns the URL of the REST service which serves ingredients by id
+     *
+     * @param ingredientId The recipe to get
+     * @return the URL of the REST service which serves recipes by id
+     */
     public static String getIngredientUrl(int ingredientId) {
         return INGREDIENTS + ingredientId + '/';
     }
 
+    /**
+     * Returns a human readable representation of the ingredient
+     *
+     * @param ingredient the ingredient
+     * @return the human readable representation of the ingredient
+     */
     public static String getIngredientReadableName(JSONObject ingredient) {
         StringBuilder sb = new StringBuilder();
 
@@ -89,7 +107,4 @@ public final class Api {
         return sb.toString();
     }
 
-    private static String normalizeIngredientQuantity(double quantity) {
-        return "";
-    }
 }

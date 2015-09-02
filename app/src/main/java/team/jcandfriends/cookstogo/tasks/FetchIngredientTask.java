@@ -11,6 +11,11 @@ import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.JSONGrabber;
 import team.jcandfriends.cookstogo.Utils;
 
+/**
+ * FetchIngredientTask fetches ingredient on the REST server backend asynchronously.
+ * <p/>
+ * Subordinates: FetchIngredientTask.Callbacks, JSONGrabber
+ */
 public class FetchIngredientTask extends AsyncTask<Integer, Void, JSONObject> {
 
     private Callbacks callbacks;
@@ -48,6 +53,9 @@ public class FetchIngredientTask extends AsyncTask<Integer, Void, JSONObject> {
         callbacks.onPostExecute(ingredient);
     }
 
+    /**
+     * Interface definition for callbacks to be invoked when events happen during the execution of this task
+     */
     public interface Callbacks {
 
         void onPreExecute();

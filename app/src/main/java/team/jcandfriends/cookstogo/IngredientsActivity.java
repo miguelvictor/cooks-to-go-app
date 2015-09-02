@@ -10,6 +10,9 @@ import android.view.MenuItem;
 
 import team.jcandfriends.cookstogo.adapters.IngredientTypesAdapter;
 
+/**
+ * The activity that displays all ingredients
+ */
 public class IngredientsActivity extends BaseActivity {
 
     private boolean isList = true;

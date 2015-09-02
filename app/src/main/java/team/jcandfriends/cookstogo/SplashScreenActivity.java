@@ -11,6 +11,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+/**
+ * The activity that is shown while the app is loading its initial data
+ */
 public class SplashScreenActivity extends Activity {
 
     @Override

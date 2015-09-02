@@ -20,6 +20,9 @@ import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.interfaces.ToolbarGettable;
 
+/**
+ * The activity that displays the ingredient
+ */
 public class IngredientActivity extends AppCompatActivity implements ToolbarGettable {
 
     public static final String EXTRA_INGREDIENT_NAME = "extra_ingredient_name";
@@ -48,9 +51,7 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
             JSONObject ingredient = Data.getCachedIngredient(this, data.getIntExtra(EXTRA_INGREDIENT_PK, -1));
 
             ((TextView) findViewById(R.id.ingredient_description)).setText(ingredient.optString(Api.INGREDIENT_DESCRIPTION));
-
             final ImageView banner = (ImageView) findViewById(R.id.ingredient_banner);
-
             ImageLoader.getInstance().loadImage(ingredient.optString(Api.INGREDIENT_BANNER), new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {

@@ -11,12 +11,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+/**
+ * Class used for each activity used in the NavigationView. This abstract class has all the boilerplate
+ * code in implementing the navigation drawer which switches activities instead of fragments.
+ */
 public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     protected DrawerLayout drawerLayout;
     protected ActionBarDrawerToggle drawerToggle;
     protected NavigationView navigationView;
 
+    /**
+     * Sets up the DrawerLayout, Toolbar, and NavigationView
+     *
+     * @return the Toolbar
+     */
     protected Toolbar setUpUI() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -60,6 +69,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         overridePendingTransition(0, 0);
     }
 
+    /**
+     * Tints the text and icon of this menu item.
+     *
+     * @param menuItemId the id of the menu that will be tinted
+     */
     public void setDrawerSelectedItem(int menuItemId) {
         MenuItem item = navigationView.getMenu().findItem(menuItemId);
         if (item != null) {

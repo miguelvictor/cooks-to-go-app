@@ -12,6 +12,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * Utility class that receives a string url and returns a JSONObject.
+ */
 public final class JSONGrabber {
 
     private URL url;

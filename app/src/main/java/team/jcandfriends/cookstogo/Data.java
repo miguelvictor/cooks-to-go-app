@@ -7,6 +7,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * The manager for storing and getting cached data.
+ */
 public final class Data {
 
     public static final String PERSISTENT_RECIPE_TYPES = "persistent_recipe_types";

@@ -1,6 +1,6 @@
 package team.jcandfriends.cookstogo.adapters;
 
-import android.app.Activity;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,19 +8,28 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.json.JSONArray;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+
 import org.json.JSONObject;
 
-import team.jcandfriends.cookstogo.R;
-import team.jcandfriends.cookstogo.VirtualBasketContainer;
+import java.util.ArrayList;
 
+import team.jcandfriends.cookstogo.Api;
+import team.jcandfriends.cookstogo.R;
+import team.jcandfriends.cookstogo.Utils;
+
+/**
+ * VirtualBasketItemsAdapter is responsible for displaying all the items in the virtual basket.
+ * <p/>
+ * Subordinates: VirtualBasketItemViewHolder, item_virtual_basket.xml
+ */
 public class VirtualBasketItemsAdapter extends RecyclerView.Adapter<VirtualBasketItemsAdapter.VirtualBasketItemViewHolder> {
 
-    private JSONArray items;
+    private ArrayList<JSONObject> items;
 
-    public VirtualBasketItemsAdapter(Activity activity) {
-        VirtualBasketContainer.initialize(activity);
-        items = VirtualBasketContainer.getData();
+    public VirtualBasketItemsAdapter(ArrayList<JSONObject> items) {
+        this.items = items;
     }
 
     @Override
@@ -30,34 +39,42 @@ public class VirtualBasketItemsAdapter extends RecyclerView.Adapter<VirtualBaske
     }
 
     @Override
-    public void onBindViewHolder(VirtualBasketItemViewHolder holder, int position) {
-        JSONObject obj = items.optJSONObject(position);
-        holder.ingredientName.setText(
-                obj.optString(VirtualBasketContainer.VIRTUAL_INGREDIENT)
-        );
-        holder.ingredientDescription.setText(
-                obj.optInt(VirtualBasketContainer.VIRTUAL_QUANTITY) + " " +
-                        obj.optString(VirtualBasketContainer.VIRTUAL_UNIT_OF_MEASURE) + " of " +
-                        obj.optString(VirtualBasketContainer.VIRTUAL_INGREDIENT)
-        );
+    public void onBindViewHolder(final VirtualBasketItemViewHolder holder, int position) {
+        JSONObject obj = items.get(position);
+
+        String ingredientName = obj.optString(Api.INGREDIENT_NAME);
+        holder.ingredientName.setText(ingredientName);
+
+        ImageLoader.getInstance().loadImage(obj.optString(Api.INGREDIENT_ICON), new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                holder.avatar.setImageBitmap(Utils.getRoundedBitmap(loadedImage));
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return items.length();
+        return items.size();
+    }
+
+    public void deleteAll() {
+        items.clear();
+    }
+
+    public void removeItem(JSONObject ingredient) {
+        items.remove(ingredient);
     }
 
     public static class VirtualBasketItemViewHolder extends RecyclerView.ViewHolder {
 
         ImageView avatar;
         TextView ingredientName;
-        TextView ingredientDescription;
 
         public VirtualBasketItemViewHolder(View itemView) {
             super(itemView);
             avatar = (ImageView) itemView.findViewById(R.id.avatar);
             ingredientName = (TextView) itemView.findViewById(R.id.primary_text);
-            ingredientDescription = (TextView) itemView.findViewById(R.id.secondary_text);
         }
     }
 

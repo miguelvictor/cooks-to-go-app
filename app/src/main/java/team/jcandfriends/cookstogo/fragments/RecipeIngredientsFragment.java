@@ -19,20 +19,21 @@ import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
 import team.jcandfriends.cookstogo.adapters.RecipeIngredientsAdapter;
 
+/**
+ * RecipeIngredientsFragment displays all ingredients used in a recipe
+ * <p/>
+ * Subordinates: fragment_recipe_ingredients.xml, RecipeIngredientsAdapter
+ */
 public class RecipeIngredientsFragment extends Fragment {
 
     /**
      * Returns the appropriate fragment for this given position in the tabs in the Recipe Activity
      *
-     * @param position What position this fragment is used for (0 - 2)
      * @return The fragment for the appropriate position
      */
-    public static RecipeIngredientsFragment newInstance(int position, int recipeId) {
-        Utils.log("Initializing fragment for position " + position);
-        Utils.log("RecipeJson: " + recipeId);
+    public static RecipeIngredientsFragment newInstance(int recipeId) {
         RecipeIngredientsFragment fragment = new RecipeIngredientsFragment();
         Bundle args = new Bundle();
-        args.putInt(Constants.RECIPE_COMPONENT_POSITION, position);
         args.putInt(Constants.EXTRA_RECIPE_ID, recipeId);
         fragment.setArguments(args);
         return fragment;

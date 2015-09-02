@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+/**
+ * Lists all search results
+ */
 public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.SearchHistoryViewHolder> {
 
     private ArrayList<String> searchHistory;

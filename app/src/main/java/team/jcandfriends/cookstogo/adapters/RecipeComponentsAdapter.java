@@ -9,6 +9,12 @@ import team.jcandfriends.cookstogo.fragments.RecipeIngredientsFragment;
 import team.jcandfriends.cookstogo.fragments.RecipeStepsFragment;
 import team.jcandfriends.cookstogo.fragments.RecipeSummaryFragment;
 
+/**
+ * RecipeComponentsAdapter is responsible for displaying the different components of
+ * a recipe: Summary(includes the picture of the recipe and its overview), Ingredients, and Steps
+ * <p/>
+ * Subordinates: RecipeSummaryFragment, RecipeIngredientsFragment, RecipeStepsFragment
+ */
 public class RecipeComponentsAdapter extends FragmentPagerAdapter {
 
     private int recipeId;
@@ -22,11 +28,11 @@ public class RecipeComponentsAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return RecipeSummaryFragment.newInstance(position, recipeId);
+                return RecipeSummaryFragment.newInstance(recipeId);
             case 1:
-                return RecipeIngredientsFragment.newInstance(position, recipeId);
+                return RecipeIngredientsFragment.newInstance(recipeId);
             default:
-                return RecipeStepsFragment.newInstance(position, recipeId);
+                return RecipeStepsFragment.newInstance(recipeId);
         }
     }
 

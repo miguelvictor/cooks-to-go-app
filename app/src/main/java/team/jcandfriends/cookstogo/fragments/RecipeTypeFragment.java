@@ -24,6 +24,11 @@ import team.jcandfriends.cookstogo.Utils;
 import team.jcandfriends.cookstogo.adapters.RecipeAdapter;
 import team.jcandfriends.cookstogo.tasks.FetchRecipeTask;
 
+/**
+ * RecipeTypeFragment displays all recipes of a specific recipe type.
+ * <p/>
+ * Subordinates: fragment_recipe_type.xml, RecipeAdapter, Data, Utils, FetchRecipeTask
+ */
 public final class RecipeTypeFragment extends Fragment {
 
     public static RecipeTypeFragment newInstance(JSONArray recipes) {
@@ -36,20 +41,19 @@ public final class RecipeTypeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final Activity activity = getActivity();
         Bundle args = getArguments();
         RecyclerView recipes = (RecyclerView) inflater.inflate(R.layout.fragment_recipe_type, container, false);
 
         try {
             final JSONArray recipesArray = new JSONArray(args.getString(Constants.RECIPES_IN_FRAGMENT));
             recipes.setAdapter(new RecipeAdapter(recipesArray));
-            recipes.setLayoutManager(new LinearLayoutManager(getActivity()));
+            recipes.setLayoutManager(new LinearLayoutManager(activity));
             recipes.setItemAnimator(new DefaultItemAnimator());
             recipes.setHasFixedSize(true);
             Utils.setOnItemClickListener(recipes, new Utils.SimpleClickListener() {
                 @Override
                 public void onClick(View view, int position) {
-                    final Activity activity = getActivity();
-
                     JSONObject recipe = recipesArray.optJSONObject(position);
                     final int recipeId = recipe.optInt(Api.RECIPE_PK);
                     final String recipeName = recipe.optString(Api.RECIPE_NAME);

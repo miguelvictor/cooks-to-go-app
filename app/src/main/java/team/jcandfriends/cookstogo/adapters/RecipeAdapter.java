@@ -18,7 +18,11 @@ import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
 
-
+/**
+ * RecipeAdapter is used to display all the recipes in the RecyclerView.
+ * <p/>
+ * Subordinates: item_recipe.xml, RecipeViewHolder
+ */
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
 
     private JSONArray recipes;

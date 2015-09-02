@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+/**
+ * The activity that allows user to submit his feedback.
+ */
 public class FeedbackActivity extends AppCompatActivity {
 
     @Override

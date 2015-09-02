@@ -1,25 +1,30 @@
 package team.jcandfriends.cookstogo;
 
+import android.app.Activity;
 import android.content.Context;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-// TODO : Remove (data == null) check on production
+import java.util.ArrayList;
 
+/**
+ * Manager of the items in the virtual basket.
+ */
 public class VirtualBasketContainer {
 
     public static final String VIRTUAL_BASKET_ITEMS = "virtual_basket_items";
     public static final String VIRTUAL_INGREDIENT = "ingredient";
-    public static final String VIRTUAL_UNIT_OF_MEASURE = "unitOfMeasure";
-    public static final String VIRTUAL_QUANTITY = "quantity";
 
-    private static JSONArray data = null;
+    private static ArrayList<JSONObject> data;
 
     public static void initialize(Context context) {
-        data = Utils.getPersistedJSONArray(context, VIRTUAL_BASKET_ITEMS);
-        if (null == data) {
-            data = new JSONArray();
+        JSONArray cachedItems = Utils.getPersistedJSONArray(context, VIRTUAL_BASKET_ITEMS);
+
+        if (null == cachedItems) {
+            data = new ArrayList<>();
+        } else {
+            data = jsonArrayToList(cachedItems);
         }
     }
 
@@ -28,44 +33,64 @@ public class VirtualBasketContainer {
             throw new RuntimeException("Attempted to add JSONObject when static data is null.");
         }
 
-        data.put(object);
+        data.add(object);
     }
 
     public static void removeItem(JSONObject object) {
         if (null == data) {
             throw new RuntimeException("Attempted to add JSONObject when static data is null.");
         }
+
+        data.remove(object);
     }
 
-    private static int getItemIndex(JSONObject object) {
-        int length = data.length();
-        JSONObject item;
-
-        for (int i = 0; i < length; i++) {
-            item = data.optJSONObject(i);
-            if (item.equals(object)) {
-                return i;
+    public static boolean isAlreadyAdded(Activity activity, JSONObject object) {
+        if (null == data) {
+            JSONArray cachedItems = Utils.getPersistedJSONArray(activity, VIRTUAL_BASKET_ITEMS);
+            if (null == cachedItems) {
+                data = new ArrayList<>();
+            } else {
+                data = jsonArrayToList(cachedItems);
             }
         }
-        return -1;
+
+        return data.contains(object);
     }
 
-    public static JSONArray getData() {
+    public static ArrayList<JSONObject> getData() {
         return data;
     }
 
-}
+    private static JSONArray listToJsonArray(ArrayList<JSONObject> list) {
+        JSONArray array = new JSONArray();
 
-/**
- * [
- * {
- * "id": 1,
- * "quantity": 2,
- * "unitOfMeasure": "kilogram",
- * "unitOfMeasureId": 5,
- * "ingredient": "meat",
- * "ingredientId": 7
- * }
- * hannah n
- * ]
- **/
+        for (JSONObject item : list) {
+            array.put(item);
+        }
+
+        return array;
+    }
+
+    private static ArrayList<JSONObject> jsonArrayToList(JSONArray array) {
+        ArrayList<JSONObject> list = new ArrayList<>();
+
+        for (int i = 0; i < array.length(); i++) {
+            list.add(array.optJSONObject(i));
+        }
+
+        return list;
+    }
+
+    public static void persist(Context context) {
+        JSONArray array = listToJsonArray(data);
+        Utils.persistJSONArray(context, VIRTUAL_BASKET_ITEMS, array);
+    }
+
+    public static void deleteAll(Context context) {
+        Utils.persistJSONArray(context, VIRTUAL_BASKET_ITEMS, null);
+    }
+
+    public static String getRecipesUrl() {
+        return Api.RECIPES + "";
+    }
+}

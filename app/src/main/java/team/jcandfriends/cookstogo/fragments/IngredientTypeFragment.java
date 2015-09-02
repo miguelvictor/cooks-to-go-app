@@ -17,13 +17,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
+import team.jcandfriends.cookstogo.BaseActivity;
 import team.jcandfriends.cookstogo.Constants;
 import team.jcandfriends.cookstogo.Data;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
+import team.jcandfriends.cookstogo.VirtualBasketContainer;
 import team.jcandfriends.cookstogo.adapters.IngredientAdapter;
 import team.jcandfriends.cookstogo.tasks.FetchIngredientTask;
 
+/**
+ * IngredientTypeFragment displays all ingredients of a specific ingredient type.
+ * <p/>
+ * Subordinates: fragment_ingredient_type.xml, IngredientAdapter, Data, Utils
+ */
 public class IngredientTypeFragment extends Fragment {
 
     public static IngredientTypeFragment newInstance(JSONArray ingredients) {
@@ -89,6 +96,36 @@ public class IngredientTypeFragment extends Fragment {
                                 .create()
                                 .show();
                     }
+                }
+
+                @Override
+                public void onLongClick(View view, final int position) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Add Ingredient")
+                            .setMessage("Add this ingredient to virtual basket?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Activity activity = getActivity();
+                                    JSONObject ingredient = ingredientsArray.optJSONObject(position);
+
+                                    if (VirtualBasketContainer.isAlreadyAdded(activity, ingredient)) {
+                                        Utils.showSnackbar((BaseActivity) activity, Utils.capitalize(ingredient.optString(Api.INGREDIENT_NAME)) + " is already added");
+                                    } else {
+                                        VirtualBasketContainer.addItem(ingredient);
+                                        Utils.showSnackbar((BaseActivity) activity, "Added " + ingredient.optString(Api.INGREDIENT_NAME));
+                                        VirtualBasketContainer.persist(activity);
+                                    }
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .create()
+                            .show();
                 }
             });
         } catch (JSONException e) {

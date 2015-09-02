@@ -15,6 +15,9 @@ import org.json.JSONObject;
 import team.jcandfriends.cookstogo.adapters.RecipeComponentsAdapter;
 import team.jcandfriends.cookstogo.interfaces.TabsToolbarGettable;
 
+/**
+ * The activity that displays the details of a recipe.
+ */
 public final class RecipeActivity extends AppCompatActivity implements TabsToolbarGettable {
 
     public static final String EXTRA_RECIPE_PK = "extra_recipe_pk";

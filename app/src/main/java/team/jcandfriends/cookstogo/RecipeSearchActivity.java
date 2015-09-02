@@ -17,6 +17,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+/**
+ * The activity that lists all recipes which was the result of a search
+ */
 public class RecipeSearchActivity extends AppCompatActivity {
 
     private static final String RECIPE_SEARCH_HISTORY = "recipe_search_history";

@@ -11,6 +11,12 @@ import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.Data;
 import team.jcandfriends.cookstogo.fragments.IngredientTypeFragment;
 
+/**
+ * IngredientTypesAdapter lays out all the ingredient types fragment which also contains the ingredients
+ * of that type. This class is responsible in making the fragments which is used by the TabLayout.
+ * <p/>
+ * Subordinates: IngredientTypeFragment
+ */
 public class IngredientTypesAdapter extends FragmentPagerAdapter {
 
     private JSONArray ingredientTypes;

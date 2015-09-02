@@ -2,6 +2,9 @@ package team.jcandfriends.cookstogo;
 
 import android.graphics.Color;
 
+/**
+ * Contains all the color constants for convenience
+ */
 public final class Colors {
 
     // PALETTE

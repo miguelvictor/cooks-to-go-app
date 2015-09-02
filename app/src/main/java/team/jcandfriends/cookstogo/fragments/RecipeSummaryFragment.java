@@ -21,12 +21,16 @@ import team.jcandfriends.cookstogo.Data;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
 
+/**
+ * RecipeSummaryFragment displays the picture of the recipe and its overview
+ * <p/>
+ * Subordinates: fragment_recipe_summary.xml, Data, ImageLoader
+ */
 public class RecipeSummaryFragment extends Fragment {
 
-    public static Fragment newInstance(int position, int recipeId) {
+    public static Fragment newInstance(int recipeId) {
         RecipeSummaryFragment fragment = new RecipeSummaryFragment();
         Bundle args = new Bundle();
-        args.putInt(Constants.RECIPE_COMPONENT_POSITION, position);
         args.putInt(Constants.EXTRA_RECIPE_ID, recipeId);
         fragment.setArguments(args);
         return fragment;

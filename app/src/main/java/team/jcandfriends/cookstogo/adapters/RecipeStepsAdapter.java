@@ -13,6 +13,11 @@ import org.json.JSONObject;
 import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.R;
 
+/**
+ * RecipeStepsAdapter is responsible for displaying all the steps in a recipe.
+ * <p/>
+ * Subordinates: RecipeStepViewHolder, item_recipe_step.xml
+ */
 public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.RecipeStepViewHolder> {
 
     private JSONArray steps;
@@ -23,7 +28,7 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
 
     @Override
     public RecipeStepViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_step_on_recipe, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recipe_step, parent, false);
         return new RecipeStepViewHolder(view);
     }
 

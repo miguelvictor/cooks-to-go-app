@@ -39,14 +39,17 @@
     <string name="empty_list_content_description">Empty List</string>
     <string name="title_activity_ingredient">IngredientActivity</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <!-- Dialog Strings -->
     <string name="dialog_ingredient_loading_header">Loading Ingredient</string>
-    <string name="dialog_ingredient_loading_subheader">Please wait while loading recipe ...</string>
+    <string name="dialog_ingredient_loading_subheader">Please wait while loading recipe &#8230;</string>
     <string name="dialog_no_internet_header">No connection</string>
     <string name="dialog_no_internet_subheader">You need to connect to internet and open the recipe for us to cache the data so you can view it offline.</string>
     <string name="dialog_neutral_button_label">Okay</string>
-    <string name="dialog_recipe_loading_subheader">Fetching recipe ...</string>
+    <string name="dialog_recipe_loading_subheader">Fetching recipe &#8230;</string>
     <string name="dialog_recipe_loading_header">Loading</string>
+
+    <!-- Actions -->
+    <string name="action_settings">Settings</string>
+    <string name="action_delete_all">Delete All</string>
 
 </resources>

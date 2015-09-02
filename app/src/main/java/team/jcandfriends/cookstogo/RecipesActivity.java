@@ -14,6 +14,9 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import team.jcandfriends.cookstogo.adapters.RecipeTypesAdapter;
 
+/**
+ * The activity that displays all recipes in a list format
+ */
 public class RecipesActivity extends BaseActivity {
 
     private boolean isList = true;

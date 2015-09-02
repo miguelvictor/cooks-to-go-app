@@ -18,6 +18,11 @@ import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
 
+/**
+ * IngredientAdapter is used to display all the ingredients in the RecyclerView.
+ * <p/>
+ * Subordinates: item_ingredient.xml, IngredientViewHolder
+ */
 public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder> {
 
     private JSONArray ingredients;
