@@ -30,8 +30,10 @@ public final class Constants {
     public static final String[] RECIPE_COMPONENTS = {
             "Summary",
             "Ingredients",
-            "Method"
+            "Steps"
     };
 
     public static final String EXTRA_RECIPE_ID = "recipe_id";
+    public static final String EXTRA_RECIPES_URL = "recipes_url";
+    public static final String EXTRA_SEARCH_QUERY = "search_query";
 }

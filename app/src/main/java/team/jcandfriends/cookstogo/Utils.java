@@ -25,12 +25,17 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Map;
 
 import team.jcandfriends.cookstogo.interfaces.TabsToolbarGettable;
@@ -392,6 +397,40 @@ public final class Utils {
         activity.startActivity(intent);
     }
 
+    public static void initializeImageLoader (Context context) {
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                .defaultDisplayImageOptions(defaultOptions)
+                .build();
+        ImageLoader.getInstance().init(config);
+    }
+
+    public static ArrayList<String> filter (ArrayList<String> collection, FilterPredicate predicate) {
+        ArrayList<String> filteredList = new ArrayList<>();
+
+        for (String next : collection) {
+            if (predicate.evaluate(next)) {
+                filteredList.add(next);
+            }
+        }
+
+        return filteredList;
+    }
+
+    public static ArrayList<String> toStringList (JSONArray array) {
+        ArrayList<String> list = new ArrayList<>();
+
+        for (int i = 0; i < array.length(); i++) {
+            list.add(array.optString(i));
+        }
+
+        return list;
+    }
+
     /**
      * The interface that is used in the setOnItemClickListener function above.
      */
@@ -399,6 +438,10 @@ public final class Utils {
         void onClick(View view, int position);
 
         void onLongClick(View view, int position);
+    }
+
+    public interface FilterPredicate {
+        boolean evaluate (String object);
     }
 
     /**

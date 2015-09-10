@@ -91,6 +91,21 @@ public class VirtualBasketContainer {
     }
 
     public static String getRecipesUrl() {
-        return Api.RECIPES + "";
+        if (data == null) {
+            throw new RuntimeException("Invoked getRecipesUrl() when data is not yet initialized.");
+        }
+
+        boolean first = true;
+        StringBuilder sb = new StringBuilder();
+        for (JSONObject ingredient : data) {
+            if (first) {
+                sb.append(ingredient.optInt(Api.INGREDIENT_PK));
+                first = false;
+            } else {
+                sb.append(",").append(ingredient.optInt(Api.INGREDIENT_PK));
+            }
+        }
+
+        return Api.RECIPES + "?ingredients=" + sb.toString();
     }
 }

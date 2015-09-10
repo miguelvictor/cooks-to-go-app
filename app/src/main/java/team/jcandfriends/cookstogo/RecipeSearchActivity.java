@@ -1,5 +1,6 @@
 package team.jcandfriends.cookstogo;
 
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -7,23 +8,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.util.ArrayList;
+import android.widget.Toast;
 
 /**
  * The activity that lists all recipes which was the result of a search
  */
-public class RecipeSearchActivity extends AppCompatActivity {
+public class RecipeSearchActivity extends AppCompatActivity implements TextWatcher, TextView.OnEditorActionListener {
 
     private static final String RECIPE_SEARCH_HISTORY = "recipe_search_history";
 
+    private SearchResultsAdapter adapter;
     private EditText searchField;
 
     @Override
@@ -39,29 +43,23 @@ public class RecipeSearchActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        final ArrayList<String> list = new ArrayList<>();
-        list.add("Sotto gago");
-        list.add("WEw paq qanun");
-        list.add("uhhh yeeaahahhah");
-
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        final RecyclerView.Adapter adapter = new SearchResultsAdapter(list);
+        adapter = new SearchResultsAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        searchField = (EditText) findViewById(R.id.search_field);
-        searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        recyclerView.setClickable(true);
+        recyclerView.setHasFixedSize(true);
+        Utils.setOnItemClickListener(recyclerView, new Utils.SimpleClickListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    list.add(0, searchField.getText().toString());
-                    adapter.notifyItemInserted(0);
-                    return true;
-                }
-
-                return false;
+            public void onClick(View view, int position) {
+                String query = searchField.getText().toString();
+                showResults(query);
             }
         });
+
+        searchField = (EditText) findViewById(R.id.search_field);
+        searchField.setOnEditorActionListener(this);
+        searchField.addTextChangedListener(this);
     }
 
     @Override
@@ -94,4 +92,42 @@ public class RecipeSearchActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
     }
 
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        adapter.filter(this, s.toString());
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            String query = searchField.getText().toString();
+            showResults(query);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void showResults (String query) {
+        if (Utils.hasInternet(this)) {
+            Intent intent = new Intent(this, RecipeSearchResultsActivity.class);
+            intent.putExtra(Constants.EXTRA_SEARCH_QUERY, query);
+            intent.putExtra(Constants.EXTRA_RECIPES_URL, Api.getSearchRecipeUrl(query));
+            startActivity(intent);
+            finish();
+        } else {
+            Toast.makeText(this, R.string.snackbar_no_internet, Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
 }

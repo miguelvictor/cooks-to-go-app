@@ -63,12 +63,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         return toolbar;
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overridePendingTransition(0, 0);
-    }
-
     /**
      * Tints the text and icon of this menu item.
      *
@@ -134,9 +128,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                     intent = new Intent(BaseActivity.this, HelpActivity.class);
                     shouldFinish = false;
                     break;
-                default:
+                case R.id.navigation_feedback:
                     intent = new Intent(BaseActivity.this, FeedbackActivity.class);
                     shouldFinish = false;
+                    break;
             }
         }
 
@@ -147,6 +142,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
             if (shouldFinish) {
                 finish();
+                overridePendingTransition(0, 0);
             }
         }
 

@@ -8,7 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * The manager for storing and getting cached data.
+ * The manager for storing and getting cached ingredients and recipes.
  */
 public final class Data {
 

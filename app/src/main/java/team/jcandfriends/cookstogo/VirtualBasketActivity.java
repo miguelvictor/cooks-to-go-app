@@ -19,7 +19,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import team.jcandfriends.cookstogo.adapters.VirtualBasketItemsAdapter;
-import team.jcandfriends.cookstogo.tasks.RecommendRecipesTask;
 
 /**
  * The activity that displays the items in the virtual basket.
@@ -162,16 +161,12 @@ public class VirtualBasketActivity extends BaseActivity {
     }
 
     public void recommendRecipes(View view) {
-        RecommendRecipesTask.start(0, new RecommendRecipesTask.Callbacks() {
-            @Override
-            public void onPreExecute() {
-                Utils.showSnackbar(VirtualBasketActivity.this, "Fetching recipes...");
-            }
-
-            @Override
-            public void onPostExecute(JSONObject recipes) {
-
-            }
-        });
+        if (Utils.hasInternet(this)) {
+            Intent intent = new Intent(this, RecipeSearchResultsActivity.class);
+            intent.putExtra(Constants.EXTRA_RECIPES_URL, VirtualBasketContainer.getRecipesUrl());
+            startActivity(intent);
+        } else {
+            Utils.showSnackbar(this, "I'm sorry but you need internet for this.");
+        }
     }
 }

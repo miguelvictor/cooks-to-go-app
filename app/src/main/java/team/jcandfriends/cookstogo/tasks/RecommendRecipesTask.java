@@ -7,7 +7,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.JSONGrabber;
 import team.jcandfriends.cookstogo.Utils;
 
@@ -17,17 +16,17 @@ import team.jcandfriends.cookstogo.Utils;
  * <p/>
  * Subordinates: FetchRecipeTask.Callbacks, JSONGrabber
  */
-public class RecommendRecipesTask extends AsyncTask<Integer, Void, JSONObject> {
+public class RecommendRecipesTask extends AsyncTask<String, Void, JSONObject> {
 
     private Callbacks callbacks;
 
-    private RecommendRecipesTask(Callbacks callbacks) {
+    public RecommendRecipesTask(Callbacks callbacks) {
         this.callbacks = callbacks;
     }
 
-    public static void start(int recipeId, Callbacks callbacks) {
+    public static void start(String url, Callbacks callbacks) {
         RecommendRecipesTask task = new RecommendRecipesTask(callbacks);
-        task.execute(recipeId);
+        task.execute(url);
     }
 
     @Override
@@ -37,9 +36,9 @@ public class RecommendRecipesTask extends AsyncTask<Integer, Void, JSONObject> {
     }
 
     @Override
-    protected JSONObject doInBackground(Integer... params) {
+    protected JSONObject doInBackground(String... params) {
         try {
-            JSONGrabber recipeGrabber = new JSONGrabber(Api.getRecipeUrl(params[0]));
+            JSONGrabber recipeGrabber = new JSONGrabber(params[0]);
             return recipeGrabber.grab();
         } catch (IOException | JSONException e) {
             Utils.log(e.getMessage());
@@ -49,9 +48,9 @@ public class RecommendRecipesTask extends AsyncTask<Integer, Void, JSONObject> {
     }
 
     @Override
-    protected void onPostExecute(JSONObject recipe) {
-        super.onPostExecute(recipe);
-        callbacks.onPostExecute(recipe);
+    protected void onPostExecute(JSONObject recipes) {
+        super.onPostExecute(recipes);
+        callbacks.onPostExecute(recipes);
     }
 
     /**

@@ -22,6 +22,7 @@ public final class Api {
     public static final String RECIPE_DESCRIPTION = "description";
     public static final String RECIPE_RECIPE_COMPONENTS = "recipe_components";
     public static final String RECIPE_STEPS = "steps";
+    public static final String RECIPE_RESULTS = "results";
 
     /**
      * Relating to the RecipeType Model
@@ -107,4 +108,8 @@ public final class Api {
         return sb.toString();
     }
 
+    // TODO : urlEncode(query)
+    public static String getSearchRecipeUrl(String query) {
+        return RECIPES + "?query=" + query;
+    }
 }

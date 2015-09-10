@@ -55,6 +55,9 @@
         <activity
             android:name=".IngredientActivity"
             android:label="@string/title_activity_ingredient"></activity>
+        <activity
+            android:name=".RecipeSearchResultsActivity"
+            android:label="@string/title_activity_recipe_search"></activity>
     </application>
 
 </manifest>
