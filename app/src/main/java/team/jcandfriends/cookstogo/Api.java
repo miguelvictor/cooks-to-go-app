@@ -1,6 +1,9 @@
 package team.jcandfriends.cookstogo;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import team.jcandfriends.cookstogo.inflector.English;
 
 /**
  * Class that contains all keys in the JSON string returned by the axasas.
@@ -13,6 +16,14 @@ public final class Api {
     public static final String INGREDIENT_TYPES = "http://cookstogo.herokuapp.com/api/ingredient-types/";
 
     /**
+     * Pagination attrs
+     */
+    public static final String COUNT = "count";
+    public static final String NEXT = "next";
+    public static final String PREVIOUS = "previous";
+    public static final String RESULTS = "results";
+
+    /**
      * Relating to the Recipe Model
      */
     public static final String RECIPE_PK = "pk";
@@ -22,14 +33,14 @@ public final class Api {
     public static final String RECIPE_DESCRIPTION = "description";
     public static final String RECIPE_RECIPE_COMPONENTS = "recipe_components";
     public static final String RECIPE_STEPS = "steps";
-    public static final String RECIPE_RESULTS = "results";
+    public static final String RECIPE_DURATION = "time_to_complete";
+    public static final String RECIPE_DEFAULT_SERVING_SIZE = "default_serving_size";
 
     /**
      * Relating to the RecipeType Model
      */
     public static final String RECIPE_TYPE_NAME = "name";
     public static final String RECIPE_TYPE_RECIPES = "recipes";
-    public static final String RECIPE_TYPE_RESULTS = "results";
 
     /**
      * Relating to the Ingredient Model
@@ -86,30 +97,70 @@ public final class Api {
     }
 
     /**
-     * Returns a human readable representation of the ingredient
+     * Returns a human readable representation of the recipeComponent
      *
-     * @param ingredient the ingredient
-     * @return the human readable representation of the ingredient
+     * @param recipeComponent the recipeComponent
+     * @return the human readable representation of the recipeComponent
      */
-    public static String getIngredientReadableName(JSONObject ingredient) {
-        StringBuilder sb = new StringBuilder();
+    public static String getIngredientReadableName(JSONObject recipeComponent) {
+        try {
+            StringBuilder sb = new StringBuilder();
 
-        // if (self.quantity).is_integer():
-        /*if (ingredient.)
-            string = "%s " % str(int(self.quantity))
-        else:
-            string = "%s " % str(self.quantity)
+            String quantity = recipeComponent.getString(Api.RECIPE_COMPONENT_QUANTITY);
+            String unitOfMeasure = recipeComponent.getJSONObject(Api.RECIPE_COMPONENT_UNIT_OF_MEASURE).getString(Api.UNIT_OF_MEASURE_NAME);
+            String adjective = recipeComponent.getString(Api.RECIPE_COMPONENT_ADJECTIVE);
+            String ingredientName = recipeComponent.getJSONObject(Api.RECIPE_COMPONENT_INGREDIENT).getString(Api.INGREDIENT_NAME);
 
-        if self.unit_of_measure.name != 'generic':
-            string += "%s of " % p.plural(self.unit_of_measure.name, int(self.quantity))
+            int plural = 2;
+            float qFloat = Float.parseFloat(quantity);
 
-        if self.adjective:
-            string += "%s " % self.adjective*/
-        return sb.toString();
+            Utils.log("Quantity: " + qFloat);
+            if (qFloat == 1 || qFloat == 0.25 || qFloat == 0.5 || qFloat == 0.3333 || qFloat == 0.2 || qFloat == 0.1666 || qFloat == 0.125) {
+                plural = 1;
+            }
+
+            if (quantity.matches("^\\d+(\\.0)?$")) { // if it's an integer
+                sb.append(Integer.valueOf(quantity)).append(" ");
+            } else { // if it's a float
+                sb.append(Utils.fractionize(quantity)).append(" ");
+            }
+
+            if (!unitOfMeasure.equals("generic")) {
+                sb.append(English.plural(unitOfMeasure, plural)).append(" of ");
+            }
+
+            if (!adjective.isEmpty()) {
+                sb.append(adjective).append(" ");
+            }
+
+            return sb.append(ingredientName).toString().toLowerCase();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    // TODO : urlEncode(query)
-    public static String getSearchRecipeUrl(String query) {
-        return RECIPES + "?query=" + query;
+    /**
+     * Returns a human readable representation of the recipe duration which is in minutes by default.
+     *
+     * @param duration in minutes, should be greater than zero
+     * @return
+     */
+    public static String normalizeRecipeDuration(int duration) {
+        StringBuilder result = new StringBuilder();
+
+        int hours = duration / 60;
+        int minutes = duration % 60;
+
+        if (hours != 0 && minutes != 0) {
+            result.append(hours).append(" ").append(English.plural("hour", hours)).append(" and ").append(minutes).append(" ").append(English.plural("minute", minutes));
+        } else if (hours != 0) {
+            result.append(hours).append(" ").append(English.plural("hour", hours));
+        } else {
+            result.append(minutes).append(" ").append(English.plural("minute", minutes));
+        }
+
+        return result.toString();
     }
+
 }

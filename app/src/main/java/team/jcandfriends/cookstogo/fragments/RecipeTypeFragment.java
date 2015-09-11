@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +23,7 @@ import team.jcandfriends.cookstogo.Data;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
 import team.jcandfriends.cookstogo.adapters.RecipeAdapter;
+import team.jcandfriends.cookstogo.managers.RecipeManager;
 import team.jcandfriends.cookstogo.tasks.FetchRecipeTask;
 
 /**
@@ -42,6 +44,7 @@ public final class RecipeTypeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final Activity activity = getActivity();
+        final RecipeManager recipeManager = RecipeManager.get(activity);
         Bundle args = getArguments();
         RecyclerView recipes = (RecyclerView) inflater.inflate(R.layout.fragment_recipe_type, container, false);
 
@@ -64,6 +67,22 @@ public final class RecipeTypeFragment extends Fragment {
                                 .setMessage(R.string.dialog_recipe_loading_subheader)
                                 .setCancelable(false)
                                 .create();
+
+                        dialog.show();
+                        recipeManager.fetch(recipeId, new RecipeManager.Callbacks() {
+                            @Override
+                            public void onSuccess(JSONObject result) {
+                                dialog.dismiss();
+                                recipeManager.cacheRecipe(result);
+                                Utils.startRecipeActivity(activity, recipeId, recipeName);
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                dialog.dismiss();
+                                Toast.makeText(activity, "Some unexpected error occurred.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                         FetchRecipeTask.start(recipeId, new FetchRecipeTask.Callbacks() {
                             @Override
                             public void onPreExecute() {

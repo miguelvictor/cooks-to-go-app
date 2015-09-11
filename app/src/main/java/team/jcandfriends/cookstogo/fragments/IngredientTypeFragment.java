@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,9 +24,9 @@ import team.jcandfriends.cookstogo.Constants;
 import team.jcandfriends.cookstogo.Data;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
-import team.jcandfriends.cookstogo.VirtualBasketContainer;
 import team.jcandfriends.cookstogo.adapters.IngredientAdapter;
-import team.jcandfriends.cookstogo.tasks.FetchIngredientTask;
+import team.jcandfriends.cookstogo.managers.IngredientManager;
+import team.jcandfriends.cookstogo.managers.VirtualBasketManager;
 
 /**
  * IngredientTypeFragment displays all ingredients of a specific ingredient type.
@@ -46,18 +48,21 @@ public class IngredientTypeFragment extends Fragment {
         Bundle args = getArguments();
         final RecyclerView ingredients;
 
+        final FragmentActivity activity = getActivity();
+        final IngredientManager ingredientManager = IngredientManager.get(activity);
+        final VirtualBasketManager virtualBasketManager = VirtualBasketManager.get(activity);
+
         ingredients = (RecyclerView) inflater.inflate(R.layout.fragment_ingredient_type, container, false);
+
         try {
             final JSONArray ingredientsArray = new JSONArray(args.getString(Constants.INGREDIENTS_IN_FRAGMENT));
             IngredientAdapter ingredientAdapter = new IngredientAdapter(ingredientsArray);
             ingredients.setAdapter(ingredientAdapter);
-            ingredients.setLayoutManager(new LinearLayoutManager(getActivity()));
+            ingredients.setLayoutManager(new LinearLayoutManager(activity));
             ingredients.setItemAnimator(new DefaultItemAnimator());
             Utils.setOnItemClickListener(ingredients, new Utils.SimpleClickListener() {
                 @Override
                 public void onClick(View view, int position) {
-                    final Activity activity = getActivity();
-
                     JSONObject ingredient = ingredientsArray.optJSONObject(position);
                     final int ingredientId = ingredient.optInt(Api.INGREDIENT_PK);
                     final String ingredientName = ingredient.optString(Api.INGREDIENT_NAME);
@@ -68,20 +73,23 @@ public class IngredientTypeFragment extends Fragment {
                                 .setMessage(R.string.dialog_ingredient_loading_subheader)
                                 .setCancelable(false)
                                 .create();
-                        FetchIngredientTask.start(ingredientId, new FetchIngredientTask.Callbacks() {
+
+                        dialog.show();
+                        ingredientManager.fetch(ingredientId, new IngredientManager.Callbacks() {
                             @Override
-                            public void onPreExecute() {
-                                dialog.show();
+                            public void onSuccess(JSONObject result) {
+                                dialog.dismiss();
+                                Data.cacheIngredient(activity, result);
+                                Utils.startIngredientActivity(activity, ingredientId, ingredientName);
                             }
 
                             @Override
-                            public void onPostExecute(JSONObject ingredient) {
+                            public void onFailure() {
                                 dialog.dismiss();
-                                Data.cacheIngredient(activity, ingredient);
-                                Utils.startIngredientActivity(activity, ingredientId, ingredientName);
+                                Toast.makeText(activity, "Some unexpected error occurred.", Toast.LENGTH_SHORT).show();
                             }
                         });
-                    } else if (Data.hasCachedRecipe(activity, ingredientId)) {
+                    } else if (ingredientManager.hasCachedIngredient(ingredientId)) {
                         Utils.startIngredientActivity(activity, ingredientId, ingredientName);
                     } else {
                         new AlertDialog.Builder(activity)
@@ -100,7 +108,7 @@ public class IngredientTypeFragment extends Fragment {
 
                 @Override
                 public void onLongClick(View view, final int position) {
-                    new AlertDialog.Builder(getActivity())
+                    new AlertDialog.Builder(activity)
                             .setTitle("Add Ingredient")
                             .setMessage("Add this ingredient to virtual basket?")
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -109,12 +117,11 @@ public class IngredientTypeFragment extends Fragment {
                                     Activity activity = getActivity();
                                     JSONObject ingredient = ingredientsArray.optJSONObject(position);
 
-                                    if (VirtualBasketContainer.isAlreadyAdded(activity, ingredient)) {
+                                    if (virtualBasketManager.isAlreadyAdded(ingredient)) {
                                         Utils.showSnackbar((BaseActivity) activity, Utils.capitalize(ingredient.optString(Api.INGREDIENT_NAME)) + " is already added");
                                     } else {
-                                        VirtualBasketContainer.addItem(ingredient);
+                                        virtualBasketManager.add(ingredient);
                                         Utils.showSnackbar((BaseActivity) activity, "Added " + ingredient.optString(Api.INGREDIENT_NAME));
-                                        VirtualBasketContainer.persist(activity);
                                     }
                                 }
                             })

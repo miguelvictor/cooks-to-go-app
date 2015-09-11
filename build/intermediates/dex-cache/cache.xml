@@ -2,10 +2,58 @@
 <items version="2" >
 
     <item
-        jar="/home/johnlibron/AndroidStudioProjects/CooksToGo/app/build/intermediates/exploded-aar/com.android.support/palette-v7/22.2.1/jars/classes.jar"
-        jumboMode="false" revision="22.0.1" sha1="d3aba1c188fea5ee83ebbcb458be29d1cc0ef483">
+        jar="M:\Projects\cooks-to-go-app\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\classes.jar"
+        jumboMode="false" revision="23.0.1" sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
         <dex
-            dex="/home/johnlibron/AndroidStudioProjects/CooksToGo/app/build/intermediates/pre-dexed/debug/classes-d56d1846fc663e1a57088af181b5bbf810150193.jar" />
+            dex="M:\Projects\cooks-to-go-app\app\build\intermediates\pre-dexed\debug\classes-bdf0bb14cd3f7be1ab9ee6b6254d5700af782431.jar" />
+    </item>
+    <item
+        jar="C:\Users\Migz\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.1\support-annotations-23.0.1.jar"
+        jumboMode="false" revision="23.0.1" sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex
+            dex="M:\Projects\cooks-to-go-app\app\build\intermediates\pre-dexed\debug\support-annotations-23.0.1-ad3f32855309b54b509f1e4d8d991564027f4116.jar" />
+    </item>
+    <item
+        jar="C:\Users\Migz\.gradle\caches\modules-2\files-2.1\com.nostra13.universalimageloader\universal-image-loader\1.9.4\dd9eeb557650c4ad7394df23f0f5cf27a7cfc697\universal-image-loader-1.9.4.jar"
+        jumboMode="false" revision="23.0.1" sha1="dd9eeb557650c4ad7394df23f0f5cf27a7cfc697">
+        <dex
+            dex="M:\Projects\cooks-to-go-app\app\build\intermediates\pre-dexed\debug\universal-image-loader-1.9.4-36f211065baeb8cf980499ebf4ca831b9de23ccd.jar" />
+    </item>
+    <item
+        jar="M:\Projects\cooks-to-go-app\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.0.1\jars\classes.jar"
+        jumboMode="false" revision="23.0.1" sha1="4356e230a981d1bbf047d848b91bc0d9b7c5bacc">
+        <dex
+            dex="M:\Projects\cooks-to-go-app\app\build\intermediates\pre-dexed\debug\classes-1d4f6b1a805a1df8357ab408b4111484d68f1cd7.jar" />
+    </item>
+    <item
+        jar="M:\Projects\cooks-to-go-app\app\build\intermediates\exploded-aar\com.android.support\cardview-v7\23.0.1\jars\classes.jar"
+        jumboMode="false" revision="23.0.1" sha1="39ae02ce40c3ac828abbf780ce0ff5d7a28b7d6a">
+        <dex
+            dex="M:\Projects\cooks-to-go-app\app\build\intermediates\pre-dexed\debug\classes-fa5c6d017290aa63d6d1784e7bd26263dee0d744.jar" />
+    </item>
+    <item
+        jar="M:\Projects\cooks-to-go-app\app\build\intermediates\exploded-aar\com.android.support\design\23.0.1\jars\classes.jar"
+        jumboMode="false" revision="23.0.1" sha1="e5c61a3169221a89654ffcaaed47bba51cf071ad">
+        <dex
+            dex="M:\Projects\cooks-to-go-app\app\build\intermediates\pre-dexed\debug\classes-07dd60d13355bde792fa96354d1fe48fef426c46.jar" />
+    </item>
+    <item
+        jar="M:\Projects\cooks-to-go-app\app\build\intermediates\exploded-aar\com.android.support\palette-v7\23.0.1\jars\classes.jar"
+        jumboMode="false" revision="23.0.1" sha1="a527cd5d9aa10f1a387cbd1c4c426fff5022a376">
+        <dex
+            dex="M:\Projects\cooks-to-go-app\app\build\intermediates\pre-dexed\debug\classes-6efb971abb0e8c63dd8e3a525d813678f310685d.jar" />
+    </item>
+    <item
+        jar="M:\Projects\cooks-to-go-app\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.1\jars\classes.jar"
+        jumboMode="false" revision="23.0.1" sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
+        <dex
+            dex="M:\Projects\cooks-to-go-app\app\build\intermediates\pre-dexed\debug\classes-093b8ac63d23312f4519543a04c0619c22a0b17b.jar" />
+    </item>
+    <item
+        jar="M:\Projects\cooks-to-go-app\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\libs\internal_impl-23.0.1.jar"
+        jumboMode="false" revision="23.0.1" sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex
+            dex="M:\Projects\cooks-to-go-app\app\build\intermediates\pre-dexed\debug\internal_impl-23.0.1-4b386b88cd9a165674899539d280f206a7354559.jar" />
     </item>
 
 </items>

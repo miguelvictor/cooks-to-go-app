@@ -19,6 +19,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import team.jcandfriends.cookstogo.adapters.VirtualBasketItemsAdapter;
+import team.jcandfriends.cookstogo.managers.SearchManager;
+import team.jcandfriends.cookstogo.managers.VirtualBasketManager;
 
 /**
  * The activity that displays the items in the virtual basket.
@@ -43,8 +45,8 @@ public class VirtualBasketActivity extends BaseActivity {
 
         recommendFab = (FloatingActionButton) findViewById(R.id.recommend_fab);
 
-        VirtualBasketContainer.initialize(this);
-        ingredients = VirtualBasketContainer.getData();
+        VirtualBasketManager virtualBasketManager = VirtualBasketManager.get(this);
+        ingredients = virtualBasketManager.getAll();
 
         setupRecyclerView(recyclerView);
     }
@@ -61,7 +63,8 @@ public class VirtualBasketActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                Intent intent = new Intent(this, RecipeSearchActivity.class);
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.putExtra(SearchManager.EXTRA_SEARCH_WHAT, SearchManager.RECIPES_SEARCH_HISTORY);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 return true;
@@ -162,9 +165,7 @@ public class VirtualBasketActivity extends BaseActivity {
 
     public void recommendRecipes(View view) {
         if (Utils.hasInternet(this)) {
-            Intent intent = new Intent(this, RecipeSearchResultsActivity.class);
-            intent.putExtra(Constants.EXTRA_RECIPES_URL, VirtualBasketContainer.getRecipesUrl());
-            startActivity(intent);
+            startActivity(new Intent(this, RecommendedRecipesActivity.class));
         } else {
             Utils.showSnackbar(this, "I'm sorry but you need internet for this.");
         }

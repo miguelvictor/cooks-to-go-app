@@ -17,7 +17,7 @@ public final class Constants {
      * HttpUrlConnection constants
      */
     public static final String REQUEST_METHOD_GET = "GET";
-    public static final int CONNECT_TIMEOUT = 15000;
+    public static final int CONNECT_TIMEOUT = 20000;
     public static final int READ_TIMEOUT = 15000;
     public static final boolean DO_INPUT = true;
 

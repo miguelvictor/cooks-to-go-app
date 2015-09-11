@@ -64,11 +64,7 @@ public final class JSONGrabber {
             Log.d(Constants.APP_DEBUG, "HTTP_CONNECTION: " + connection.getResponseCode());
         }
         if (is != null) {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            is.close();
         }
         if (connection != null) {
             connection.disconnect();

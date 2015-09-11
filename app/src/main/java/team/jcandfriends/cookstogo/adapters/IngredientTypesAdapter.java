@@ -1,6 +1,5 @@
 package team.jcandfriends.cookstogo.adapters;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -8,7 +7,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import org.json.JSONArray;
 
 import team.jcandfriends.cookstogo.Api;
-import team.jcandfriends.cookstogo.Data;
 import team.jcandfriends.cookstogo.fragments.IngredientTypeFragment;
 
 /**
@@ -21,9 +19,9 @@ public class IngredientTypesAdapter extends FragmentPagerAdapter {
 
     private JSONArray ingredientTypes;
 
-    public IngredientTypesAdapter(Context context, FragmentManager fm) {
+    public IngredientTypesAdapter(FragmentManager fm, JSONArray ingredientTypes) {
         super(fm);
-        ingredientTypes = Data.getIngredientTypes(context);
+        this.ingredientTypes = ingredientTypes;
     }
 
     @Override

@@ -31,6 +31,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -429,6 +430,82 @@ public final class Utils {
         }
 
         return list;
+    }
+
+    public static JSONArray listToJsonArray(ArrayList<JSONObject> list) {
+        JSONArray array = new JSONArray();
+
+        for (JSONObject item : list) {
+            array.put(item);
+        }
+
+        return array;
+    }
+
+    public static JSONArray stringListToJsonArray(ArrayList<String> list) {
+        JSONArray array = new JSONArray();
+
+        for (String item : list) {
+            array.put(item);
+        }
+
+        return array;
+    }
+
+    public static ArrayList<JSONObject> jsonArrayToList(JSONArray array) {
+        ArrayList<JSONObject> list = new ArrayList<>();
+
+        for (int i = 0; i < array.length(); i++) {
+            list.add(array.optJSONObject(i));
+        }
+
+        return list;
+    }
+
+    /**
+     * Reference: http://english.stackexchange.com/questions/69162/are-these-plural-or-singular
+     *
+     * @param x
+     * @return
+     */
+    public static String fractionize(String x) {
+        String tokens[] = x.split("\\.");
+        String whole = tokens[0].equals("0") ? "" : tokens[0];
+        String decimal = tokens[1];
+
+        if (decimal.equals("25")) { // 1/4
+            return whole + "¼";
+        } else if (decimal.equals("5")) { // 1/2
+            return whole + "½";
+        } else if (decimal.equals("75")) { // 3/4
+            return whole + "¾";
+        } else if (decimal.equals("3333")) { // 1/3
+            return whole + "⅓";
+        } else if (decimal.equals("6666")) { // 2/3
+            return whole + "⅔";
+        } else if (decimal.equals("2")) { // 1/5
+            return whole + "⅕";
+        } else if (decimal.equals("4")) { // 2/5
+            return whole + "⅖";
+        } else if (decimal.equals("6")) { // 3/5
+            return whole + "⅗";
+        } else if (decimal.equals("8")) { // 4/5
+            return whole + "⅘";
+        } else if (decimal.equals("1666")) { // 1/6
+            return whole + "⅙";
+        } else if (decimal.equals("8333")) { // 5/6
+            return whole + "⅚";
+        } else if (decimal.equals("125")) { // 1/8
+            return whole + "⅛";
+        } else if (decimal.equals("375")) { // 3/8
+            return whole + "⅜";
+        } else if (decimal.equals("625")) { // 5/8
+            return whole + "⅝";
+        } else if (decimal.equals("875")) { // 7/8
+            return whole + "⅞";
+        } else {
+            return x;
+        }
     }
 
     /**

@@ -45,7 +45,7 @@
             android:label="@string/title_activity_feedback">
         </activity>
         <activity
-            android:name=".RecipeSearchActivity"
+            android:name=".SearchActivity"
             android:label="@string/title_activity_recipe_search">
         </activity>
         <activity
@@ -54,10 +54,18 @@
         </activity>
         <activity
             android:name=".IngredientActivity"
-            android:label="@string/title_activity_ingredient"></activity>
+            android:label="@string/title_activity_ingredient" />
         <activity
             android:name=".RecipeSearchResultsActivity"
-            android:label="@string/title_activity_recipe_search"></activity>
+            android:label="@string/title_activity_recipe_search" />
+        <activity
+            android:name=".RecommendedRecipesActivity"
+            android:label="@string/title_activity_recommended_recipes"
+            android:parentActivityName=".VirtualBasketActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="team.jcandfriends.cookstogo.VirtualBasketActivity" />
+        </activity>
     </application>
 
 </manifest>

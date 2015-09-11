@@ -52,5 +52,8 @@
     <string name="action_settings">Settings</string>
     <string name="action_delete_all">Delete All</string>
     <string name="snackbar_no_internet">No connection</string>
+    <string name="title_activity_recommended_recipes">RecommendedRecipesActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

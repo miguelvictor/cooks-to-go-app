@@ -18,6 +18,24 @@
             android:scaleType="fitXY" />
 
         <TextView
+            android:id="@+id/recipe_duration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/black87" />
+
+        <TextView
+            android:id="@+id/recipe_serving_size"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/black87" />
+
+        <TextView
             android:id="@+id/recipe_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

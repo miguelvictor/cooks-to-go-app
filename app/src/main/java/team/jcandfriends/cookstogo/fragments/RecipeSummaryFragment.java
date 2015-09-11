@@ -20,6 +20,7 @@ import team.jcandfriends.cookstogo.Constants;
 import team.jcandfriends.cookstogo.Data;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
+import team.jcandfriends.cookstogo.inflector.English;
 
 /**
  * RecipeSummaryFragment displays the picture of the recipe and its overview
@@ -54,6 +55,12 @@ public class RecipeSummaryFragment extends Fragment {
                     Utils.decorateToolbarAndTabs(getActivity(), loadedImage);
                 }
             });
+
+            ((TextView) summaryView.findViewById(R.id.recipe_duration)).setText("Duration: " + Api.normalizeRecipeDuration(recipe.optInt(Api.RECIPE_DURATION)));
+
+            int defaultServingSize = recipe.optInt(Api.RECIPE_DEFAULT_SERVING_SIZE, 1);
+            ((TextView) summaryView.findViewById(R.id.recipe_serving_size)).setText("Serving size: " + defaultServingSize + " " + English.plural("person", defaultServingSize));
+
             ((TextView) summaryView.findViewById(R.id.recipe_summary)).setText(recipe.optString(Api.RECIPE_DESCRIPTION));
         } catch (JSONException e) {
             e.printStackTrace();

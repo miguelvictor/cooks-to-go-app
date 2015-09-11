@@ -39,17 +39,11 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
 
     @Override
     public void onBindViewHolder(final RecipeIngredientViewHolder holder, int position) {
-        final JSONObject ingredient = recipeComponents.optJSONObject(position);
-        final StringBuilder name = new StringBuilder();
-        name.append(ingredient.optInt(Api.RECIPE_COMPONENT_QUANTITY))
-                .append(" ")
-                .append(ingredient.optJSONObject(Api.RECIPE_COMPONENT_UNIT_OF_MEASURE).optString(Api.UNIT_OF_MEASURE_NAME))
-                .append(" of ")
-                .append(ingredient.optJSONObject(Api.RECIPE_COMPONENT_INGREDIENT).optString(Api.INGREDIENT_NAME).toLowerCase());
+        final JSONObject recipeComponent = recipeComponents.optJSONObject(position);
 
-        holder.name.setText(name);
+        holder.name.setText(Api.getIngredientReadableName(recipeComponent));
 
-        ImageLoader.getInstance().loadImage(ingredient.optString(Api.INGREDIENT_ICON), new SimpleImageLoadingListener() {
+        ImageLoader.getInstance().loadImage(recipeComponent.optString(Api.INGREDIENT_ICON), new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 if (null != loadedImage) {

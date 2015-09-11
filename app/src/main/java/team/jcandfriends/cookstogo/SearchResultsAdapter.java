@@ -1,6 +1,5 @@
 package team.jcandfriends.cookstogo;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import team.jcandfriends.cookstogo.managers.SearchManager;
+
 /**
  * Lists all search results
  */
@@ -17,8 +18,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     private ArrayList<String> searchHistory;
 
-    public SearchResultsAdapter(Context context) {
-        searchHistory = SearchManager.getHistory(context);
+    public SearchResultsAdapter(ArrayList<String> searchHistory) {
+        this.searchHistory = searchHistory;
     }
 
     @Override
@@ -32,9 +33,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         holder.text.setText(searchHistory.get(position));
     }
 
-    public void filter(Context context, final String query) {
+    public ArrayList<String> filter(final String query, SearchManager searchManager) {
         if (null != query && !query.isEmpty()) {
-            Utils.log("Received Query : " + query);
             searchHistory = Utils.filter(searchHistory, new Utils.FilterPredicate() {
                 final Pattern pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
 
@@ -44,9 +44,10 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                 }
             });
         } else {
-            searchHistory = SearchManager.getHistory(context);
+            searchHistory = searchManager.getAll();
         }
         notifyDataSetChanged();
+        return searchHistory;
     }
 
     @Override
