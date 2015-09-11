@@ -1,5 +1,6 @@
 package team.jcandfriends.cookstogo.fragments;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -42,9 +43,10 @@ public class RecipeSummaryFragment extends Fragment {
         Bundle args = getArguments();
         View summaryView = null;
         JSONObject recipe;
+        final Activity activity = getActivity();
 
         try {
-            recipe = Data.getCachedRecipe(getActivity(), args.getInt(Constants.EXTRA_RECIPE_ID));
+            recipe = Data.getCachedRecipe(activity, args.getInt(Constants.EXTRA_RECIPE_ID));
             summaryView = inflater.inflate(R.layout.fragment_recipe_summary, container, false);
             final View finalSummaryView = summaryView;
             ImageLoader.getInstance().loadImage(recipe.optString(Api.RECIPE_BANNER), new SimpleImageLoadingListener() {
@@ -52,7 +54,7 @@ public class RecipeSummaryFragment extends Fragment {
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     ImageView banner = (ImageView) finalSummaryView.findViewById(R.id.recipe_banner);
                     banner.setImageBitmap(loadedImage);
-                    Utils.decorateToolbarAndTabs(getActivity(), loadedImage);
+                    Utils.decorateToolbarAndTabs(activity, loadedImage);
                 }
             });
 

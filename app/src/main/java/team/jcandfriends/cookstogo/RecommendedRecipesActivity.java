@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ public class RecommendedRecipesActivity extends AppCompatActivity {
         assert actionBar != null;
 
         actionBar.setTitle("Recipe Results");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         VirtualBasketManager virtualBasketManager = VirtualBasketManager.get(this);
         RecipeManager recipeManager = RecipeManager.get(this);
@@ -36,6 +38,7 @@ public class RecommendedRecipesActivity extends AppCompatActivity {
         recipeManager.recommendRecipes(virtualBasketManager.getAll(), new RecipeManager.Callbacks() {
             @Override
             public void onSuccess(JSONObject result) {
+                findViewById(R.id.progress_bar).setVisibility(View.GONE);
                 if (result.optInt(Api.COUNT, 0) == 0) {
                     findViewById(R.id.no_results_found).setVisibility(View.VISIBLE);
                 } else {
@@ -56,4 +59,13 @@ public class RecommendedRecipesActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }

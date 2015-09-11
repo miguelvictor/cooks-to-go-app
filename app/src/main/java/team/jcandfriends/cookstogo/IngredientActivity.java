@@ -66,6 +66,12 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.setStatusBarColor(this, Colors.PRIMARY_COLOR_DARK);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_ingredient, menu);
         return true;

@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
@@ -20,7 +19,7 @@ import team.jcandfriends.cookstogo.R;
  */
 public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.RecipeStepViewHolder> {
 
-    private JSONArray steps;
+    JSONArray steps;
 
     public RecipeStepsAdapter(JSONArray steps) {
         this.steps = steps;
@@ -34,13 +33,9 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
 
     @Override
     public void onBindViewHolder(RecipeStepViewHolder holder, int position) {
-        try {
-            JSONObject step = steps.getJSONObject(position);
-            holder.header.setText("Step " + step.optInt(Api.STEP_SEQUENCE));
-            holder.text.setText(step.optString(Api.STEP_INSTRUCTION));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        JSONObject step = steps.optJSONObject(position);
+        holder.header.setText("Step " + step.optInt(Api.STEP_SEQUENCE));
+        holder.text.setText(step.optString(Api.STEP_INSTRUCTION));
     }
 
     @Override

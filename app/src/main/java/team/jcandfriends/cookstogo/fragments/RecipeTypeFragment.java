@@ -24,7 +24,6 @@ import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
 import team.jcandfriends.cookstogo.adapters.RecipeAdapter;
 import team.jcandfriends.cookstogo.managers.RecipeManager;
-import team.jcandfriends.cookstogo.tasks.FetchRecipeTask;
 
 /**
  * RecipeTypeFragment displays all recipes of a specific recipe type.
@@ -81,19 +80,6 @@ public final class RecipeTypeFragment extends Fragment {
                             public void onFailure() {
                                 dialog.dismiss();
                                 Toast.makeText(activity, "Some unexpected error occurred.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        FetchRecipeTask.start(recipeId, new FetchRecipeTask.Callbacks() {
-                            @Override
-                            public void onPreExecute() {
-                                dialog.show();
-                            }
-
-                            @Override
-                            public void onPostExecute(JSONObject recipe) {
-                                dialog.dismiss();
-                                Data.cacheRecipe(activity, recipe);
-                                Utils.startRecipeActivity(activity, recipeId, recipeName);
                             }
                         });
                     } else if (Data.hasCachedRecipe(activity, recipeId)) {
