@@ -41,8 +41,8 @@ public class IngredientsActivity extends BaseActivity {
             case R.id.action_search:
                 Intent intent = new Intent(this, SearchActivity.class);
                 intent.putExtra(SearchManager.EXTRA_SEARCH_WHAT, SearchManager.INGREDIENTS_SEARCH_HISTORY);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
+                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 return true;
         }
 

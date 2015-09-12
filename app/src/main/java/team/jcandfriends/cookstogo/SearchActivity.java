@@ -131,7 +131,7 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Te
     @Override
     protected void onPause() {
         super.onPause();
-        overridePendingTransition(0, 0);
+        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
 
     @Override

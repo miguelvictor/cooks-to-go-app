@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.adapters.RecipeAdapter;
@@ -33,21 +34,31 @@ public class RecommendedRecipesActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         VirtualBasketManager virtualBasketManager = VirtualBasketManager.get(this);
-        RecipeManager recipeManager = RecipeManager.get(this);
+        final RecipeManager recipeManager = RecipeManager.get(this);
 
         recipeManager.recommendRecipes(virtualBasketManager.getAll(), new RecipeManager.Callbacks() {
             @Override
-            public void onSuccess(JSONObject result) {
+            public void onSuccess(final JSONObject result) {
                 findViewById(R.id.progress_bar).setVisibility(View.GONE);
                 if (result.optInt(Api.COUNT, 0) == 0) {
                     findViewById(R.id.no_results_found).setVisibility(View.VISIBLE);
                 } else {
                     final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+                    final JSONArray results = result.optJSONArray(Api.RESULTS);
+
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setClickable(true);
                     recyclerView.setLayoutManager(new LinearLayoutManager(RecommendedRecipesActivity.this));
-                    recyclerView.setAdapter(new RecipeAdapter(result.optJSONArray(Api.RESULTS)));
+                    recyclerView.setAdapter(new RecipeAdapter(results));
                     recyclerView.setVisibility(View.VISIBLE);
+                    Utils.setOnItemClickListener(recyclerView, new Utils.SimpleClickListener() {
+                        @Override
+                        public void onClick(View view, int position) {
+                            JSONObject recipe = results.optJSONObject(position);
+                            recipeManager.cacheRecipe(recipe);
+                            Utils.startRecipeActivity(RecommendedRecipesActivity.this, recipe.optInt(Api.RECIPE_PK), recipe.optString(Api.RECIPE_NAME));
+                        }
+                    });
                 }
             }
 

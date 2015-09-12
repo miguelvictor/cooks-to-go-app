@@ -89,4 +89,8 @@ public class VirtualBasketManager {
         return cachedItems.contains(ingredient);
     }
 
+    public void deleteAll() {
+        cachedItems.clear();
+        preferences.edit().remove(PERSISTENT_VIRTUAL_BASKET_ITEMS).apply();
+    }
 }

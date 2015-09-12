@@ -2,6 +2,7 @@ package team.jcandfriends.cookstogo;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -32,6 +33,7 @@ public class VirtualBasketActivity extends BaseActivity {
     private FloatingActionButton recommendFab;
     private ArrayList<JSONObject> ingredients;
     private View emptyView;
+    private VirtualBasketManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +47,8 @@ public class VirtualBasketActivity extends BaseActivity {
 
         recommendFab = (FloatingActionButton) findViewById(R.id.recommend_fab);
 
-        VirtualBasketManager virtualBasketManager = VirtualBasketManager.get(this);
-        ingredients = virtualBasketManager.getAll();
+        manager = VirtualBasketManager.get(this);
+        ingredients = manager.getAll();
 
         setupRecyclerView(recyclerView);
     }
@@ -64,9 +66,9 @@ public class VirtualBasketActivity extends BaseActivity {
         switch (item.getItemId()) {
             case R.id.action_search:
                 Intent intent = new Intent(this, SearchActivity.class);
-                intent.putExtra(SearchManager.EXTRA_SEARCH_WHAT, SearchManager.RECIPES_SEARCH_HISTORY);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                intent.putExtra(SearchManager.EXTRA_SEARCH_WHAT, SearchManager.INGREDIENTS_SEARCH_HISTORY);
                 startActivity(intent);
+                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 return true;
             case R.id.action_delete_all:
                 new AlertDialog.Builder(this)
@@ -75,7 +77,7 @@ public class VirtualBasketActivity extends BaseActivity {
                         .setPositiveButton("Delete 'em", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                VirtualBasketContainer.deleteAll(VirtualBasketActivity.this);
+                                manager.deleteAll();
                                 adapter.deleteAll();
                                 Utils.showSnackbar(VirtualBasketActivity.this, "All items deleted");
                                 checkAdapterIsEmpty(adapter);
@@ -105,13 +107,23 @@ public class VirtualBasketActivity extends BaseActivity {
         if (adapter.getItemCount() == 0) {
             emptyView.setVisibility(View.VISIBLE);
             recommendFab.setVisibility(View.GONE);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                toolbar.setElevation(0);
+            }
+
             AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
             params.setScrollFlags(0);
         } else {
             emptyView.setVisibility(View.GONE);
             recommendFab.setVisibility(View.VISIBLE);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                toolbar.setElevation(Utils.dpToPixels(this, 4));
+            }
+
             AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
-            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
         }
     }
 
@@ -143,8 +155,7 @@ public class VirtualBasketActivity extends BaseActivity {
                         .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                VirtualBasketContainer.removeItem(ingredient);
-                                VirtualBasketContainer.persist(VirtualBasketActivity.this);
+                                manager.remove(ingredient);
                                 adapter.removeItem(ingredient);
                                 adapter.notifyItemRemoved(position);
                             }

@@ -19,6 +19,7 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -196,18 +197,18 @@ public final class Utils {
      */
     public static void decorateToolbarAndTabs(Activity activity, Bitmap bitmap) {
         Palette p = Palette.from(bitmap).generate();
-        Palette.Swatch vibrantSwatch = p.getVibrantSwatch();
-        Palette.Swatch vibrantLightSwatch = p.getLightVibrantSwatch();
-        Palette.Swatch vibrantDarkSwatch = p.getDarkVibrantSwatch();
+        Palette.Swatch vibrant = p.getVibrantSwatch();
+        Palette.Swatch lightVibrant = p.getLightVibrantSwatch();
+        Palette.Swatch darkVibrant = p.getDarkVibrantSwatch();
 
-        if (vibrantSwatch != null && vibrantLightSwatch != null && vibrantDarkSwatch != null) {
-            int primaryColor = vibrantSwatch.getRgb();
+        if (vibrant != null && lightVibrant != null && darkVibrant != null) {
+            int primaryColor = vibrant.getRgb();
             Toolbar toolbar = ((TabsToolbarGettable) activity).getToolbar();
             toolbar.setBackgroundColor(primaryColor);
             TabLayout tabs = ((TabsToolbarGettable) activity).getTabLayout();
             tabs.setBackgroundColor(primaryColor);
-            setTabIndicatorColor(tabs, vibrantLightSwatch.getRgb());
-            setStatusBarColor(activity, vibrantDarkSwatch.getRgb());
+            setTabIndicatorColor(tabs, lightVibrant.getRgb());
+            setStatusBarColor(activity, darkVibrant.getRgb());
         }
     }
 
@@ -506,6 +507,14 @@ public final class Utils {
         } else {
             return x;
         }
+    }
+
+    public static float dpToPixels(Context context, int dp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    }
+
+    public static float pixelsToDp(Context context, int pixels) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, pixels, context.getResources().getDisplayMetrics());
     }
 
     /**

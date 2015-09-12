@@ -49,8 +49,9 @@ public final class JSONGrabber {
         connection.connect();
 
         Log.d(Constants.APP_DEBUG, "Connection to " + url + " established.");
-        StringBuilder response = new StringBuilder();
+
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            StringBuilder response = new StringBuilder();
             String line;
             is = connection.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(is));

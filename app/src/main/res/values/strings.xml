@@ -55,5 +55,6 @@
     <string name="title_activity_recommended_recipes">RecommendedRecipesActivity</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="action_add_to_virtual_basket">Add to Virtual Basket</string>
 
 </resources>

@@ -3,6 +3,7 @@ package team.jcandfriends.cookstogo;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.interfaces.ToolbarGettable;
+import team.jcandfriends.cookstogo.managers.VirtualBasketManager;
 
 /**
  * The activity that displays the ingredient
@@ -29,6 +31,7 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
     public static final String EXTRA_INGREDIENT_PK = "extra_ingredient_pk";
 
     private Toolbar toolbar;
+    private JSONObject ingredient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +51,7 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
         }
 
         try {
-            JSONObject ingredient = Data.getCachedIngredient(this, data.getIntExtra(EXTRA_INGREDIENT_PK, -1));
+            ingredient = Data.getCachedIngredient(this, data.getIntExtra(EXTRA_INGREDIENT_PK, -1));
 
             ((TextView) findViewById(R.id.ingredient_description)).setText(ingredient.optString(Api.INGREDIENT_DESCRIPTION));
             final ImageView banner = (ImageView) findViewById(R.id.ingredient_banner);
@@ -83,7 +86,14 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_settings:
+            case R.id.action_add_to_virtual_basket:
+                VirtualBasketManager manager = VirtualBasketManager.get(this);
+                if (manager.isAlreadyAdded(ingredient)) {
+                    Snackbar.make(findViewById(R.id.activity_parent), Utils.capitalize(ingredient.optString(Api.INGREDIENT_NAME)) + " is already added.", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    VirtualBasketManager.get(this).add(ingredient);
+                    Snackbar.make(findViewById(R.id.activity_parent), "Added " + ingredient.optString(Api.INGREDIENT_NAME), Snackbar.LENGTH_SHORT).show();
+                }
                 return true;
         }
 
