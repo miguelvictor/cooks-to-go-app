@@ -14,5 +14,6 @@
     <color name="black54">#8a000000</color>
     <color name="black87">#de000000</color>
     <color name="black">#000000</color>
+    <color name="background_color">#ededed</color>
 
 </resources>

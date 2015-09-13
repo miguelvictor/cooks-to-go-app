@@ -25,6 +25,7 @@ public final class SearchManager {
     private SearchManager(Context context, String whatHistory) {
         this.preferences = context.getSharedPreferences(SEARCH_HISTORY_PREFERENCE, Context.MODE_PRIVATE);
         this.whatHistory = whatHistory;
+
         try {
             if (preferences.getAll().containsKey(whatHistory)) {
                 this.cache = Utils.toStringList(new JSONArray(preferences.getString(whatHistory, "")));

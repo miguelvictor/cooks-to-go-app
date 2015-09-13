@@ -235,7 +235,7 @@ public class RecipeManager {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
 
-        sb.append(Api.RECIPES).append("?ingredients=");
+        sb.append(Api.RECOMMEND_RECIPES).append("?q=");
         for (JSONObject ingredient : ingredients) {
             if (first) {
                 sb.append(ingredient.optInt(Api.INGREDIENT_PK));

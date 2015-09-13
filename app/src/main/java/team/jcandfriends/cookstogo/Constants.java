@@ -36,4 +36,7 @@ public final class Constants {
     public static final String EXTRA_RECIPE_ID = "recipe_id";
     public static final String EXTRA_RECIPES_URL = "recipes_url";
     public static final String EXTRA_SEARCH_QUERY = "search_query";
+
+    public static final String RECOMMEND_RECIPES_EXACT = "Recipes";
+    public static final String RECOMMEND_RECIPES_NEARLY_THERE = "Nearly There";
 }

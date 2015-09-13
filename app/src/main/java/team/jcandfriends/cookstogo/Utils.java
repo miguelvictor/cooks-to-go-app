@@ -11,6 +11,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -515,6 +516,11 @@ public final class Utils {
 
     public static float pixelsToDp(Context context, int pixels) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, pixels, context.getResources().getDisplayMetrics());
+    }
+
+    public static String getMacAddress(Context context) {
+        WifiManager wimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        return wimanager.getConnectionInfo().getMacAddress();
     }
 
     /**

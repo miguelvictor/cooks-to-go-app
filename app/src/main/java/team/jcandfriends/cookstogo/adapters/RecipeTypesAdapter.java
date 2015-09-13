@@ -2,7 +2,7 @@ package team.jcandfriends.cookstogo.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import org.json.JSONArray;
 
@@ -15,7 +15,7 @@ import team.jcandfriends.cookstogo.fragments.RecipeTypeFragment;
  * <p/>
  * Subordinates: RecipeTypeFragment
  */
-public class RecipeTypesAdapter extends FragmentPagerAdapter {
+public class RecipeTypesAdapter extends FragmentStatePagerAdapter {
 
     private JSONArray recipeTypes;
 
