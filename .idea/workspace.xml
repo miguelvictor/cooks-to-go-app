@@ -2460,7 +2460,13 @@
       <option name="project" value="LOCAL" />
       <updated>1442173559796</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Updated Recommend Recipes behavior">
+      <created>1442173803599</created>
+      <option name="number" value="00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1442173803599</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TodoView">
