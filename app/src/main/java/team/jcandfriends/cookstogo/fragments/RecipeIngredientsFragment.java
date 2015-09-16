@@ -1,5 +1,6 @@
 package team.jcandfriends.cookstogo.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,15 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.Constants;
-import team.jcandfriends.cookstogo.Data;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
 import team.jcandfriends.cookstogo.adapters.RecipeIngredientsAdapter;
+import team.jcandfriends.cookstogo.managers.IngredientManager;
+import team.jcandfriends.cookstogo.managers.RecipeManager;
 
 /**
  * RecipeIngredientsFragment displays all ingredients used in a recipe
@@ -41,31 +42,28 @@ public class RecipeIngredientsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final Activity activity = getActivity();
         Bundle args = getArguments();
         JSONObject recipe;
-        View view = null;
+        View view;
 
-        try {
-            recipe = Data.getCachedRecipe(getActivity(), args.getInt(Constants.EXTRA_RECIPE_ID));
-            final JSONArray ingredients = recipe.optJSONArray(Api.RECIPE_RECIPE_COMPONENTS);
+        recipe = RecipeManager.get(activity).getCachedRecipe(args.getInt(Constants.EXTRA_RECIPE_ID));
+        final JSONArray recipeComponents = recipe.optJSONArray(Api.RECIPE_RECIPE_COMPONENTS);
 
-            view = inflater.inflate(R.layout.fragment_recipe_ingredients, container, false);
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-            RecipeIngredientsAdapter ingredientsAdapter = new RecipeIngredientsAdapter(ingredients);
-            recyclerView.setAdapter(ingredientsAdapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            recyclerView.setHasFixedSize(true);
-            Utils.setOnItemClickListener(recyclerView, new Utils.SimpleClickListener() {
-                @Override
-                public void onClick(View view, int position) {
-                    JSONObject ingredient = ingredients.optJSONObject(position).optJSONObject(Api.RECIPE_COMPONENT_INGREDIENT);
-                    Utils.log("Starting Ingredient Activity : " + ingredient);
-                    Utils.startIngredientActivity(getActivity(), ingredient.optInt(Api.INGREDIENT_PK), ingredient.optString(Api.INGREDIENT_NAME));
-                }
-            });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        view = inflater.inflate(R.layout.fragment_recipe_ingredients, container, false);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        RecipeIngredientsAdapter ingredientsAdapter = new RecipeIngredientsAdapter(recipeComponents);
+        recyclerView.setAdapter(ingredientsAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+        Utils.setOnItemClickListener(recyclerView, new Utils.SimpleClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                JSONObject ingredient = recipeComponents.optJSONObject(position).optJSONObject(Api.RECIPE_COMPONENT_INGREDIENT);
+                IngredientManager.get(activity).cacheIngredient(ingredient);
+                Utils.startIngredientActivity(getActivity(), ingredient.optInt(Api.INGREDIENT_PK), ingredient.optString(Api.INGREDIENT_NAME));
+            }
+        });
 
         return view;
     }

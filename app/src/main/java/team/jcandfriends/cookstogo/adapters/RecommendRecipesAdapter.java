@@ -19,6 +19,7 @@ import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.Constants;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
+import team.jcandfriends.cookstogo.managers.RecipeManager;
 
 public class RecommendRecipesAdapter extends FragmentPagerAdapter {
 
@@ -32,9 +33,11 @@ public class RecommendRecipesAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            return RecommendRecipesFragment.newInstance(result.optJSONArray(Api.EXACT));
+            JSONArray exactRecipes = result.optJSONArray(Api.EXACT);
+            return RecommendRecipesFragment.newInstance(exactRecipes);
         } else {
-            return RecommendRecipesFragment.newInstance(result.optJSONArray(Api.NEARLY_THERE));
+            final JSONArray nearlyThereRecipes = result.optJSONArray(Api.NEARLY_THERE);
+            return RecommendRecipesFragment.newInstance(nearlyThereRecipes);
         }
     }
 
@@ -68,11 +71,12 @@ public class RecommendRecipesAdapter extends FragmentPagerAdapter {
 
             try {
                 Utils.log(getArguments().getString(Constants.RECIPES_IN_FRAGMENT));
-                final JSONArray recipes = new JSONArray(getArguments().getString(Constants.RECIPES_IN_FRAGMENT));
+                String recipesAsString = getArguments().getString(Constants.RECIPES_IN_FRAGMENT);
+                final JSONArray recipes = new JSONArray(recipesAsString);
 
                 if (recipes.length() > 0) {
                     RecyclerView list = (RecyclerView) LayoutInflater.from(container.getContext()).inflate(R.layout.recommend_recipe_list, container, false);
-                    list.setAdapter(new RecipeAdapter(recipes));
+                    list.setAdapter(new RecipeAdapterWithMissing(recipes));
                     list.setClickable(true);
                     list.setHasFixedSize(true);
                     list.setLayoutManager(new LinearLayoutManager(activity));
@@ -80,6 +84,7 @@ public class RecommendRecipesAdapter extends FragmentPagerAdapter {
                         @Override
                         public void onClick(View view, int position) {
                             JSONObject recipe = recipes.optJSONObject(position);
+                            RecipeManager.get(activity).cacheRecipe(recipe);
                             Utils.startRecipeActivity(activity, recipe.optInt(Api.RECIPE_PK), recipe.optString(Api.RECIPE_NAME));
                         }
                     });

@@ -20,9 +20,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/color_primary"
+                android:theme="@style/ToolbarTheme"
                 app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
-                app:popupTheme="@style/PopupTheme"
-                app:theme="@style/ToolbarTheme" />
+                app:popupTheme="@style/PopupTheme" />
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tab_layout"

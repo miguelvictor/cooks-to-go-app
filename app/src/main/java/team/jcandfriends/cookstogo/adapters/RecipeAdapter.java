@@ -44,7 +44,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         ImageLoader.getInstance().loadImage(obj.optString(Api.RECIPE_ICON), new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                super.onLoadingComplete(imageUri, view, loadedImage);
                 holder.icon.setImageBitmap(Utils.getRoundedBitmap(loadedImage));
             }
         });

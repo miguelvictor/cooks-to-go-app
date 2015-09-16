@@ -32,6 +32,8 @@ public class RecommendedRecipesActivity extends AppCompatActivity {
         actionBar.setTitle("Results");
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        Utils.initializeImageLoader(this);
+
         VirtualBasketManager virtualBasketManager = VirtualBasketManager.get(this);
         final RecipeManager recipeManager = RecipeManager.get(this);
 

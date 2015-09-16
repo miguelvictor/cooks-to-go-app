@@ -51,6 +51,7 @@ public class VirtualBasketActivity extends BaseActivity {
         ingredients = manager.getAll();
 
         setupRecyclerView(recyclerView);
+        Utils.initializeImageLoader(this);
     }
 
     @Override

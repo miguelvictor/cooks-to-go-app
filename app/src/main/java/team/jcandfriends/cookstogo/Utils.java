@@ -401,15 +401,17 @@ public final class Utils {
     }
 
     public static void initializeImageLoader (Context context) {
-        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .build();
+        if (!ImageLoader.getInstance().isInited()) {
+            DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .build();
 
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-                .defaultDisplayImageOptions(defaultOptions)
-                .build();
-        ImageLoader.getInstance().init(config);
+            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                    .defaultDisplayImageOptions(defaultOptions)
+                    .build();
+            ImageLoader.getInstance().init(config);
+        }
     }
 
     public static ArrayList<String> filter (ArrayList<String> collection, FilterPredicate predicate) {

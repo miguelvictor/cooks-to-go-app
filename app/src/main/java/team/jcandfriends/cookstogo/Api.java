@@ -42,6 +42,7 @@ public final class Api {
     public static final String RECIPE_STEPS = "steps";
     public static final String RECIPE_DURATION = "time_to_complete";
     public static final String RECIPE_DEFAULT_SERVING_SIZE = "default_serving_size";
+    public static final String RECIPE_MISSING_COUNT = "missing_count";
 
     /**
      * Relating to the RecipeType Model

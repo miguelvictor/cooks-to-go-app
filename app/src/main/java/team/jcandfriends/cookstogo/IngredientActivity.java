@@ -16,10 +16,10 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.interfaces.ToolbarGettable;
+import team.jcandfriends.cookstogo.managers.IngredientManager;
 import team.jcandfriends.cookstogo.managers.VirtualBasketManager;
 
 /**
@@ -50,22 +50,17 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
             actionBar.setTitle(Utils.capitalize(ingredientName));
         }
 
-        try {
-            ingredient = Data.getCachedIngredient(this, data.getIntExtra(EXTRA_INGREDIENT_PK, -1));
+        ingredient = IngredientManager.get(this).getCachedIngredient(data.getIntExtra(EXTRA_INGREDIENT_PK, -1));
 
-            ((TextView) findViewById(R.id.ingredient_description)).setText(ingredient.optString(Api.INGREDIENT_DESCRIPTION));
-            final ImageView banner = (ImageView) findViewById(R.id.ingredient_banner);
-            ImageLoader.getInstance().loadImage(ingredient.optString(Api.INGREDIENT_BANNER), new SimpleImageLoadingListener() {
-                @Override
-                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                    banner.setImageBitmap(loadedImage);
-                    Utils.decorateToolbar(IngredientActivity.this, loadedImage);
-                }
-            });
-        } catch (JSONException e) {
-            Utils.log("JSONException : " + e.getMessage());
-            e.printStackTrace();
-        }
+        ((TextView) findViewById(R.id.ingredient_description)).setText(ingredient.optString(Api.INGREDIENT_DESCRIPTION));
+        final ImageView banner = (ImageView) findViewById(R.id.ingredient_banner);
+        ImageLoader.getInstance().loadImage(ingredient.optString(Api.INGREDIENT_BANNER), new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                banner.setImageBitmap(loadedImage);
+                Utils.decorateToolbar(IngredientActivity.this, loadedImage);
+            }
+        });
     }
 
     @Override
