@@ -43,7 +43,7 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
 
         holder.name.setText(Api.getIngredientReadableName(recipeComponent));
 
-        ImageLoader.getInstance().loadImage(recipeComponent.optString(Api.INGREDIENT_ICON), new SimpleImageLoadingListener() {
+        ImageLoader.getInstance().loadImage(recipeComponent.optJSONObject(Api.RECIPE_COMPONENT_INGREDIENT).optString(Api.INGREDIENT_ICON), new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 if (null != loadedImage) {

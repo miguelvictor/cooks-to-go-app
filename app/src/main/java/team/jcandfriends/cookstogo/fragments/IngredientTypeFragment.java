@@ -118,7 +118,7 @@ public class IngredientTypeFragment extends Fragment {
                                     JSONObject ingredient = ingredientsArray.optJSONObject(position);
 
                                     if (virtualBasketManager.isAlreadyAdded(ingredient)) {
-                                        Utils.showSnackbar((BaseActivity) activity, Utils.capitalize(ingredient.optString(Api.INGREDIENT_NAME)) + " is already added");
+                                        Utils.showSnackbar((BaseActivity) activity, Utils.capitalize(ingredient.optString(Api.INGREDIENT_NAME)) + " was already added");
                                     } else {
                                         virtualBasketManager.add(ingredient);
                                         Utils.showSnackbar((BaseActivity) activity, "Added " + ingredient.optString(Api.INGREDIENT_NAME));

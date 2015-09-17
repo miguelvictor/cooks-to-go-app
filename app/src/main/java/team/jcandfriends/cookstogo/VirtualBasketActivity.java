@@ -20,7 +20,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import team.jcandfriends.cookstogo.adapters.VirtualBasketItemsAdapter;
-import team.jcandfriends.cookstogo.managers.SearchManager;
 import team.jcandfriends.cookstogo.managers.VirtualBasketManager;
 
 /**
@@ -66,8 +65,7 @@ public class VirtualBasketActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                Intent intent = new Intent(this, SearchActivity.class);
-                intent.putExtra(SearchManager.EXTRA_SEARCH_WHAT, SearchManager.INGREDIENTS_SEARCH_HISTORY);
+                Intent intent = new Intent(this, IngredientSearchActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 return true;

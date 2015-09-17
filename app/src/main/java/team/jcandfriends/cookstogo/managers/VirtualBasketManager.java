@@ -86,7 +86,15 @@ public class VirtualBasketManager {
     }
 
     public boolean isAlreadyAdded(JSONObject ingredient) {
-        return cachedItems.contains(ingredient);
+        int ingredientId = ingredient.optInt(Api.INGREDIENT_PK);
+
+        for (JSONObject i : cachedItems) {
+            if (ingredientId == i.optInt(Api.INGREDIENT_PK)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void deleteAll() {

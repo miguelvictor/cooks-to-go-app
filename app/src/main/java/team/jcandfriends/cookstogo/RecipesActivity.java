@@ -10,7 +10,6 @@ import android.view.MenuItem;
 
 import team.jcandfriends.cookstogo.adapters.RecipeTypesAdapter;
 import team.jcandfriends.cookstogo.managers.RecipeManager;
-import team.jcandfriends.cookstogo.managers.SearchManager;
 
 /**
  * The activity that displays all recipes in a list format
@@ -48,8 +47,7 @@ public class RecipesActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                Intent intent = new Intent(this, SearchActivity.class);
-                intent.putExtra(SearchManager.EXTRA_SEARCH_WHAT, SearchManager.RECIPES_SEARCH_HISTORY);
+                Intent intent = new Intent(this, RecipeSearchActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 return true;

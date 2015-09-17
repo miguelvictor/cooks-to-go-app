@@ -85,6 +85,13 @@ public final class Api {
     public static final String STEP_SEQUENCE = "sequence";
 
     /**
+     * Recommend Recipes
+     */
+    public static final String NEARLY_THERE_RECIPE = "recipe";
+    public static final String NEARLY_THERE_MISSING_COUNT = "missing_count";
+
+
+    /**
      * Returns the URL of the REST service which serves recipes by id
      *
      * @param recipeId The recipe to get

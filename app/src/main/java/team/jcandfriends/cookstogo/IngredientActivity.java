@@ -84,9 +84,9 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
             case R.id.action_add_to_virtual_basket:
                 VirtualBasketManager manager = VirtualBasketManager.get(this);
                 if (manager.isAlreadyAdded(ingredient)) {
-                    Snackbar.make(findViewById(R.id.activity_parent), Utils.capitalize(ingredient.optString(Api.INGREDIENT_NAME)) + " is already added.", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(R.id.activity_parent), Utils.capitalize(ingredient.optString(Api.INGREDIENT_NAME)) + " was already added.", Snackbar.LENGTH_SHORT).show();
                 } else {
-                    VirtualBasketManager.get(this).add(ingredient);
+                    manager.add(ingredient);
                     Snackbar.make(findViewById(R.id.activity_parent), "Added " + ingredient.optString(Api.INGREDIENT_NAME), Snackbar.LENGTH_SHORT).show();
                 }
                 return true;

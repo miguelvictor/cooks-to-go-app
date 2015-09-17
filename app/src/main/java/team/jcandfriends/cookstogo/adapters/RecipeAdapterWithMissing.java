@@ -17,11 +17,9 @@ import org.json.JSONObject;
 import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
+import team.jcandfriends.cookstogo.inflector.English;
 
 public class RecipeAdapterWithMissing extends RecyclerView.Adapter<RecipeAdapterWithMissing.RecipeAdapterWithMissingViewHolder> {
-
-    private static final String NEARLY_THERE_RECIPE = "recipe";
-    private static final String NEARLY_THERE_MISSING_COUNT = "missing_count";
 
     private JSONArray nearlyThereRecipes;
 
@@ -37,12 +35,13 @@ public class RecipeAdapterWithMissing extends RecyclerView.Adapter<RecipeAdapter
 
     @Override
     public void onBindViewHolder(final RecipeAdapterWithMissingViewHolder viewHolder, int i) {
-        JSONObject recipe = nearlyThereRecipes.optJSONObject(i).optJSONObject(NEARLY_THERE_RECIPE);
-        int missing = nearlyThereRecipes.optJSONObject(i).optInt(NEARLY_THERE_MISSING_COUNT);
+        JSONObject nearlyThereRecipe = nearlyThereRecipes.optJSONObject(i);
+        JSONObject recipe = nearlyThereRecipe.optJSONObject(Api.NEARLY_THERE_RECIPE);
+        int missing = nearlyThereRecipe.optInt(Api.NEARLY_THERE_MISSING_COUNT);
 
         viewHolder.name.setText(recipe.optString(Api.RECIPE_NAME));
         viewHolder.description.setText(recipe.optString(Api.RECIPE_DESCRIPTION));
-        viewHolder.missing.setText(missing + " ingredients missing");
+        viewHolder.missing.setText(missing + " " + English.plural("ingredient", missing) + " missing");
 
         ImageLoader.getInstance().loadImage(recipe.optString(Api.RECIPE_BANNER), new SimpleImageLoadingListener() {
             @Override

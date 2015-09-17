@@ -33,7 +33,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         holder.text.setText(searchHistory.get(position));
     }
 
-    public ArrayList<String> filter(final String query, SearchManager searchManager) {
+    public ArrayList<String> filter(final String query, SearchManager<String> searchManager) {
         if (null != query && !query.isEmpty()) {
             searchHistory = Utils.filter(searchHistory, new Utils.FilterPredicate() {
                 final Pattern pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);

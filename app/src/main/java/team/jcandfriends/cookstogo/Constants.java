@@ -39,4 +39,5 @@ public final class Constants {
 
     public static final String RECOMMEND_RECIPES_EXACT = "Recipes";
     public static final String RECOMMEND_RECIPES_NEARLY_THERE = "Nearly There";
+    public static final String RECOMMEND_RECIPE_FRAGMENT_POSITION = "fragment_position";
 }

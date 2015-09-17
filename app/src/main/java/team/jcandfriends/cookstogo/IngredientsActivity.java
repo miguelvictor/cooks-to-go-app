@@ -10,7 +10,6 @@ import android.view.MenuItem;
 
 import team.jcandfriends.cookstogo.adapters.IngredientTypesAdapter;
 import team.jcandfriends.cookstogo.managers.IngredientManager;
-import team.jcandfriends.cookstogo.managers.SearchManager;
 
 /**
  * The activity that displays all ingredients
@@ -39,8 +38,7 @@ public class IngredientsActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                Intent intent = new Intent(this, SearchActivity.class);
-                intent.putExtra(SearchManager.EXTRA_SEARCH_WHAT, SearchManager.INGREDIENTS_SEARCH_HISTORY);
+                Intent intent = new Intent(this, IngredientSearchActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 return true;

@@ -34,10 +34,10 @@ public class RecommendRecipesAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         if (position == 0) {
             JSONArray exactRecipes = result.optJSONArray(Api.EXACT);
-            return RecommendRecipesFragment.newInstance(exactRecipes);
+            return RecommendRecipesFragment.newInstance(position, exactRecipes);
         } else {
             final JSONArray nearlyThereRecipes = result.optJSONArray(Api.NEARLY_THERE);
-            return RecommendRecipesFragment.newInstance(nearlyThereRecipes);
+            return RecommendRecipesFragment.newInstance(position, nearlyThereRecipes);
         }
     }
 
@@ -57,9 +57,10 @@ public class RecommendRecipesAdapter extends FragmentPagerAdapter {
 
     public static class RecommendRecipesFragment extends Fragment {
 
-        public static Fragment newInstance(JSONArray recipes) {
+        public static Fragment newInstance(int position, JSONArray recipes) {
             Fragment fragment = new RecommendRecipesFragment();
             Bundle bundle = new Bundle();
+            bundle.putInt(Constants.RECOMMEND_RECIPE_FRAGMENT_POSITION, position);
             bundle.putString(Constants.RECIPES_IN_FRAGMENT, recipes.toString());
             fragment.setArguments(bundle);
             return fragment;
@@ -67,16 +68,24 @@ public class RecommendRecipesAdapter extends FragmentPagerAdapter {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            final Bundle arguments = getArguments();
+            final int fragmentPosition = arguments.getInt(Constants.RECOMMEND_RECIPE_FRAGMENT_POSITION);
             final Activity activity = getActivity();
 
             try {
                 Utils.log(getArguments().getString(Constants.RECIPES_IN_FRAGMENT));
-                String recipesAsString = getArguments().getString(Constants.RECIPES_IN_FRAGMENT);
+                String recipesAsString = arguments.getString(Constants.RECIPES_IN_FRAGMENT);
                 final JSONArray recipes = new JSONArray(recipesAsString);
 
                 if (recipes.length() > 0) {
                     RecyclerView list = (RecyclerView) LayoutInflater.from(container.getContext()).inflate(R.layout.recommend_recipe_list, container, false);
-                    list.setAdapter(new RecipeAdapterWithMissing(recipes));
+
+                    if (fragmentPosition == 0) {
+                        list.setAdapter(new RecipeAdapter(recipes));
+                    } else {
+                        list.setAdapter(new RecipeAdapterWithMissing(recipes));
+                    }
+
                     list.setClickable(true);
                     list.setHasFixedSize(true);
                     list.setLayoutManager(new LinearLayoutManager(activity));
@@ -84,6 +93,11 @@ public class RecommendRecipesAdapter extends FragmentPagerAdapter {
                         @Override
                         public void onClick(View view, int position) {
                             JSONObject recipe = recipes.optJSONObject(position);
+
+                            if (fragmentPosition != 0) {
+                                recipe = recipes.optJSONObject(position).optJSONObject(Api.NEARLY_THERE_RECIPE);
+                            }
+
                             RecipeManager.get(activity).cacheRecipe(recipe);
                             Utils.startRecipeActivity(activity, recipe.optInt(Api.RECIPE_PK), recipe.optString(Api.RECIPE_NAME));
                         }
