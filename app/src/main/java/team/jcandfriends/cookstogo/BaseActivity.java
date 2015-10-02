@@ -3,6 +3,7 @@ package team.jcandfriends.cookstogo;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -11,11 +12,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import team.jcandfriends.cookstogo.R.id;
+import team.jcandfriends.cookstogo.R.string;
+
 /**
  * Class used for each activity used in the NavigationView. This abstract class has all the boilerplate
  * code in implementing the navigation drawer which switches activities instead of fragments.
  */
-public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public abstract class BaseActivity extends AppCompatActivity implements OnNavigationItemSelectedListener {
 
     protected DrawerLayout drawerLayout;
     protected ActionBarDrawerToggle drawerToggle;
@@ -27,9 +31,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
      * @return the Toolbar
      */
     protected Toolbar setUpUI() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        Toolbar toolbar = (Toolbar) this.findViewById(id.toolbar);
+        this.drawerLayout = (DrawerLayout) this.findViewById(id.drawer_layout);
+        this.navigationView = (NavigationView) this.findViewById(id.navigation_view);
 
         // TODO : comment this in production
         if (null == toolbar) {
@@ -37,28 +41,28 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         }
 
         // TODO : comment this in production
-        if (null == drawerLayout) {
+        if (null == this.drawerLayout) {
             throw new RuntimeException("Extending BaseActivity without attaching a DrawerLayout.");
         }
 
         // TODO : comment this in production
-        if (null == navigationView) {
+        if (null == this.navigationView) {
             throw new RuntimeException("Extending BaseActivity without attaching a NavigationView.");
         }
 
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
-        drawerLayout.setDrawerListener(drawerToggle);
+        this.drawerToggle = new ActionBarDrawerToggle(this, this.drawerLayout, toolbar, string.drawer_open, string.drawer_close);
+        this.drawerLayout.setDrawerListener(this.drawerToggle);
 
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
+        this.setSupportActionBar(toolbar);
+        ActionBar actionBar = this.getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         // setup drawer items clicks
-        navigationView.setNavigationItemSelectedListener(this);
+        this.navigationView.setNavigationItemSelectedListener(this);
 
-        drawerToggle.syncState();
+        this.drawerToggle.syncState();
 
         return toolbar;
     }
@@ -69,22 +73,22 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
      * @param menuItemId the id of the menu that will be tinted
      */
     public void setDrawerSelectedItem(int menuItemId) {
-        MenuItem item = navigationView.getMenu().findItem(menuItemId);
+        MenuItem item = this.navigationView.getMenu().findItem(menuItemId);
         if (item != null) {
             item.setChecked(true);
         }
     }
 
     @Override
-    public void onConfigurationChanged(final Configuration newConfig) {
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
+        this.drawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
+        if (this.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            this.drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -93,7 +97,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            drawerLayout.openDrawer(GravityCompat.START);
+            this.drawerLayout.openDrawer(GravityCompat.START);
             return true;
         }
 
@@ -105,44 +109,45 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         Intent intent = null;
         boolean shouldFinish = true;
 
-        if (shouldPerformNavigationClick(menuItem)) {
+        if (this.shouldPerformNavigationClick(menuItem)) {
             switch (menuItem.getItemId()) {
-                case R.id.navigation_recipes:
-                    intent = new Intent(BaseActivity.this, RecipesActivity.class);
+                case id.navigation_recipes:
+                    intent = new Intent(this, RecipesActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     break;
-                case R.id.navigation_ingredients:
-                    intent = new Intent(BaseActivity.this, IngredientsActivity.class);
+                case id.navigation_ingredients:
+                    intent = new Intent(this, IngredientsActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     break;
-                case R.id.navigation_virtual_basket:
-                    intent = new Intent(BaseActivity.this, VirtualBasketActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    break;
-                case R.id.navigation_settings:
-                    intent = new Intent(BaseActivity.this, SettingsActivity.class);
+                case id.navigation_virtual_basket:
+                    intent = new Intent(this, VirtualBasketsActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     break;
 
-                case R.id.navigation_help:
-                    intent = new Intent(BaseActivity.this, HelpActivity.class);
+                case id.navigation_settings:
+                    intent = new Intent(this, SettingsActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    break;
+                /*
+                case id.navigation_help:
+                    intent = new Intent(this, HelpActivity.class);
                     shouldFinish = false;
                     break;
-                case R.id.navigation_feedback:
-                    intent = new Intent(BaseActivity.this, FeedbackActivity.class);
+                case id.navigation_feedback:
+                    intent = new Intent(this, FeedbackActivity.class);
                     shouldFinish = false;
-                    break;
+                    break;*/
             }
         }
 
-        drawerLayout.closeDrawers();
+        this.drawerLayout.closeDrawers();
 
         if (intent != null) {
-            startActivity(intent);
+            this.startActivity(intent);
 
             if (shouldFinish) {
-                finish();
-                overridePendingTransition(0, 0);
+                this.finish();
+                this.overridePendingTransition(0, 0);
             }
         }
 

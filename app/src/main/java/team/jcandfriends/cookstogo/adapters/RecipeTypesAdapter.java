@@ -17,7 +17,7 @@ import team.jcandfriends.cookstogo.fragments.RecipeTypeFragment;
  */
 public class RecipeTypesAdapter extends FragmentStatePagerAdapter {
 
-    private JSONArray recipeTypes;
+    private final JSONArray recipeTypes;
 
     public RecipeTypesAdapter(FragmentManager fm, JSONArray recipeTypes) {
         super(fm);
@@ -26,17 +26,17 @@ public class RecipeTypesAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        JSONArray recipes = recipeTypes.optJSONObject(position).optJSONArray(Api.RECIPE_TYPE_RECIPES);
+        JSONArray recipes = this.recipeTypes.optJSONObject(position).optJSONArray(Api.RECIPE_TYPE_RECIPES);
         return RecipeTypeFragment.newInstance(recipes);
     }
 
     @Override
     public int getCount() {
-        return recipeTypes.length();
+        return this.recipeTypes.length();
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return recipeTypes.optJSONObject(position).optString(Api.RECIPE_TYPE_NAME);
+        return this.recipeTypes.optJSONObject(position).optString(Api.RECIPE_TYPE_NAME);
     }
 }

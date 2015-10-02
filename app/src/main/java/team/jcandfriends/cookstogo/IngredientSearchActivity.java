@@ -1,7 +1,7 @@
 package team.jcandfriends.cookstogo;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +19,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -26,14 +27,20 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import team.jcandfriends.cookstogo.R.anim;
+import team.jcandfriends.cookstogo.R.id;
+import team.jcandfriends.cookstogo.R.layout;
+import team.jcandfriends.cookstogo.R.string;
+import team.jcandfriends.cookstogo.Utils.SimpleClickListener;
 import team.jcandfriends.cookstogo.adapters.IngredientAdapter;
 import team.jcandfriends.cookstogo.managers.IngredientManager;
+import team.jcandfriends.cookstogo.managers.IngredientManager.Callbacks;
 import team.jcandfriends.cookstogo.managers.IngredientSearchManager;
 
 /**
  * The activity that lists all recipes which was the result of a search
  */
-public class IngredientSearchActivity extends AppCompatActivity implements TextWatcher, TextView.OnEditorActionListener {
+public class IngredientSearchActivity extends AppCompatActivity implements TextWatcher, OnEditorActionListener {
 
     private IngredientSearchManager searchManager;
 
@@ -49,56 +56,62 @@ public class IngredientSearchActivity extends AppCompatActivity implements TextW
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        this.setContentView(layout.activity_search);
 
         // Toolbar initialization
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) this.findViewById(id.toolbar);
+        this.setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = this.getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         // Views initialization
-        searchHistoryView = (RecyclerView) findViewById(R.id.recycler_view);
-        searchResultsView = (RecyclerView) findViewById(R.id.results_view);
-        searchField = (EditText) findViewById(R.id.search_field);
-        progressBar = findViewById(R.id.progress_bar);
-        noResultsView = findViewById(R.id.no_results_found);
+        this.searchHistoryView = (RecyclerView) this.findViewById(id.recycler_view);
+        this.searchResultsView = (RecyclerView) this.findViewById(id.results_view);
+        this.searchField = (EditText) this.findViewById(id.search_field);
+        this.progressBar = this.findViewById(id.progress_bar);
+        this.noResultsView = this.findViewById(id.no_results_found);
 
         // adapter boilerplate initialization
-        searchHistoryView.setLayoutManager(new LinearLayoutManager(this));
-        searchHistoryView.setClickable(true);
-        searchHistoryView.setHasFixedSize(true);
-        searchResultsView.setHasFixedSize(true);
-        searchResultsView.setClickable(true);
-        searchResultsView.setLayoutManager(new LinearLayoutManager(IngredientSearchActivity.this));
+        this.searchHistoryView.setLayoutManager(new LinearLayoutManager(this));
+        this.searchHistoryView.setClickable(true);
+        this.searchHistoryView.setHasFixedSize(true);
+        this.searchResultsView.setHasFixedSize(true);
+        this.searchResultsView.setClickable(true);
+        this.searchResultsView.setLayoutManager(new LinearLayoutManager(this));
 
-        searchManager = IngredientSearchManager.get(this);
+        this.searchManager = IngredientSearchManager.get(this);
 
-        searchHistoryList = searchManager.getAll();
-        adapter = new SearchResultsAdapter(searchHistoryList);
-        searchHistoryView.setAdapter(adapter);
-        Utils.setOnItemClickListener(this.searchHistoryView, new Utils.SimpleClickListener() {
+        this.searchHistoryList = this.searchManager.getAll();
+        this.adapter = new SearchResultsAdapter(this.searchHistoryList);
+        this.searchHistoryView.setAdapter(this.adapter);
+        Utils.setOnItemClickListener(searchHistoryView, new SimpleClickListener() {
             @Override
             public void onClick(View view, int position) {
-                String query = searchHistoryList.get(position);
-                searchField.setText(query);
-                showResults(query);
+                String query = IngredientSearchActivity.this.searchHistoryList.get(position);
+                View currentFocus = IngredientSearchActivity.this.getCurrentFocus();
+                if (null != currentFocus) {
+                    InputMethodManager imm = (InputMethodManager) IngredientSearchActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+                    imm.hideSoftInputFromInputMethod(currentFocus.getWindowToken(), 0);
+                }
+                IngredientSearchActivity.this.searchField.setText(query);
+                IngredientSearchActivity.this.showResults(query);
             }
         });
 
-        searchField.setOnEditorActionListener(this);
-        searchField.addTextChangedListener(this);
+        this.searchField.setOnEditorActionListener(this);
+        this.searchField.addTextChangedListener(this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+        MenuInflater inflater = this.getMenuInflater();
         inflater.inflate(R.menu.menu_recipes_search, menu);
 
-        menu.findItem(R.id.action_clear_search_text).getIcon().setColorFilter(Colors.BLACK_54, PorterDuff.Mode.SRC_IN);
+        menu.findItem(id.action_clear_search_text).getIcon().setColorFilter(Colors.BLACK_54, Mode.SRC_IN);
 
         return true;
     }
@@ -109,7 +122,7 @@ public class IngredientSearchActivity extends AppCompatActivity implements TextW
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_clear_search_text:
+            case id.action_clear_search_text:
                 searchField.setText("");
                 return true;
         }
@@ -120,7 +133,7 @@ public class IngredientSearchActivity extends AppCompatActivity implements TextW
     @Override
     protected void onPause() {
         super.onPause();
-        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+        this.overridePendingTransition(anim.abc_fade_in, anim.abc_fade_out);
     }
 
     @Override
@@ -135,10 +148,10 @@ public class IngredientSearchActivity extends AppCompatActivity implements TextW
 
     @Override
     public void afterTextChanged(Editable s) {
-        searchHistoryList = adapter.filter(s.toString(), searchManager);
-        searchHistoryView.setVisibility(View.VISIBLE);
-        noResultsView.setVisibility(View.GONE);
-        searchResultsView.setVisibility(View.GONE);
+        this.searchHistoryList = this.adapter.filter(s.toString(), this.searchManager);
+        this.searchHistoryView.setVisibility(View.VISIBLE);
+        this.noResultsView.setVisibility(View.GONE);
+        this.searchResultsView.setVisibility(View.GONE);
     }
 
     @Override
@@ -161,52 +174,52 @@ public class IngredientSearchActivity extends AppCompatActivity implements TextW
 
     private void showResults(String query) {
         if (Utils.hasInternet(this)) {
-            searchHistoryView.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
-            searchField.clearFocus();
+            this.searchHistoryView.setVisibility(View.GONE);
+            this.progressBar.setVisibility(View.VISIBLE);
+            this.searchField.clearFocus();
 
-            handleIngredientSearch(query);
+            this.handleIngredientSearch(query);
         } else {
-            Toast.makeText(this, R.string.snackbar_no_internet, Toast.LENGTH_SHORT).show();
-            finish();
+            Toast.makeText(this, string.snackbar_no_internet, Toast.LENGTH_SHORT).show();
+            this.finish();
         }
     }
 
     private void handleIngredientSearch(String query) {
         final IngredientManager ingredientManager = IngredientManager.get(this);
-        ingredientManager.search(query, new IngredientManager.Callbacks() {
+        ingredientManager.search(query, new Callbacks() {
             @Override
             public void onSuccess(JSONObject result) {
                 final JSONArray results = result.optJSONArray(Api.RESULTS);
 
                 if (results.length() == 0) {
-                    findViewById(R.id.no_results_found).setVisibility(View.VISIBLE);
+                    IngredientSearchActivity.this.findViewById(id.no_results_found).setVisibility(View.VISIBLE);
                 } else {
                     IngredientAdapter adapter = new IngredientAdapter(results);
-                    searchResultsView.setAdapter(adapter);
-                    Utils.setOnItemClickListener(searchResultsView, new Utils.SimpleClickListener() {
+                    IngredientSearchActivity.this.searchResultsView.setAdapter(adapter);
+                    Utils.setOnItemClickListener(IngredientSearchActivity.this.searchResultsView, new SimpleClickListener() {
                         @Override
                         public void onClick(View view, int position) {
                             super.onClick(view, position);
 
-                            final JSONObject ingredient = results.optJSONObject(position);
-                            final int ingredientId = ingredient.optInt(Api.INGREDIENT_PK);
-                            final String ingredientName = ingredient.optString(Api.INGREDIENT_NAME);
+                            JSONObject ingredient = results.optJSONObject(position);
+                            int ingredientId = ingredient.optInt(Api.INGREDIENT_PK);
+                            String ingredientName = ingredient.optString(Api.INGREDIENT_NAME);
 
                             ingredientManager.cacheIngredient(ingredient);
                             Utils.startIngredientActivity(IngredientSearchActivity.this, ingredientId, ingredientName);
                         }
                     });
-                    searchResultsView.setVisibility(View.VISIBLE);
+                    IngredientSearchActivity.this.searchResultsView.setVisibility(View.VISIBLE);
                 }
 
-                progressBar.setVisibility(View.GONE);
+                IngredientSearchActivity.this.progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure() {
                 Toast.makeText(IngredientSearchActivity.this, "Something went wrong. Sorry!", Toast.LENGTH_SHORT).show();
-                finish();
+                IngredientSearchActivity.this.finish();
             }
         });
     }

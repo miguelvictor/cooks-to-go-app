@@ -89,13 +89,13 @@ public class English extends TwoFormInflector {
     private static English inflector = new English();
 
     public English() {
-        this(MODE.ENGLISH_ANGLICIZED);
+        this(English.MODE.ENGLISH_ANGLICIZED);
     }
 
 
-    public English(MODE mode) {
+    public English(English.MODE mode) {
 
-        uncountable(new String[]{
+        this.uncountable(new String[]{
                 // 2. Handle words that do not inflect in the plural (such as fish, travois, chassis, nationalities ending
                 // endings
                 "fish", "ois", "sheep", "deer", "pox", "itis",
@@ -113,7 +113,7 @@ public class English extends TwoFormInflector {
 
         // 4. Handle standard irregular plurals (mongooses, oxen, etc.)
 
-        irregular(new String[][]{
+        this.irregular(new String[][]{
                 {"child", "children"}, // classical
                 {"ephemeris", "ephemerides"}, // classical
                 {"mongoose", "mongoose"}, // anglicized
@@ -126,9 +126,9 @@ public class English extends TwoFormInflector {
                 {"quiz", "quizzes"},
         });
 
-        if (mode == MODE.ENGLISH_ANGLICIZED) {
+        if (mode == English.MODE.ENGLISH_ANGLICIZED) {
             // Anglicized plural
-            irregular(new String[][]{
+            this.irregular(new String[][]{
                     {"beef", "beefs"},
                     {"brother", "brothers"},
                     {"cow", "cows"},
@@ -137,9 +137,9 @@ public class English extends TwoFormInflector {
                     {"octopus", "octopuses"},
                     {"opus", "opuses"},
             });
-        } else if (mode == MODE.ENGLISH_CLASSICAL) {
+        } else if (mode == English.MODE.ENGLISH_CLASSICAL) {
             // Classical plural
-            irregular(new String[][]{{"beef", "beeves"},
+            this.irregular(new String[][]{{"beef", "beeves"},
                     {"brother", "brethren"},
                     {"cos", "kine"}, {"genie", "genii"},
                     {"money", "monies"},
@@ -148,7 +148,7 @@ public class English extends TwoFormInflector {
             });
         }
 
-        categoryRule(CATEGORY_MAN_MANS, "", "s");
+        this.categoryRule(English.CATEGORY_MAN_MANS, "", "s");
 
         // questionable
         /*
@@ -160,7 +160,7 @@ public class English extends TwoFormInflector {
 		});
 		 */
         // 5. Handle irregular inflections for common suffixes
-        rule(new String[][]{
+        this.rule(new String[][]{
                 {"man$", "men"},
                 {"([lm])ouse$", "$1ice"},
                 {"tooth$", "teeth"},
@@ -171,47 +171,47 @@ public class English extends TwoFormInflector {
         });
 
         // 6. Handle fully assimilated classical inflections
-        categoryRule(CATEGORY_EX_ICES, "ex", "ices");
-        categoryRule(CATEGORY_IX_ICES, "ix", "ices");
-        categoryRule(CATEGORY_UM_A, "um", "a");
-        categoryRule(CATEGORY_ON_A, "on", "a");
-        categoryRule(CATEGORY_A_AE, "a", "ae");
+        this.categoryRule(English.CATEGORY_EX_ICES, "ex", "ices");
+        this.categoryRule(English.CATEGORY_IX_ICES, "ix", "ices");
+        this.categoryRule(English.CATEGORY_UM_A, "um", "a");
+        this.categoryRule(English.CATEGORY_ON_A, "on", "a");
+        this.categoryRule(English.CATEGORY_A_AE, "a", "ae");
 
         // 7. Handle classical variants of modern inflections
-        if (mode == MODE.ENGLISH_CLASSICAL) {
-            rule(new String[][]{
+        if (mode == English.MODE.ENGLISH_CLASSICAL) {
+            this.rule(new String[][]{
                     {"trix$", "trices"},
                     {"eau$", "eaux"},
                     {"ieu$", "ieux"},
                     {"(..[iay])nx$", "$1nges"},
             });
-            categoryRule(CATEGORY_EN_INA, "en", "ina");
-            categoryRule(CATEGORY_A_ATA, "a", "ata");
-            categoryRule(CATEGORY_IS_IDES, "is", "ides");
-            categoryRule(CATEGORY_US_US, "", "");
-            categoryRule(CATEGORY_O_I, "o", "i");
-            categoryRule(CATEGORY_NONE_I, "", "i");
-            categoryRule(CATEGORY_NONE_IM, "", "im");
-            categoryRule(CATEGORY_EX_EXES, "ex", "ices");
-            categoryRule(CATEGORY_IX_IXES, "ix", "ices");
+            this.categoryRule(English.CATEGORY_EN_INA, "en", "ina");
+            this.categoryRule(English.CATEGORY_A_ATA, "a", "ata");
+            this.categoryRule(English.CATEGORY_IS_IDES, "is", "ides");
+            this.categoryRule(English.CATEGORY_US_US, "", "");
+            this.categoryRule(English.CATEGORY_O_I, "o", "i");
+            this.categoryRule(English.CATEGORY_NONE_I, "", "i");
+            this.categoryRule(English.CATEGORY_NONE_IM, "", "im");
+            this.categoryRule(English.CATEGORY_EX_EXES, "ex", "ices");
+            this.categoryRule(English.CATEGORY_IX_IXES, "ix", "ices");
         }
 
-        categoryRule(CATEGORY_US_I, "us", "i");
+        this.categoryRule(English.CATEGORY_US_I, "us", "i");
 
-        rule("([cs]h|[zx])$", "$1es");
-        categoryRule(CATEGORY_S_ES, "", "es");
-        categoryRule(CATEGORY_IS_IDES, "", "es");
-        categoryRule(CATEGORY_US_US, "", "es");
-        rule("(us)$", "$1es");
-        categoryRule(CATEGORY_A_ATA, "", "s");
+        this.rule("([cs]h|[zx])$", "$1es");
+        this.categoryRule(English.CATEGORY_S_ES, "", "es");
+        this.categoryRule(English.CATEGORY_IS_IDES, "", "es");
+        this.categoryRule(English.CATEGORY_US_US, "", "es");
+        this.rule("(us)$", "$1es");
+        this.categoryRule(English.CATEGORY_A_ATA, "", "s");
 
         // The suffixes -ch, -sh, and -ss all take -es in the plural (churches,
         // classes, etc)...
-        rule(new String[][]{{"([cs])h$", "$1hes"}, {"ss$", "sses"}});
+        this.rule(new String[][]{{"([cs])h$", "$1hes"}, {"ss$", "sses"}});
 
         // Certain words ending in -f or -fe take -ves in the plural (lives,
         // wolves, etc)...
-        rule(new String[][]{
+        this.rule(new String[][]{
                 {"([aeo]l)f$", "$1ves"},
                 {"([^d]ea)f$", "$1ves"},
                 {"(ar)f$", "$1ves"},
@@ -219,22 +219,22 @@ public class English extends TwoFormInflector {
         });
 
         // Words ending in -y take -ys
-        rule(new String[][]{{"([aeiou])y$", "$1ys"}, {"y$", "ies"},});
+        this.rule(new String[][]{{"([aeiou])y$", "$1ys"}, {"y$", "ies"},});
 
         // Some words ending in -o take -os (including does preceded by a vowel)
-        categoryRule(CATEGORY_O_I, "o", "os");
-        categoryRule(CATEGORY_O_OS, "o", "os");
-        rule("([aeiou])o$", "$1os");
+        this.categoryRule(English.CATEGORY_O_I, "o", "os");
+        this.categoryRule(English.CATEGORY_O_OS, "o", "os");
+        this.rule("([aeiou])o$", "$1os");
         // The rest take -oes
-        rule("o$", "oes");
+        this.rule("o$", "oes");
 
-        rule("ulum", "ula");
+        this.rule("ulum", "ula");
 
-        categoryRule(CATEGORY_A_ATA, "", "es");
+        this.categoryRule(English.CATEGORY_A_ATA, "", "es");
 
-        rule("s$", "ses");
+        this.rule("s$", "ses");
         // Otherwise, assume that the plural just adds -s
-        rule("$", "s");
+        this.rule("$", "s");
     }
 
     /**
@@ -252,7 +252,7 @@ public class English extends TwoFormInflector {
      * @return plural form of given word
      */
     public static String plural(String word) {
-        return inflector.getPlural(word);
+        return English.inflector.getPlural(word);
     }
 
     /**
@@ -272,12 +272,12 @@ public class English extends TwoFormInflector {
      * @return form of the word correct for given count
      */
     public static String plural(String word, int count) {
-        return inflector.getPlural(word, count);
+        return English.inflector.getPlural(word, count);
     }
 
-    public static void setMode(MODE mode) {
+    public static void setMode(English.MODE mode) {
         English newInflector = new English(mode);
-        inflector = newInflector;
+        English.inflector = newInflector;
     }
 
     /**
@@ -302,7 +302,7 @@ public class English extends TwoFormInflector {
         if (count == 1) {
             return word;
         }
-        return getPlural(word);
+        return this.getPlural(word);
     }
 
     public enum MODE {

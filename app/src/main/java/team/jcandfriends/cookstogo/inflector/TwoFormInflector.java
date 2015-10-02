@@ -6,10 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class TwoFormInflector {
-    private final List<Rule> rules = new ArrayList<Rule>();
+    private final List<TwoFormInflector.Rule> rules = new ArrayList<>();
 
     protected String getPlural(String word) {
-        for (Rule rule : rules) {
+        for (TwoFormInflector.Rule rule : this.rules) {
             String result = rule.getPlural(word);
             if (result != null) {
                 return result;
@@ -19,18 +19,18 @@ public abstract class TwoFormInflector {
     }
 
     protected void uncountable(String[] list) {
-        rules.add(new CategoryRule(list, "", ""));
+        this.rules.add(new TwoFormInflector.CategoryRule(list, "", ""));
     }
 
     protected void irregular(String singular, String plural) {
         if (singular.charAt(0) == plural.charAt(0)) {
-            rules.add(new RegExpRule(Pattern.compile("(?i)(" + singular.charAt(0) + ")" + singular.substring(1)
+            this.rules.add(new TwoFormInflector.RegExpRule(Pattern.compile("(?i)(" + singular.charAt(0) + ")" + singular.substring(1)
                     + "$"), "$1" + plural.substring(1)));
         } else {
-            rules.add(new RegExpRule(Pattern.compile(Character.toUpperCase(singular.charAt(0)) + "(?i)"
+            this.rules.add(new TwoFormInflector.RegExpRule(Pattern.compile(Character.toUpperCase(singular.charAt(0)) + "(?i)"
                     + singular.substring(1) + "$"), Character.toUpperCase(plural.charAt(0))
                     + plural.substring(1)));
-            rules.add(new RegExpRule(Pattern.compile(Character.toLowerCase(singular.charAt(0)) + "(?i)"
+            this.rules.add(new TwoFormInflector.RegExpRule(Pattern.compile(Character.toLowerCase(singular.charAt(0)) + "(?i)"
                     + singular.substring(1) + "$"), Character.toLowerCase(plural.charAt(0))
                     + plural.substring(1)));
         }
@@ -38,29 +38,29 @@ public abstract class TwoFormInflector {
 
     protected void irregular(String[][] list) {
         for (String[] pair : list) {
-            irregular(pair[0], pair[1]);
+            this.irregular(pair[0], pair[1]);
         }
     }
 
     protected void rule(String singular, String plural) {
-        rules.add(new RegExpRule(Pattern.compile(singular, Pattern.CASE_INSENSITIVE), plural));
+        this.rules.add(new TwoFormInflector.RegExpRule(Pattern.compile(singular, Pattern.CASE_INSENSITIVE), plural));
     }
 
     protected void rule(String[][] list) {
         for (String[] pair : list) {
-            rules.add(new RegExpRule(Pattern.compile(pair[0], Pattern.CASE_INSENSITIVE), pair[1]));
+            this.rules.add(new TwoFormInflector.RegExpRule(Pattern.compile(pair[0], Pattern.CASE_INSENSITIVE), pair[1]));
         }
     }
 
     protected void categoryRule(String[] list, String singular, String plural) {
-        rules.add(new CategoryRule(list, singular, plural));
+        this.rules.add(new TwoFormInflector.CategoryRule(list, singular, plural));
     }
 
     private interface Rule {
         String getPlural(String singular);
     }
 
-    private static class RegExpRule implements Rule {
+    private static class RegExpRule implements TwoFormInflector.Rule {
         private final Pattern singular;
         private final String plural;
 
@@ -72,9 +72,9 @@ public abstract class TwoFormInflector {
         @Override
         public String getPlural(String word) {
             StringBuffer buffer = new StringBuffer();
-            Matcher matcher = singular.matcher(word);
+            Matcher matcher = this.singular.matcher(word);
             if (matcher.find()) {
-                matcher.appendReplacement(buffer, plural);
+                matcher.appendReplacement(buffer, this.plural);
                 matcher.appendTail(buffer);
                 return buffer.toString();
             }
@@ -82,7 +82,7 @@ public abstract class TwoFormInflector {
         }
     }
 
-    private static class CategoryRule implements Rule {
+    private static class CategoryRule implements TwoFormInflector.Rule {
         private final String[] list;
         private final String singular;
         private final String plural;
@@ -96,12 +96,12 @@ public abstract class TwoFormInflector {
         @Override
         public String getPlural(String word) {
             String lowerWord = word.toLowerCase();
-            for (String suffix : list) {
+            for (String suffix : this.list) {
                 if (lowerWord.endsWith(suffix)) {
-                    if (!lowerWord.endsWith(singular)) {
+                    if (!lowerWord.endsWith(this.singular)) {
                         throw new RuntimeException("Internal error");
                     }
-                    return word.substring(0, word.length() - singular.length()) + plural;
+                    return word.substring(0, word.length() - this.singular.length()) + this.plural;
                 }
             }
             return null;

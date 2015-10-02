@@ -1,7 +1,8 @@
 package team.jcandfriends.cookstogo.adapters;
 
 import android.graphics.Bitmap;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.Adapter;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,27 +16,28 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
-import team.jcandfriends.cookstogo.R;
+import team.jcandfriends.cookstogo.R.id;
+import team.jcandfriends.cookstogo.R.layout;
 import team.jcandfriends.cookstogo.Utils;
 import team.jcandfriends.cookstogo.inflector.English;
 
-public class RecipeAdapterWithMissing extends RecyclerView.Adapter<RecipeAdapterWithMissing.RecipeAdapterWithMissingViewHolder> {
+public class RecipeAdapterWithMissing extends Adapter<RecipeAdapterWithMissing.RecipeAdapterWithMissingViewHolder> {
 
-    private JSONArray nearlyThereRecipes;
+    private final JSONArray nearlyThereRecipes;
 
     public RecipeAdapterWithMissing(JSONArray nearlyThereRecipes) {
         this.nearlyThereRecipes = nearlyThereRecipes;
     }
 
     @Override
-    public RecipeAdapterWithMissingViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_recipe_with_missing, viewGroup, false);
-        return new RecipeAdapterWithMissingViewHolder(view);
+    public RecipeAdapterWithMissing.RecipeAdapterWithMissingViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(layout.item_recipe_with_missing, viewGroup, false);
+        return new RecipeAdapterWithMissing.RecipeAdapterWithMissingViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final RecipeAdapterWithMissingViewHolder viewHolder, int i) {
-        JSONObject nearlyThereRecipe = nearlyThereRecipes.optJSONObject(i);
+    public void onBindViewHolder(final RecipeAdapterWithMissing.RecipeAdapterWithMissingViewHolder viewHolder, int i) {
+        JSONObject nearlyThereRecipe = this.nearlyThereRecipes.optJSONObject(i);
         JSONObject recipe = nearlyThereRecipe.optJSONObject(Api.NEARLY_THERE_RECIPE);
         int missing = nearlyThereRecipe.optInt(Api.NEARLY_THERE_MISSING_COUNT);
 
@@ -53,10 +55,10 @@ public class RecipeAdapterWithMissing extends RecyclerView.Adapter<RecipeAdapter
 
     @Override
     public int getItemCount() {
-        return nearlyThereRecipes.length();
+        return this.nearlyThereRecipes.length();
     }
 
-    public static class RecipeAdapterWithMissingViewHolder extends RecyclerView.ViewHolder {
+    public static class RecipeAdapterWithMissingViewHolder extends ViewHolder {
 
         ImageView avatar;
         TextView name;
@@ -65,10 +67,10 @@ public class RecipeAdapterWithMissing extends RecyclerView.Adapter<RecipeAdapter
 
         public RecipeAdapterWithMissingViewHolder(View itemView) {
             super(itemView);
-            avatar = (ImageView) itemView.findViewById(R.id.avatar);
-            name = (TextView) itemView.findViewById(R.id.primary_text);
-            description = (TextView) itemView.findViewById(R.id.secondary_text);
-            missing = (TextView) itemView.findViewById(R.id.missing_text);
+            this.avatar = (ImageView) itemView.findViewById(id.avatar);
+            this.name = (TextView) itemView.findViewById(id.primary_text);
+            this.description = (TextView) itemView.findViewById(id.secondary_text);
+            this.missing = (TextView) itemView.findViewById(id.missing_text);
         }
     }
 

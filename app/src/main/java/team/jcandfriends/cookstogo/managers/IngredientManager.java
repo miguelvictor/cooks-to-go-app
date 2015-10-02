@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.JSONGrabber;
@@ -44,10 +45,10 @@ public class IngredientManager {
     /**
      * The SharedPreferences that contains the caches of this class
      */
-    private SharedPreferences preferences;
+    private final SharedPreferences preferences;
 
     private IngredientManager(Context context) {
-        preferences = context.getSharedPreferences(INGREDIENT_CACHE, Context.MODE_PRIVATE);
+        this.preferences = context.getSharedPreferences(IngredientManager.INGREDIENT_CACHE, Context.MODE_PRIVATE);
     }
 
     /**
@@ -57,10 +58,10 @@ public class IngredientManager {
      * @return the singleton instance
      */
     public static IngredientManager get(Context context) {
-        if (ourInstance == null) {
-            ourInstance = new IngredientManager(context);
+        if (IngredientManager.ourInstance == null) {
+            IngredientManager.ourInstance = new IngredientManager(context);
         }
-        return ourInstance;
+        return IngredientManager.ourInstance;
     }
 
     /**
@@ -69,7 +70,7 @@ public class IngredientManager {
      * @return true if recipe types cache is not empty, false otherwise
      */
     public boolean hasCachedIngredientTypes() {
-        return preferences.getAll().containsKey(PERSISTENT_INGREDIENT_TYPES);
+        return this.preferences.getAll().containsKey(IngredientManager.PERSISTENT_INGREDIENT_TYPES);
     }
 
     /**
@@ -78,7 +79,7 @@ public class IngredientManager {
      * @param recipeTypes the JSONArray to cache
      */
     public void cacheIngredientTypes(JSONArray recipeTypes) {
-        preferences.edit().putString(PERSISTENT_INGREDIENT_TYPES, recipeTypes.toString()).apply();
+        this.preferences.edit().putString(IngredientManager.PERSISTENT_INGREDIENT_TYPES, recipeTypes.toString()).apply();
     }
 
     /**
@@ -87,11 +88,11 @@ public class IngredientManager {
      * @return the cached recipe types as JSONArray
      */
     public JSONArray getCachedIngredientTypes() {
-        String ingredientTypesAsString = preferences.getString(PERSISTENT_INGREDIENT_TYPES, "");
+        String ingredientTypesAsString = this.preferences.getString(IngredientManager.PERSISTENT_INGREDIENT_TYPES, "");
         try {
             return new JSONArray(ingredientTypesAsString);
         } catch (JSONException e) {
-            Log.e(TAG, "JSONException : The ingredientTypesAsString can't be parsed as a valid JSONArray");
+            Log.e(IngredientManager.TAG, "JSONException : The ingredientTypesAsString can't be parsed as a valid JSONArray");
             e.printStackTrace();
             throw new RuntimeException("Cannot proceed anymore");
         }
@@ -101,7 +102,7 @@ public class IngredientManager {
      * Removes the cached recipe types
      */
     public void clearCachedIngredientTypes() {
-        preferences.edit().remove(PERSISTENT_INGREDIENT_TYPES).apply();
+        this.preferences.edit().remove(IngredientManager.PERSISTENT_INGREDIENT_TYPES).apply();
     }
 
     /**
@@ -111,7 +112,7 @@ public class IngredientManager {
      * @return true if the recipe is found, false otherwise
      */
     public boolean hasCachedIngredient(int recipeId) {
-        return preferences.getAll().containsKey(INGREDIENT_CACHE_PREFIX + recipeId);
+        return this.preferences.getAll().containsKey(IngredientManager.INGREDIENT_CACHE_PREFIX + recipeId);
     }
 
     /**
@@ -121,9 +122,9 @@ public class IngredientManager {
      */
     public void cacheIngredient(JSONObject ingredient) {
         try {
-            preferences.edit().putString(INGREDIENT_CACHE_PREFIX + ingredient.getInt(Api.INGREDIENT_PK), ingredient.toString()).apply();
+            this.preferences.edit().putString(IngredientManager.INGREDIENT_CACHE_PREFIX + ingredient.getInt(Api.INGREDIENT_PK), ingredient.toString()).apply();
         } catch (JSONException e) {
-            Log.e(TAG, "JSONException : The passed JSONObject ingredient doesn't contain a '" + Api.INGREDIENT_PK + "'");
+            Log.e(IngredientManager.TAG, "JSONException : The passed JSONObject ingredient doesn't contain a '" + Api.INGREDIENT_PK + "'");
             e.printStackTrace();
             throw new RuntimeException("Cannot proceed anymore");
         }
@@ -136,11 +137,11 @@ public class IngredientManager {
      * @return the recipe
      */
     public JSONObject getCachedIngredient(int ingredientId) {
-        String ingredientAsString = preferences.getString(INGREDIENT_CACHE_PREFIX + ingredientId, "");
+        String ingredientAsString = this.preferences.getString(IngredientManager.INGREDIENT_CACHE_PREFIX + ingredientId, "");
         try {
             return new JSONObject(ingredientAsString);
         } catch (JSONException e) {
-            Log.e(TAG, "JSONException : The ingredientAsString can't be parsed as a valid JSONObject");
+            Log.e(IngredientManager.TAG, "JSONException : The ingredientAsString can't be parsed as a valid JSONObject");
             e.printStackTrace();
             throw new RuntimeException("Cannot proceed anymore");
         }
@@ -152,10 +153,10 @@ public class IngredientManager {
      * @param ingredientId the id of the recipe to remove
      */
     public void clearCachedIngredient(int ingredientId) {
-        preferences.edit().remove(INGREDIENT_CACHE_PREFIX + ingredientId).apply();
+        this.preferences.edit().remove(IngredientManager.INGREDIENT_CACHE_PREFIX + ingredientId).apply();
     }
 
-    public void fetch(final int ingredientId, final Callbacks callbacks) {
+    public void fetch(final int ingredientId, final IngredientManager.Callbacks callbacks) {
         new AsyncTask<String, Void, JSONObject>() {
             @Override
             protected JSONObject doInBackground(String... params) {
@@ -188,18 +189,16 @@ public class IngredientManager {
      * @param query     the query
      * @param callbacks the callbacks that will be invoked in success or failure event
      */
-    public void search(String query, final Callbacks callbacks) {
+    public void search(final String query, final IngredientManager.Callbacks callbacks) {
         if (query == null || query.isEmpty()) {
             throw new IllegalArgumentException("query must not be null and empty");
         }
-
-        final String url = Api.INGREDIENTS + "?search=" + query;
 
         new AsyncTask<String, Void, JSONObject>() {
             @Override
             protected JSONObject doInBackground(String... params) {
                 try {
-                    JSONGrabber grabber = new JSONGrabber(url);
+                    JSONGrabber grabber = new JSONGrabber(Api.INGREDIENTS + "?search=" + URLEncoder.encode(query, "UTF-8"));
                     return grabber.grab();
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();

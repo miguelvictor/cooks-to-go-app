@@ -17,17 +17,17 @@ public final class IngredientSearchManager implements SearchManager<String> {
 
     private static IngredientSearchManager ourInstance;
 
-    private SharedPreferences preferences;
+    private final SharedPreferences preferences;
     private ArrayList<String> cache;
 
     private IngredientSearchManager(Context context) {
-        this.preferences = context.getSharedPreferences(INGREDIENTS_SEARCH_HISTORY, Context.MODE_PRIVATE);
+        preferences = context.getSharedPreferences(IngredientSearchManager.INGREDIENTS_SEARCH_HISTORY, Context.MODE_PRIVATE);
 
         try {
-            if (preferences.getAll().containsKey(INGREDIENTS_SEARCH_HISTORY)) {
-                this.cache = Utils.toStringList(new JSONArray(preferences.getString(INGREDIENTS_SEARCH_HISTORY, "")));
+            if (this.preferences.getAll().containsKey(IngredientSearchManager.INGREDIENTS_SEARCH_HISTORY)) {
+                cache = Utils.toStringList(new JSONArray(this.preferences.getString(IngredientSearchManager.INGREDIENTS_SEARCH_HISTORY, "")));
             } else {
-                this.cache = new ArrayList<>();
+                cache = new ArrayList<>();
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -35,33 +35,33 @@ public final class IngredientSearchManager implements SearchManager<String> {
     }
 
     public static IngredientSearchManager get(Context context) {
-        if (null != ourInstance) {
-            return ourInstance;
+        if (null != IngredientSearchManager.ourInstance) {
+            return IngredientSearchManager.ourInstance;
         }
 
-        return ourInstance = new IngredientSearchManager(context);
+        return IngredientSearchManager.ourInstance = new IngredientSearchManager(context);
     }
 
     public void add(String query) {
-        if (cache.contains(query)) {
-            cache.remove(query);
+        if (this.cache.contains(query)) {
+            this.cache.remove(query);
         }
 
-        cache.add(0, query);
-        persist();
+        this.cache.add(0, query);
+        this.persist();
     }
 
     public void deleteAll() {
-        cache.clear();
-        persist();
+        this.cache.clear();
+        this.persist();
     }
 
     public ArrayList<String> getAll() {
-        return cache;
+        return this.cache;
     }
 
     private void persist() {
-        preferences.edit().putString(INGREDIENTS_SEARCH_HISTORY, Utils.stringListToJsonArray(cache).toString()).apply();
+        this.preferences.edit().putString(IngredientSearchManager.INGREDIENTS_SEARCH_HISTORY, Utils.stringListToJsonArray(this.cache).toString()).apply();
     }
 
 }

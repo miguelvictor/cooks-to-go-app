@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import team.jcandfriends.cookstogo.inflector.English;
 
 /**
- * Class that contains all keys in the JSON string returned by the axasas.
+ * Class that contains all keys in the JSON string returned by the rest api.
  */
 public final class Api {
 
@@ -42,7 +42,8 @@ public final class Api {
     public static final String RECIPE_STEPS = "steps";
     public static final String RECIPE_DURATION = "time_to_complete";
     public static final String RECIPE_DEFAULT_SERVING_SIZE = "default_serving_size";
-    public static final String RECIPE_MISSING_COUNT = "missing_count";
+    public static final String RECIPE_RATING = "rating";
+    public static final String RECIPE_REVIEWS = "reviews";
 
     /**
      * Relating to the RecipeType Model
@@ -90,7 +91,6 @@ public final class Api {
     public static final String NEARLY_THERE_RECIPE = "recipe";
     public static final String NEARLY_THERE_MISSING_COUNT = "missing_count";
 
-
     /**
      * Returns the URL of the REST service which serves recipes by id
      *
@@ -98,7 +98,7 @@ public final class Api {
      * @return the URL of the REST service which serves recipes by id
      */
     public static String getRecipeUrl(int recipeId) {
-        return RECIPES + recipeId + '/';
+        return Api.RECIPES + recipeId + '/';
     }
 
     /**
@@ -108,7 +108,7 @@ public final class Api {
      * @return the URL of the REST service which serves recipes by id
      */
     public static String getIngredientUrl(int ingredientId) {
-        return INGREDIENTS + ingredientId + '/';
+        return Api.INGREDIENTS + ingredientId + '/';
     }
 
     /**
@@ -121,10 +121,10 @@ public final class Api {
         try {
             StringBuilder sb = new StringBuilder();
 
-            String quantity = recipeComponent.getString(Api.RECIPE_COMPONENT_QUANTITY);
-            String unitOfMeasure = recipeComponent.getJSONObject(Api.RECIPE_COMPONENT_UNIT_OF_MEASURE).getString(Api.UNIT_OF_MEASURE_NAME);
-            String adjective = recipeComponent.getString(Api.RECIPE_COMPONENT_ADJECTIVE);
-            String ingredientName = recipeComponent.getJSONObject(Api.RECIPE_COMPONENT_INGREDIENT).getString(Api.INGREDIENT_NAME);
+            String quantity = recipeComponent.getString(RECIPE_COMPONENT_QUANTITY);
+            String unitOfMeasure = recipeComponent.getJSONObject(RECIPE_COMPONENT_UNIT_OF_MEASURE).getString(UNIT_OF_MEASURE_NAME);
+            String adjective = recipeComponent.getString(RECIPE_COMPONENT_ADJECTIVE);
+            String ingredientName = recipeComponent.getJSONObject(RECIPE_COMPONENT_INGREDIENT).getString(INGREDIENT_NAME);
 
             int plural = 2;
             float qFloat = Float.parseFloat(quantity);
@@ -159,7 +159,7 @@ public final class Api {
      * Returns a human readable representation of the recipe duration which is in minutes by default.
      *
      * @param duration in minutes, should be greater than zero
-     * @return
+     * @return the formatted duration of recipe preparation
      */
     public static String normalizeRecipeDuration(int duration) {
         StringBuilder result = new StringBuilder();

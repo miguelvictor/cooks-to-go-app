@@ -8,19 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.Constants;
-import team.jcandfriends.cookstogo.Data;
-import team.jcandfriends.cookstogo.R;
+import team.jcandfriends.cookstogo.R.id;
+import team.jcandfriends.cookstogo.R.layout;
 import team.jcandfriends.cookstogo.adapters.RecipeStepsAdapter;
+import team.jcandfriends.cookstogo.managers.RecipeManager;
 
 /**
  * Displays all steps in a recipe
  * <p/>
- * Subordinates: fragment_recipe_methods.xml, RecipeStepsAdapter, Data
+ * Subordinates: fragment_recipe_methods.xml, RecipeStepsAdapter, RecipeManager
  */
 public class RecipeStepsFragment extends Fragment {
 
@@ -34,21 +34,15 @@ public class RecipeStepsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Bundle args = getArguments();
-        View view = null;
-        JSONObject recipe;
+        Bundle args = this.getArguments();
+        JSONObject recipe = RecipeManager.get(this.getActivity()).getCachedRecipe(args.getInt(Constants.EXTRA_RECIPE_ID));
+        View view = inflater.inflate(layout.fragment_recipe_methods, container, false);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(id.recycler_view);
+        RecipeStepsAdapter stepsAdapter = new RecipeStepsAdapter(recipe.optJSONArray(Api.RECIPE_STEPS));
 
-        try {
-            recipe = Data.getCachedRecipe(getActivity(), args.getInt(Constants.EXTRA_RECIPE_ID));
-            view = inflater.inflate(R.layout.fragment_recipe_methods, container, false);
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-            RecipeStepsAdapter stepsAdapter = new RecipeStepsAdapter(recipe.optJSONArray(Api.RECIPE_STEPS));
-            recyclerView.setAdapter(stepsAdapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            recyclerView.setHasFixedSize(true);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        recyclerView.setAdapter(stepsAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        recyclerView.setHasFixedSize(true);
 
         return view;
     }

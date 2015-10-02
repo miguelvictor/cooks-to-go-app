@@ -17,16 +17,10 @@ public final class Constants {
      * HttpUrlConnection constants
      */
     public static final String REQUEST_METHOD_GET = "GET";
-    public static final int CONNECT_TIMEOUT = 20000;
-    public static final int READ_TIMEOUT = 15000;
+    public static final int CONNECT_TIMEOUT = 0;
+    public static final int READ_TIMEOUT = 0;
     public static final boolean DO_INPUT = true;
 
-    /**
-     * SharedPreferences Keys
-     */
-    public static final String VIEW_TYPE = "view_type";
-
-    public static final String RECIPE_COMPONENT_POSITION = "recipe_component_position";
     public static final String[] RECIPE_COMPONENTS = {
             "Summary",
             "Ingredients",
@@ -34,8 +28,6 @@ public final class Constants {
     };
 
     public static final String EXTRA_RECIPE_ID = "recipe_id";
-    public static final String EXTRA_RECIPES_URL = "recipes_url";
-    public static final String EXTRA_SEARCH_QUERY = "search_query";
 
     public static final String RECOMMEND_RECIPES_EXACT = "Recipes";
     public static final String RECOMMEND_RECIPES_NEARLY_THERE = "Nearly There";

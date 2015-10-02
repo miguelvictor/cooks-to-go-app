@@ -1,19 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="team.jcandfriends.cookstogo.VirtualBasketsActivity">
 
     <item
-        android:id="@+id/action_search"
-        android:icon="@mipmap/ic_search"
-        android:orderInCategory="1"
-        android:title="@string/action_search"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/action_delete_all"
+        android:id="@+id/action_delete_virtual_basket"
         android:icon="@mipmap/ic_delete"
-        android:orderInCategory="2"
-        android:title="@string/action_delete_all"
+        android:title="@string/action_delete_virtual_basket"
         app:showAsAction="ifRoom" />
 
 </menu>

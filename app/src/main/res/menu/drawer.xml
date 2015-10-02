@@ -23,6 +23,7 @@
             android:title="@string/navigation_settings" />
     </group>
 
+    <!--
     <group
         android:id="@+id/secondary_drawer_menu"
         android:checkableBehavior="single">
@@ -35,5 +36,6 @@
             android:icon="@mipmap/ic_sms"
             android:title="@string/navigation_feedback" />
     </group>
+    -->
 
 </menu>

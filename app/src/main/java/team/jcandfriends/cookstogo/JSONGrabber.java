@@ -22,38 +22,38 @@ public final class JSONGrabber {
 
     public JSONGrabber(String url) throws IOException {
         this.url = new URL(url);
-        setupConnection();
+        this.setupConnection();
     }
 
     public void reuseConnection(String url) throws IOException {
         this.url = new URL(url);
-        setupConnection();
+        this.setupConnection();
     }
 
     private void setupConnection() throws IOException {
-        connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod(Constants.REQUEST_METHOD_GET);
-        connection.setRequestProperty("Content-length", "0");
-        connection.setUseCaches(false);
-        connection.setAllowUserInteraction(false);
-        connection.setConnectTimeout(Constants.CONNECT_TIMEOUT);
-        connection.setReadTimeout(Constants.READ_TIMEOUT);
-        connection.setDoInput(Constants.DO_INPUT);
+        this.connection = (HttpURLConnection) this.url.openConnection();
+        this.connection.setRequestMethod(Constants.REQUEST_METHOD_GET);
+        this.connection.setRequestProperty("Content-length", "0");
+        this.connection.setUseCaches(false);
+        this.connection.setAllowUserInteraction(false);
+        this.connection.setConnectTimeout(Constants.CONNECT_TIMEOUT);
+        this.connection.setReadTimeout(Constants.READ_TIMEOUT);
+        this.connection.setDoInput(Constants.DO_INPUT);
     }
 
     public JSONObject grab() throws IOException, JSONException {
         InputStream is = null;
         JSONObject object = null;
 
-        Log.d(Constants.APP_DEBUG, "Attempting to connect to " + url);
-        connection.connect();
+        Log.d(Constants.APP_DEBUG, "Attempting to connect to " + this.url);
+        this.connection.connect();
 
-        Log.d(Constants.APP_DEBUG, "Connection to " + url + " established.");
+        Log.d(Constants.APP_DEBUG, "Connection to " + this.url + " established.");
 
-        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+        if (this.connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             StringBuilder response = new StringBuilder();
             String line;
-            is = connection.getInputStream();
+            is = this.connection.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             while ((line = br.readLine()) != null)
@@ -62,13 +62,13 @@ public final class JSONGrabber {
             Log.d(Constants.APP_DEBUG, "Response: " + response);
             object = new JSONObject(response.toString());
         } else {
-            Log.d(Constants.APP_DEBUG, "HTTP_CONNECTION: " + connection.getResponseCode());
+            Log.d(Constants.APP_DEBUG, "HTTP_CONNECTION: " + this.connection.getResponseCode());
         }
         if (is != null) {
             is.close();
         }
-        if (connection != null) {
-            connection.disconnect();
+        if (this.connection != null) {
+            this.connection.disconnect();
         }
 
         return object;

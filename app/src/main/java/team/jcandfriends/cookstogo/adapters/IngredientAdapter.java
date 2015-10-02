@@ -1,7 +1,8 @@
 package team.jcandfriends.cookstogo.adapters;
 
 import android.graphics.Bitmap;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.Adapter;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
-import team.jcandfriends.cookstogo.R;
+import team.jcandfriends.cookstogo.R.id;
+import team.jcandfriends.cookstogo.R.layout;
 import team.jcandfriends.cookstogo.Utils;
 
 /**
@@ -23,23 +25,23 @@ import team.jcandfriends.cookstogo.Utils;
  * <p/>
  * Subordinates: item_ingredient.xml, IngredientViewHolder
  */
-public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder> {
+public class IngredientAdapter extends Adapter<IngredientAdapter.IngredientViewHolder> {
 
-    private JSONArray ingredients;
+    private final JSONArray ingredients;
 
     public IngredientAdapter(JSONArray ingredients) {
         this.ingredients = ingredients;
     }
 
     @Override
-    public IngredientViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ingredient, parent, false);
-        return new IngredientViewHolder(view);
+    public IngredientAdapter.IngredientViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(layout.item_ingredient, parent, false);
+        return new IngredientAdapter.IngredientViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final IngredientViewHolder holder, int position) {
-        JSONObject ingredient = ingredients.optJSONObject(position);
+    public void onBindViewHolder(final IngredientAdapter.IngredientViewHolder holder, int position) {
+        JSONObject ingredient = this.ingredients.optJSONObject(position);
 
         holder.name.setText(ingredient.optString(Api.INGREDIENT_NAME));
         ImageLoader.getInstance().loadImage(ingredient.optString(Api.INGREDIENT_ICON), new SimpleImageLoadingListener() {
@@ -52,10 +54,10 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
 
     @Override
     public int getItemCount() {
-        return ingredients.length();
+        return this.ingredients.length();
     }
 
-    public static class IngredientViewHolder extends RecyclerView.ViewHolder {
+    public static class IngredientViewHolder extends ViewHolder {
 
         ImageView avatar;
         TextView name;
@@ -63,8 +65,8 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
         public IngredientViewHolder(View itemView) {
             super(itemView);
 
-            avatar = (ImageView) itemView.findViewById(R.id.avatar);
-            name = (TextView) itemView.findViewById(R.id.primary_text);
+            this.avatar = (ImageView) itemView.findViewById(id.avatar);
+            this.name = (TextView) itemView.findViewById(id.primary_text);
 
             itemView.setClickable(true);
         }

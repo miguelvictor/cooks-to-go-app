@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CooksToGo</string>
+    <string name="app_name">Nam-Nam</string>
 
     <!-- Accessibility -->
     <string name="drawer_close">Drawer Close</string>
@@ -13,7 +13,7 @@
     <!-- NavigationView menus -->
     <string name="navigation_recipes">Recipes</string>
     <string name="navigation_ingredients">Ingredients</string>
-    <string name="navigation_virtual_basket">Virtual Basket</string>
+    <string name="navigation_virtual_basket">Virtual Baskets</string>
     <string name="navigation_settings">Settings</string>
 
     <!-- Activity Names -->
@@ -40,8 +40,12 @@
     <string name="title_activity_ingredient">IngredientActivity</string>
 
     <!-- Dialog Strings -->
+    <string name="dialog_clear_recipes_title">Clear Recipes Cache?</string>
+    <string name="dialog_clear_recipes_summary">Are you sure you want to delete the recipes cache? This action cannot be undone.</string>
+    <string name="dialog_clear_ingredients_title">Clear Ingredients Cache?</string>
+    <string name="dialog_clear_ingredients_summary">Are you sure you want to delete the ingredients cache? This action cannot be undone.</string>
     <string name="dialog_ingredient_loading_header">Loading Ingredient</string>
-    <string name="dialog_ingredient_loading_subheader">Please wait while loading recipe &#8230;</string>
+    <string name="dialog_ingredient_loading_subheader">Please wait while loading ingredient &#8230;</string>
     <string name="dialog_no_internet_header">No connection</string>
     <string name="dialog_no_internet_subheader">You need to connect to internet and open the recipe for us to cache the data so you can view it offline.</string>
     <string name="dialog_neutral_button_label">Okay</string>
@@ -54,7 +58,26 @@
     <string name="snackbar_no_internet">No connection</string>
     <string name="title_activity_recommended_recipes">RecommendedRecipesActivity</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_add_to_virtual_basket">Add to Virtual Basket</string>
+    <string name="recipe_image_content_description">Recipe\'s image</string>
+    <string name="activity_title_help">Help</string>
+    <string name="activity_title_feedback">Feedback</string>
+    <string name="no_results_found">No results found</string>
+    <string name="activity_splash_loading">Preparing things&#8230;</string>
+    <string name="title_activity_virtual_baskets">Virtual Baskets</string>
+    <string name="action_delete_virtual_baskets">Delete all</string>
+    <string name="action_delete_virtual_basket">Delete</string>
+    <string name="preference_caches">Cache</string>
+
+    <!-- Preference Fragment -->
+    <string name="preference_clear_recipes_cache_key">clear_recipes_key</string>
+    <string name="preference_clear_recipes_cache_title">Clear Recipe Cache</string>
+    <string name="preference_clear_recipes_cache_summary">This will free all the resources the recipes cache are occupying</string>
+    <string name="preference_clear_ingredients_cache_key">clear_ingredients_key</string>
+    <string name="preference_clear_ingredients_cache_title">Clear Ingredient Cache</string>
+    <string name="preference_clear_ingredients_cache_summary">This will free all the resources the ingredients cache are occupying</string>
+    <string name="title_activity_test">TestActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

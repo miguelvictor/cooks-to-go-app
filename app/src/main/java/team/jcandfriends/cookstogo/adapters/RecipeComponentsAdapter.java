@@ -17,7 +17,7 @@ import team.jcandfriends.cookstogo.fragments.RecipeSummaryFragment;
  */
 public class RecipeComponentsAdapter extends FragmentPagerAdapter {
 
-    private int recipeId;
+    private final int recipeId;
 
     public RecipeComponentsAdapter(FragmentManager fm, int recipeId) {
         super(fm);
@@ -28,11 +28,11 @@ public class RecipeComponentsAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return RecipeSummaryFragment.newInstance(recipeId);
+                return RecipeSummaryFragment.newInstance(this.recipeId);
             case 1:
-                return RecipeIngredientsFragment.newInstance(recipeId);
+                return RecipeIngredientsFragment.newInstance(this.recipeId);
             default:
-                return RecipeStepsFragment.newInstance(recipeId);
+                return RecipeStepsFragment.newInstance(this.recipeId);
         }
     }
 

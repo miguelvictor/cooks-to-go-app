@@ -9,11 +9,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import team.jcandfriends.cookstogo.Api;
+import team.jcandfriends.cookstogo.Constants;
 import team.jcandfriends.cookstogo.JSONGrabber;
+import team.jcandfriends.cookstogo.Utils;
 
 public class RecipeManager {
 
@@ -45,10 +55,10 @@ public class RecipeManager {
     /**
      * The SharedPreferences that contains the caches of this class
      */
-    private SharedPreferences preferences;
+    private final SharedPreferences preferences;
 
     private RecipeManager(Context context) {
-        preferences = context.getSharedPreferences(RECIPE_CACHE, Context.MODE_PRIVATE);
+        this.preferences = context.getSharedPreferences(RecipeManager.RECIPE_CACHE, Context.MODE_PRIVATE);
     }
 
     /**
@@ -58,10 +68,10 @@ public class RecipeManager {
      * @return the singleton instance
      */
     public static RecipeManager get(Context context) {
-        if (ourInstance == null) {
-            ourInstance = new RecipeManager(context);
+        if (RecipeManager.ourInstance == null) {
+            RecipeManager.ourInstance = new RecipeManager(context);
         }
-        return ourInstance;
+        return RecipeManager.ourInstance;
     }
 
     /**
@@ -70,7 +80,7 @@ public class RecipeManager {
      * @return true if recipe types cache is not empty, false otherwise
      */
     public boolean hasCachedRecipeTypes() {
-        return preferences.getAll().containsKey(PERSISTENT_RECIPE_TYPES);
+        return this.preferences.getAll().containsKey(RecipeManager.PERSISTENT_RECIPE_TYPES);
     }
 
     /**
@@ -79,7 +89,7 @@ public class RecipeManager {
      * @param recipeTypes the JSONArray to cache
      */
     public void cacheRecipeTypes(JSONArray recipeTypes) {
-        preferences.edit().putString(PERSISTENT_RECIPE_TYPES, recipeTypes.toString()).apply();
+        this.preferences.edit().putString(RecipeManager.PERSISTENT_RECIPE_TYPES, recipeTypes.toString()).apply();
     }
 
     /**
@@ -88,11 +98,11 @@ public class RecipeManager {
      * @return the cached recipe types as JSONArray
      */
     public JSONArray getCachedRecipeTypes() {
-        String recipeTypesAsString = preferences.getString(PERSISTENT_RECIPE_TYPES, "");
+        String recipeTypesAsString = this.preferences.getString(RecipeManager.PERSISTENT_RECIPE_TYPES, "");
         try {
             return new JSONArray(recipeTypesAsString);
         } catch (JSONException e) {
-            Log.e(TAG, "JSONException : The recipeTypesAsString can't be parsed as a valid JSONArray");
+            Log.e(RecipeManager.TAG, "JSONException : The recipeTypesAsString can't be parsed as a valid JSONArray");
             e.printStackTrace();
             throw new RuntimeException("Cannot proceed anymore");
         }
@@ -102,7 +112,7 @@ public class RecipeManager {
      * Removes the cached recipe types
      */
     public void clearCachedRecipeTypes() {
-        preferences.edit().remove(PERSISTENT_RECIPE_TYPES).apply();
+        this.preferences.edit().remove(RecipeManager.PERSISTENT_RECIPE_TYPES).apply();
     }
 
     /**
@@ -112,7 +122,7 @@ public class RecipeManager {
      * @return true if the recipe is found, false otherwise
      */
     public boolean hasCachedRecipe(int recipeId) {
-        return preferences.getAll().containsKey(RECIPE_CACHE_PREFIX + recipeId);
+        return this.preferences.getAll().containsKey(RecipeManager.RECIPE_CACHE_PREFIX + recipeId);
     }
 
     /**
@@ -122,9 +132,9 @@ public class RecipeManager {
      */
     public void cacheRecipe(JSONObject recipe) {
         try {
-            preferences.edit().putString(RECIPE_CACHE_PREFIX + recipe.getInt(Api.RECIPE_PK), recipe.toString()).apply();
+            this.preferences.edit().putString(RecipeManager.RECIPE_CACHE_PREFIX + recipe.getInt(Api.RECIPE_PK), recipe.toString()).apply();
         } catch (JSONException e) {
-            Log.e(TAG, "JSONException : The passed JSONObject recipe doesn't contain a '" + Api.RECIPE_PK + "'");
+            Log.e(RecipeManager.TAG, "JSONException : The passed JSONObject recipe doesn't contain a '" + Api.RECIPE_PK + "'");
             e.printStackTrace();
             throw new RuntimeException("Cannot proceed anymore");
         }
@@ -137,11 +147,11 @@ public class RecipeManager {
      * @return the recipe
      */
     public JSONObject getCachedRecipe(int recipeId) {
-        String recipeAsString = preferences.getString(RECIPE_CACHE_PREFIX + recipeId, "");
+        String recipeAsString = this.preferences.getString(RecipeManager.RECIPE_CACHE_PREFIX + recipeId, "");
         try {
             return new JSONObject(recipeAsString);
         } catch (JSONException e) {
-            Log.e(TAG, "JSONException : The recipeAsString can't be parsed as a valid JSONObject");
+            Log.e(RecipeManager.TAG, "JSONException : The recipeAsString can't be parsed as a valid JSONObject");
             e.printStackTrace();
             throw new RuntimeException("Cannot proceed anymore");
         }
@@ -153,10 +163,16 @@ public class RecipeManager {
      * @param recipeId the id of the recipe to remove
      */
     public void clearCachedRecipe(int recipeId) {
-        preferences.edit().remove(RECIPE_CACHE_PREFIX + recipeId).apply();
+        this.preferences.edit().remove(RecipeManager.RECIPE_CACHE_PREFIX + recipeId).apply();
     }
 
-    public void fetch(final int recipeId, final Callbacks callbacks) {
+    /**
+     * Grabs the recipe on the cloud server
+     *
+     * @param recipeId  the id of the recipe to get
+     * @param callbacks the callbacks that will be invoked on success and on failure
+     */
+    public void fetch(final int recipeId, final RecipeManager.Callbacks callbacks) {
         new AsyncTask<String, Void, JSONObject>() {
             @Override
             protected JSONObject doInBackground(String... params) {
@@ -182,6 +198,88 @@ public class RecipeManager {
     }
 
     /**
+     * Sends a rating to the server
+     *
+     * @param recipeId  the id of the recipe to be rated
+     * @param rating    the rating on a scale of 1 - 5
+     * @param callbacks the callbacks that will be invoked in cases of success and error
+     */
+    public void rate(final Context context, int recipeId, final int rating, final RecipeManager.Callbacks callbacks) {
+        if (rating < 0 || rating > 5) {
+            throw new RuntimeException("Recipe ID must not be in the range of (0-5)");
+        }
+
+        final String urlAsString = Api.RECIPES + recipeId + "/rate/";
+
+        new AsyncTask<String, Void, JSONObject>() {
+            @Override
+            protected JSONObject doInBackground(String... params) {
+                try {
+                    JSONObject response = null;
+                    URL url = new URL(urlAsString);
+                    Log.i(TAG, "Attempting to connect to " + url);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                    String requestBody = String.format("rating=%d&mac=%s", rating, URLEncoder.encode(Utils.getMacAddress(context), "UTF-8"));
+                    byte[] requestBodyAsBytes = requestBody.getBytes();
+
+                    connection.setRequestMethod("POST");
+                    connection.setConnectTimeout(Constants.CONNECT_TIMEOUT);
+                    connection.setReadTimeout(Constants.READ_TIMEOUT);
+                    connection.setDoInput(true);
+                    connection.setUseCaches(false);
+                    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                    connection.setRequestProperty("charset", "UTF-8");
+                    connection.setRequestProperty("Content-Length", Integer.toString(requestBodyAsBytes.length));
+                    connection.setDoOutput(true);
+
+                    DataOutputStream os = new DataOutputStream(connection.getOutputStream());
+                    os.write(requestBodyAsBytes);
+
+                    Log.i(TAG, "Request body : " + requestBody);
+
+                    connection.connect();
+
+                    int statusCode = connection.getResponseCode();
+
+                    InputStream is = connection.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    String line;
+                    StringBuilder builder = new StringBuilder();
+                    while ((line = reader.readLine()) != null) {
+                        builder.append(line);
+                    }
+
+                    Log.i(TAG, "Connection to " + url + " was established with a status code of " + statusCode);
+                    Log.i(TAG, "Response body: " + builder);
+
+                    try {
+                        response = new JSONObject(builder.toString());
+                    } catch (JSONException e) {
+                        Log.e(TAG, "JSONException", e);
+                    }
+                    return response;
+                } catch (MalformedURLException e) {
+                    Log.e(RecipeManager.TAG, "Could not parse the url for rating a recipe : " + urlAsString, e);
+                } catch (IOException e) {
+                    Log.e(RecipeManager.TAG, "Could not open connection from URL", e);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject response) {
+                super.onPostExecute(response);
+                if (null != response) {
+                    callbacks.onSuccess(response);
+                } else {
+                    callbacks.onFailure();
+                }
+            }
+        }.execute();
+    }
+
+    /**
      * Starts an asynchronous request to the backend server that will return a resulting JSONObject
      * containing the count, next, previous, and the actual results which are the recipes that
      * matches the query.
@@ -189,18 +287,16 @@ public class RecipeManager {
      * @param query     the query
      * @param callbacks the callbacks that will be invoked in success or failure event
      */
-    public void search(String query, final Callbacks callbacks) {
+    public void search(final String query, final RecipeManager.Callbacks callbacks) {
         if (query == null || query.isEmpty()) {
             throw new IllegalArgumentException("query must not be null and empty");
         }
-
-        final String url = Api.RECIPES + "?search=" + query;
 
         new AsyncTask<String, Void, JSONObject>() {
             @Override
             protected JSONObject doInBackground(String... params) {
                 try {
-                    JSONGrabber grabber = new JSONGrabber(url);
+                    JSONGrabber grabber = new JSONGrabber(Api.RECIPES + "?search=" + URLEncoder.encode(query, "UTF-8"));
                     return grabber.grab();
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
@@ -228,7 +324,7 @@ public class RecipeManager {
      * @param ingredients the list of ingredients
      * @param callbacks   the callbacks that will be invoked in success or failure event
      */
-    public void recommendRecipes(ArrayList<JSONObject> ingredients, final Callbacks callbacks) {
+    public void recommendRecipes(ArrayList<JSONObject> ingredients, final RecipeManager.Callbacks callbacks) {
         if (ingredients.size() < 1)
             throw new IllegalArgumentException("ingredients length < 1 : " + ingredients.size());
 

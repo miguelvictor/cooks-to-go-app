@@ -19,16 +19,17 @@ import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.Constants;
-import team.jcandfriends.cookstogo.Data;
 import team.jcandfriends.cookstogo.R;
+import team.jcandfriends.cookstogo.R.layout;
 import team.jcandfriends.cookstogo.Utils;
+import team.jcandfriends.cookstogo.Utils.SimpleClickListener;
 import team.jcandfriends.cookstogo.adapters.RecipeAdapter;
 import team.jcandfriends.cookstogo.managers.RecipeManager;
 
 /**
  * RecipeTypeFragment displays all recipes of a specific recipe type.
  * <p/>
- * Subordinates: fragment_recipe_type.xml, RecipeAdapter, Data, Utils, FetchRecipeTask
+ * Subordinates: fragment_recipe_type.xml, RecipeAdapter, RecipeManager, Utils, FetchRecipeTask
  */
 public final class RecipeTypeFragment extends Fragment {
 
@@ -42,10 +43,10 @@ public final class RecipeTypeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final Activity activity = getActivity();
+        final Activity activity = this.getActivity();
         final RecipeManager recipeManager = RecipeManager.get(activity);
-        Bundle args = getArguments();
-        RecyclerView recipes = (RecyclerView) inflater.inflate(R.layout.fragment_recipe_type, container, false);
+        Bundle args = this.getArguments();
+        RecyclerView recipes = (RecyclerView) inflater.inflate(layout.fragment_recipe_type, container, false);
 
         try {
             final JSONArray recipesArray = new JSONArray(args.getString(Constants.RECIPES_IN_FRAGMENT));
@@ -53,14 +54,53 @@ public final class RecipeTypeFragment extends Fragment {
             recipes.setLayoutManager(new LinearLayoutManager(activity));
             recipes.setItemAnimator(new DefaultItemAnimator());
             recipes.setHasFixedSize(true);
-            Utils.setOnItemClickListener(recipes, new Utils.SimpleClickListener() {
+            Utils.setOnItemClickListener(recipes, new SimpleClickListener() {
                 @Override
                 public void onClick(View view, int position) {
                     JSONObject recipe = recipesArray.optJSONObject(position);
                     final int recipeId = recipe.optInt(Api.RECIPE_PK);
                     final String recipeName = recipe.optString(Api.RECIPE_NAME);
 
-                    if (Utils.hasInternet(activity)) {
+                    /*if (Utils.hasInternet(activity)) {
+                        final AlertDialog dialog = new Builder(activity)
+                                .setTitle(string.dialog_recipe_loading_header)
+                                .setMessage(string.dialog_recipe_loading_subheader)
+                                .setCancelable(false)
+                                .create();
+
+                        dialog.show();
+                        recipeManager.fetch(recipeId, new Callbacks() {
+                            @Override
+                            public void onSuccess(JSONObject result) {
+                                dialog.dismiss();
+                                recipeManager.cacheRecipe(result);
+                                Utils.startRecipeActivity(activity, recipeId, recipeName);
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                dialog.dismiss();
+                                Toast.makeText(activity, "Some unexpected error occurred.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else if (recipeManager.hasCachedRecipe(recipeId)) {
+                        Utils.startRecipeActivity(activity, recipeId, recipeName);
+                    } else {
+                        new Builder(activity)
+                                .setTitle(string.dialog_no_internet_header)
+                                .setMessage(string.dialog_no_internet_subheader)
+                                .setNeutralButton(string.dialog_neutral_button_label, new OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .create()
+                                .show();
+                    }*/
+                    if (recipeManager.hasCachedRecipe(recipeId)) {
+                        Utils.startRecipeActivity(activity, recipeId, recipeName);
+                    } else if (Utils.hasInternet(activity)) {
                         final AlertDialog dialog = new AlertDialog.Builder(activity)
                                 .setTitle(R.string.dialog_recipe_loading_header)
                                 .setMessage(R.string.dialog_recipe_loading_subheader)
@@ -82,8 +122,6 @@ public final class RecipeTypeFragment extends Fragment {
                                 Toast.makeText(activity, "Some unexpected error occurred.", Toast.LENGTH_SHORT).show();
                             }
                         });
-                    } else if (Data.hasCachedRecipe(activity, recipeId)) {
-                        Utils.startRecipeActivity(activity, recipeId, recipeName);
                     } else {
                         new AlertDialog.Builder(activity)
                                 .setTitle(R.string.dialog_no_internet_header)

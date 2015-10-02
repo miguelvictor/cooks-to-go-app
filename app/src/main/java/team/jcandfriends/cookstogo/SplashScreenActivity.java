@@ -12,6 +12,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import team.jcandfriends.cookstogo.R.id;
+import team.jcandfriends.cookstogo.R.layout;
 import team.jcandfriends.cookstogo.managers.IngredientManager;
 import team.jcandfriends.cookstogo.managers.RecipeManager;
 
@@ -28,41 +30,50 @@ public class SplashScreenActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash_screen);
+        this.setContentView(layout.activity_splash_screen);
 
-        recipeManager = RecipeManager.get(this);
-        ingredientManager = IngredientManager.get(this);
+        this.recipeManager = RecipeManager.get(this);
+        this.ingredientManager = IngredientManager.get(this);
 
-        output = (TextView) findViewById(R.id.output);
+        this.output = (TextView) this.findViewById(id.output);
 
-        if (Utils.hasInternet(this)) {
+        /*if (Utils.hasInternet(this)) {
             Utils.log("Internet available: Fetching latest Recipe and Ingredient types");
-            initialize();
+            this.initialize();
         } else {
             Utils.log("Internet unavailable: Displaying cached data");
-            if (recipeManager.hasCachedRecipeTypes() && ingredientManager.hasCachedIngredientTypes()) {
-                startActivity(new Intent(SplashScreenActivity.this, RecipesActivity.class));
-                finish();
+            if (this.recipeManager.hasCachedRecipeTypes() && this.ingredientManager.hasCachedIngredientTypes()) {
+                this.startActivity(new Intent(this, RecipesActivity.class));
+                this.finish();
             } else {
-                output.setText("Sorry, CooksToGo needs internet. After a first successful connection, data will be cached and can be accessed without internet.");
+                this.output.setText("Sorry, CooksToGo needs internet. After a first successful connection, data will be cached and can be accessed without internet.");
             }
+        }*/
+
+        if (recipeManager.hasCachedRecipeTypes() && ingredientManager.hasCachedIngredientTypes()) {
+            startActivity(new Intent(this, RecipesActivity.class));
+            finish();
+        } else if (Utils.hasInternet(this)) {
+            initialize();
+        } else {
+            output.setText("Sorry, CooksToGo needs internet. After a first successful connection, data will be cached and can be accessed without internet.");
         }
     }
 
     private void onPostExecute(JSONObject[] jsonObjects) throws JSONException {
         if (null != jsonObjects) {
             JSONArray temp = jsonObjects[0].getJSONArray(Api.RESULTS);
-            recipeManager.cacheRecipeTypes(temp);
+            this.recipeManager.cacheRecipeTypes(temp);
 
             temp = jsonObjects[1].getJSONArray(Api.RESULTS);
-            ingredientManager.cacheIngredientTypes(temp);
+            this.ingredientManager.cacheIngredientTypes(temp);
 
             Intent intent = new Intent(this, RecipesActivity.class);
-            startActivity(intent);
-            finish();
+            this.startActivity(intent);
+            this.finish();
         } else {
-            output.setText("Oh my god! It failed, trying again...");
-            initialize();
+            this.output.setText("Oh my god! It failed, trying again...");
+            this.initialize();
         }
     }
 
@@ -90,7 +101,7 @@ public class SplashScreenActivity extends Activity {
                 try {
                     SplashScreenActivity.this.onPostExecute(jsonObjects);
                 } catch (JSONException e) {
-                    Utils.log("Chaka na, di maparse ang response sa recipe ug ingredient types.");
+                    Utils.log("Cannot parse the response of the server. This should not happen.");
                     e.printStackTrace();
                 }
             }

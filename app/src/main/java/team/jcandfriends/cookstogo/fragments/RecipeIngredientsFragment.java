@@ -14,8 +14,10 @@ import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.Constants;
-import team.jcandfriends.cookstogo.R;
+import team.jcandfriends.cookstogo.R.id;
+import team.jcandfriends.cookstogo.R.layout;
 import team.jcandfriends.cookstogo.Utils;
+import team.jcandfriends.cookstogo.Utils.SimpleClickListener;
 import team.jcandfriends.cookstogo.adapters.RecipeIngredientsAdapter;
 import team.jcandfriends.cookstogo.managers.IngredientManager;
 import team.jcandfriends.cookstogo.managers.RecipeManager;
@@ -42,26 +44,26 @@ public class RecipeIngredientsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final Activity activity = getActivity();
-        Bundle args = getArguments();
+        final Activity activity = this.getActivity();
+        Bundle args = this.getArguments();
         JSONObject recipe;
         View view;
 
         recipe = RecipeManager.get(activity).getCachedRecipe(args.getInt(Constants.EXTRA_RECIPE_ID));
         final JSONArray recipeComponents = recipe.optJSONArray(Api.RECIPE_RECIPE_COMPONENTS);
 
-        view = inflater.inflate(R.layout.fragment_recipe_ingredients, container, false);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        view = inflater.inflate(layout.fragment_recipe_ingredients, container, false);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(id.recycler_view);
         RecipeIngredientsAdapter ingredientsAdapter = new RecipeIngredientsAdapter(recipeComponents);
         recyclerView.setAdapter(ingredientsAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         recyclerView.setHasFixedSize(true);
-        Utils.setOnItemClickListener(recyclerView, new Utils.SimpleClickListener() {
+        Utils.setOnItemClickListener(recyclerView, new SimpleClickListener() {
             @Override
             public void onClick(View view, int position) {
                 JSONObject ingredient = recipeComponents.optJSONObject(position).optJSONObject(Api.RECIPE_COMPONENT_INGREDIENT);
                 IngredientManager.get(activity).cacheIngredient(ingredient);
-                Utils.startIngredientActivity(getActivity(), ingredient.optInt(Api.INGREDIENT_PK), ingredient.optString(Api.INGREDIENT_NAME));
+                Utils.startIngredientActivity(RecipeIngredientsFragment.this.getActivity(), ingredient.optInt(Api.INGREDIENT_PK), ingredient.optString(Api.INGREDIENT_NAME));
             }
         });
 

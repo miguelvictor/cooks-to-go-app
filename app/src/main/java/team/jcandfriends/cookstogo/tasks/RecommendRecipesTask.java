@@ -18,13 +18,13 @@ import team.jcandfriends.cookstogo.Utils;
  */
 public class RecommendRecipesTask extends AsyncTask<String, Void, JSONObject> {
 
-    private Callbacks callbacks;
+    private final RecommendRecipesTask.Callbacks callbacks;
 
-    public RecommendRecipesTask(Callbacks callbacks) {
+    public RecommendRecipesTask(RecommendRecipesTask.Callbacks callbacks) {
         this.callbacks = callbacks;
     }
 
-    public static void start(String url, Callbacks callbacks) {
+    public static void start(String url, RecommendRecipesTask.Callbacks callbacks) {
         RecommendRecipesTask task = new RecommendRecipesTask(callbacks);
         task.execute(url);
     }
@@ -32,7 +32,7 @@ public class RecommendRecipesTask extends AsyncTask<String, Void, JSONObject> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        callbacks.onPreExecute();
+        this.callbacks.onPreExecute();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class RecommendRecipesTask extends AsyncTask<String, Void, JSONObject> {
     @Override
     protected void onPostExecute(JSONObject recipes) {
         super.onPostExecute(recipes);
-        callbacks.onPostExecute(recipes);
+        this.callbacks.onPostExecute(recipes);
     }
 
     /**

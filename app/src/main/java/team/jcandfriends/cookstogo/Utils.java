@@ -4,32 +4,38 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.graphics.Palette;
+import android.support.v7.graphics.Palette.Swatch;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.OnItemTouchListener;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration.Builder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +47,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Map;
 
+import team.jcandfriends.cookstogo.R.id;
 import team.jcandfriends.cookstogo.interfaces.TabsToolbarGettable;
 import team.jcandfriends.cookstogo.interfaces.ToolbarGettable;
 
@@ -130,7 +137,7 @@ public final class Utils {
      */
     public static void persistJSONArray(Context context, String key, JSONArray jsonArray) {
         String toPersist = jsonArray == null ? "" : jsonArray.toString();
-        persistString(context, key, toPersist);
+        Utils.persistString(context, key, toPersist);
     }
 
     /**
@@ -141,7 +148,7 @@ public final class Utils {
      * @return The persisted JSONArray or null if key is not found
      */
     public static JSONArray getPersistedJSONArray(Context context, String key) {
-        String jsonArray = getPersistedString(context, key, "");
+        String jsonArray = Utils.getPersistedString(context, key, "");
         try {
             return new JSONArray(jsonArray);
         } catch (JSONException e) {
@@ -171,7 +178,7 @@ public final class Utils {
      */
     public static void showSnackbar(BaseActivity activity, String message) {
         Snackbar
-                .make(activity.findViewById(R.id.coordinator_layout), message, Snackbar.LENGTH_SHORT)
+                .make(activity.findViewById(id.coordinator_layout), message, Snackbar.LENGTH_SHORT)
                 .show();
     }
 
@@ -198,9 +205,9 @@ public final class Utils {
      */
     public static void decorateToolbarAndTabs(Activity activity, Bitmap bitmap) {
         Palette p = Palette.from(bitmap).generate();
-        Palette.Swatch vibrant = p.getVibrantSwatch();
-        Palette.Swatch lightVibrant = p.getLightVibrantSwatch();
-        Palette.Swatch darkVibrant = p.getDarkVibrantSwatch();
+        Swatch vibrant = p.getVibrantSwatch();
+        Swatch lightVibrant = p.getLightVibrantSwatch();
+        Swatch darkVibrant = p.getDarkVibrantSwatch();
 
         if (vibrant != null && lightVibrant != null && darkVibrant != null) {
             int primaryColor = vibrant.getRgb();
@@ -208,8 +215,8 @@ public final class Utils {
             toolbar.setBackgroundColor(primaryColor);
             TabLayout tabs = ((TabsToolbarGettable) activity).getTabLayout();
             tabs.setBackgroundColor(primaryColor);
-            setTabIndicatorColor(tabs, lightVibrant.getRgb());
-            setStatusBarColor(activity, darkVibrant.getRgb());
+            Utils.setTabIndicatorColor(tabs, lightVibrant.getRgb());
+            Utils.setStatusBarColor(activity, darkVibrant.getRgb());
         }
     }
 
@@ -221,10 +228,10 @@ public final class Utils {
      * @param statusBarColor The color to use
      */
     public static void setStatusBarColor(Activity activity, int statusBarColor) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             Window window = activity.getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(statusBarColor);
         }
     }
@@ -247,19 +254,19 @@ public final class Utils {
             Object object = tabStripField.get(tabs);
             changeIndicatorColor.invoke(object, color);
         } catch (NoSuchFieldException e) {
-            Utils.log("NoSuchFieldException : " + e.getMessage());
+            log("NoSuchFieldException : " + e.getMessage());
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
-            Utils.log("NoSuchMethodException : " + e.getMessage());
+            log("NoSuchMethodException : " + e.getMessage());
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-            Utils.log("InvocationTargetException : " + e.getMessage());
+            log("InvocationTargetException : " + e.getMessage());
             e.printStackTrace();
         } catch (IllegalAccessException e) {
-            Utils.log("IllegalAccessException : " + e.getMessage());
+            log("IllegalAccessException : " + e.getMessage());
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            Utils.log("ClassNotFoundException : " + e.getMessage());
+            log("ClassNotFoundException : " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -273,8 +280,8 @@ public final class Utils {
      */
     public static void decorateToolbar(Activity activity, Bitmap bitmap) {
         Palette p = Palette.from(bitmap).generate();
-        Palette.Swatch vibrantSwatch = p.getVibrantSwatch();
-        Utils.log("Vibrant swatch is null : " + (vibrantSwatch == null));
+        Swatch vibrantSwatch = p.getVibrantSwatch();
+        log("Vibrant swatch is null : " + (vibrantSwatch == null));
 
         if (vibrantSwatch != null) {
             int primaryColor = vibrantSwatch.getRgb();
@@ -291,17 +298,17 @@ public final class Utils {
      */
     public static Bitmap getRoundedBitmap(Bitmap bitmap) {
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                bitmap.getHeight(), Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        Paint paint = new Paint();
+        Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
 
         paint.setAntiAlias(true);
         canvas.drawARGB(0, 0, 0, 0);
         canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2,
                 bitmap.getWidth() / 2, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
         return output;
     }
@@ -326,8 +333,8 @@ public final class Utils {
      * @param recyclerView The object which the item click listener will be attached
      * @param listener The callbacks which will be invoked appropriately
      */
-    public static void setOnItemClickListener(final RecyclerView recyclerView, final CustomClickListener listener) {
-        final GestureDetector detector = new GestureDetector(recyclerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
+    public static void setOnItemClickListener(final RecyclerView recyclerView, final Utils.CustomClickListener listener) {
+        final GestureDetector detector = new GestureDetector(recyclerView.getContext(), new SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
                 View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
@@ -352,7 +359,7 @@ public final class Utils {
             }
         });
 
-        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+        recyclerView.addOnItemTouchListener(new OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 return detector.onTouchEvent(e);
@@ -407,14 +414,14 @@ public final class Utils {
                     .cacheOnDisk(true)
                     .build();
 
-            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+            ImageLoaderConfiguration config = new Builder(context)
                     .defaultDisplayImageOptions(defaultOptions)
                     .build();
             ImageLoader.getInstance().init(config);
         }
     }
 
-    public static ArrayList<String> filter (ArrayList<String> collection, FilterPredicate predicate) {
+    public static ArrayList<String> filter(ArrayList<String> collection, Utils.FilterPredicate predicate) {
         ArrayList<String> filteredList = new ArrayList<>();
 
         for (String next : collection) {
@@ -469,46 +476,47 @@ public final class Utils {
     /**
      * Reference: http://english.stackexchange.com/questions/69162/are-these-plural-or-singular
      *
-     * @param x
-     * @return
+     * @param x the floating-point number in string format
+     * @return the fraction version
      */
     public static String fractionize(String x) {
         String tokens[] = x.split("\\.");
         String whole = tokens[0].equals("0") ? "" : tokens[0];
         String decimal = tokens[1];
 
-        if (decimal.equals("25")) { // 1/4
-            return whole + "¼";
-        } else if (decimal.equals("5")) { // 1/2
-            return whole + "½";
-        } else if (decimal.equals("75")) { // 3/4
-            return whole + "¾";
-        } else if (decimal.equals("3333")) { // 1/3
-            return whole + "⅓";
-        } else if (decimal.equals("6666")) { // 2/3
-            return whole + "⅔";
-        } else if (decimal.equals("2")) { // 1/5
-            return whole + "⅕";
-        } else if (decimal.equals("4")) { // 2/5
-            return whole + "⅖";
-        } else if (decimal.equals("6")) { // 3/5
-            return whole + "⅗";
-        } else if (decimal.equals("8")) { // 4/5
-            return whole + "⅘";
-        } else if (decimal.equals("1666")) { // 1/6
-            return whole + "⅙";
-        } else if (decimal.equals("8333")) { // 5/6
-            return whole + "⅚";
-        } else if (decimal.equals("125")) { // 1/8
-            return whole + "⅛";
-        } else if (decimal.equals("375")) { // 3/8
-            return whole + "⅜";
-        } else if (decimal.equals("625")) { // 5/8
-            return whole + "⅝";
-        } else if (decimal.equals("875")) { // 7/8
-            return whole + "⅞";
-        } else {
-            return x;
+        switch (decimal) {
+            case "25":  // 1/4
+                return whole + "¼";
+            case "5":  // 1/2
+                return whole + "½";
+            case "75":  // 3/4
+                return whole + "¾";
+            case "3333":  // 1/3
+                return whole + "⅓";
+            case "6666":  // 2/3
+                return whole + "⅔";
+            case "2":  // 1/5
+                return whole + "⅕";
+            case "4":  // 2/5
+                return whole + "⅖";
+            case "6":  // 3/5
+                return whole + "⅗";
+            case "8":  // 4/5
+                return whole + "⅘";
+            case "1666":  // 1/6
+                return whole + "⅙";
+            case "8333":  // 5/6
+                return whole + "⅚";
+            case "125":  // 1/8
+                return whole + "⅛";
+            case "375":  // 3/8
+                return whole + "⅜";
+            case "625":  // 5/8
+                return whole + "⅝";
+            case "875":  // 7/8
+                return whole + "⅞";
+            default:
+                return x;
         }
     }
 
@@ -521,8 +529,8 @@ public final class Utils {
     }
 
     public static String getMacAddress(Context context) {
-        WifiManager wimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        return wimanager.getConnectionInfo().getMacAddress();
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        return wifiManager.getConnectionInfo().getMacAddress();
     }
 
     /**
@@ -541,7 +549,7 @@ public final class Utils {
     /**
      * Convenience class that implements the CustomClickListener with blank implementations.
      */
-    public static class SimpleClickListener implements CustomClickListener {
+    public static class SimpleClickListener implements Utils.CustomClickListener {
 
         @Override
         public void onClick(View view, int position) {

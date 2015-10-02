@@ -18,13 +18,13 @@ import team.jcandfriends.cookstogo.Utils;
  */
 public class FetchRecipeTask extends AsyncTask<Integer, Void, JSONObject> {
 
-    private Callbacks callbacks;
+    private final FetchRecipeTask.Callbacks callbacks;
 
-    private FetchRecipeTask(Callbacks callbacks) {
+    private FetchRecipeTask(FetchRecipeTask.Callbacks callbacks) {
         this.callbacks = callbacks;
     }
 
-    public static void start(int recipeId, Callbacks callbacks) {
+    public static void start(int recipeId, FetchRecipeTask.Callbacks callbacks) {
         FetchRecipeTask task = new FetchRecipeTask(callbacks);
         task.execute(recipeId);
     }
@@ -32,7 +32,7 @@ public class FetchRecipeTask extends AsyncTask<Integer, Void, JSONObject> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        callbacks.onPreExecute();
+        this.callbacks.onPreExecute();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class FetchRecipeTask extends AsyncTask<Integer, Void, JSONObject> {
     @Override
     protected void onPostExecute(JSONObject recipe) {
         super.onPostExecute(recipe);
-        callbacks.onPostExecute(recipe);
+        this.callbacks.onPostExecute(recipe);
     }
 
     /**

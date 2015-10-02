@@ -16,80 +16,131 @@ import team.jcandfriends.cookstogo.Utils;
 public class VirtualBasketManager {
 
     /**
-     *
+     * Constants related to a virtual basket object
      */
-    public static final String PERSISTENT_VIRTUAL_BASKET_ITEMS = "persistent_virtual_basket_items";
-    /**
-     * The Log tag
-     */
+    public static final String VIRTUAL_BASKET_NAME = "name";
+    public static final String VIRTUAL_BASKET_ITEMS = "items";
+    private static final String PERSISTENT_VIRTUAL_BASKETS = "persistent_virtual_baskets";
     private static final String TAG = "VirtualBasketManager";
-    /**
-     * The name of the SharedPreferences that contains the caches of this class
-     */
-    private static final String VIRTUAL_BASKET_CACHE = "virtual_basket_cache";
-    /**
-     * Singleton instance
-     */
-    private static VirtualBasketManager ourInstance;
-
-    private ArrayList<JSONObject> cachedItems;
+    private static VirtualBasketManager SOLE_INSTANCE;
     private SharedPreferences preferences;
+    private ArrayList<JSONObject> mVirtualBaskets;
 
     private VirtualBasketManager(Context context) {
-        preferences = context.getSharedPreferences(VIRTUAL_BASKET_CACHE, Context.MODE_PRIVATE);
-        String items = preferences.getString(PERSISTENT_VIRTUAL_BASKET_ITEMS, null);
+        this.preferences = context.getSharedPreferences(PERSISTENT_VIRTUAL_BASKETS, Context.MODE_PRIVATE);
+        String virtualBasketsAsString = preferences.getString(PERSISTENT_VIRTUAL_BASKETS, null);
 
-        if (null == items) {
-            cachedItems = new ArrayList<>();
-        } else {
+        if (virtualBasketsAsString != null) {
             try {
-                cachedItems = Utils.jsonArrayToList(new JSONArray(items));
+                mVirtualBaskets = Utils.jsonArrayToList(new JSONArray(virtualBasketsAsString));
             } catch (JSONException e) {
-                Log.e(TAG, "virtual basket items can't be parsed to a JSONArray");
-                e.printStackTrace();
+                Log.e(TAG, "Error parsing json as valid JSONArray of virtual baskets", e);
             }
+        } else {
+            mVirtualBaskets = new ArrayList<>();
         }
+    }
+
+    public static VirtualBasketManager get(Context context) {
+        if (SOLE_INSTANCE == null) {
+            SOLE_INSTANCE = new VirtualBasketManager(context);
+        }
+
+        return SOLE_INSTANCE;
     }
 
     /**
-     * Returns the singleton instance
+     * Returns a list of all virtual baskets
      *
-     * @param context the context
-     * @return the singleton instance
+     * @return
      */
-    public static VirtualBasketManager get(Context context) {
-        if (ourInstance == null) {
-            ourInstance = new VirtualBasketManager(context);
-        }
-        return ourInstance;
-    }
-
-    public void add(JSONObject ingredient) throws IllegalStateException {
-        if (cachedItems.contains(ingredient)) {
-            throw new IllegalStateException(ingredient.optString(Api.INGREDIENT_TYPE_NAME) + " is already added.");
-        }
-        cachedItems.add(ingredient);
-        persist();
-    }
-
-    public void remove(JSONObject ingredient) {
-        cachedItems.remove(ingredient);
-        persist();
-    }
-
     public ArrayList<JSONObject> getAll() {
-        return cachedItems;
+        return mVirtualBaskets;
+    }
+
+    public ArrayList<String> getAllAsString() {
+        ArrayList<String> names = new ArrayList<>();
+
+        for (JSONObject virtualBasket : mVirtualBaskets) {
+            names.add(virtualBasket.optString(VIRTUAL_BASKET_NAME));
+        }
+
+        return names;
+    }
+
+    public JSONObject get(int position) {
+        return mVirtualBaskets.get(position);
+    }
+
+    /**
+     * Adds the ingredient to the virtual basket on the given positon
+     *
+     * @param position   the position of the virtual basket on the JSONArray
+     * @param ingredient the ingredient that will be added to the items of the virtual basket
+     */
+    public void addTo(int position, JSONObject ingredient) {
+        try {
+            JSONObject virtualBasket = mVirtualBaskets.get(position);
+            JSONArray items = virtualBasket.optJSONArray(VIRTUAL_BASKET_ITEMS);
+            items.put(ingredient);
+            virtualBasket.put(VIRTUAL_BASKET_ITEMS, items);
+            persist();
+        } catch (IndexOutOfBoundsException e) {
+            Log.e(TAG, "Attempt to add an ingredient to a virtual basket that doesn't exist", e);
+        } catch (JSONException e) {
+            Log.e(TAG, "Attempt to put items to the virtual basket failed", e);
+        }
+    }
+
+    public ArrayList<JSONObject> getItems(JSONObject virtualBasket) {
+        return Utils.jsonArrayToList(virtualBasket.optJSONArray(VIRTUAL_BASKET_ITEMS));
+    }
+
+    public int getCount() {
+        return mVirtualBaskets.size();
+    }
+
+    public void add(String virtualBasketName) {
+        JSONObject virtualBasket = new JSONObject();
+        try {
+            virtualBasket.put(VIRTUAL_BASKET_NAME, virtualBasketName);
+            virtualBasket.put(VIRTUAL_BASKET_ITEMS, new JSONArray());
+        } catch (JSONException e) {
+            Log.e(TAG, "Error putting virtual basket name", e);
+        }
+
+        mVirtualBaskets.add(virtualBasket);
+        persist();
+    }
+
+    public void remove(JSONObject virtualBasket) {
+        mVirtualBaskets.remove(virtualBasket);
+        persist();
     }
 
     private void persist() {
-        preferences.edit().putString(PERSISTENT_VIRTUAL_BASKET_ITEMS, Utils.listToJsonArray(cachedItems).toString()).apply();
+        preferences.edit().putString(PERSISTENT_VIRTUAL_BASKETS, Utils.listToJsonArray(mVirtualBaskets).toString()).apply();
     }
 
-    public boolean isAlreadyAdded(JSONObject ingredient) {
-        int ingredientId = ingredient.optInt(Api.INGREDIENT_PK);
+    public boolean isAlreadyAdded(String virtualBasketName) {
+        for (JSONObject i : mVirtualBaskets) {
+            if (virtualBasketName.equalsIgnoreCase(i.optString(VIRTUAL_BASKET_NAME))) {
+                return true;
+            }
+        }
 
-        for (JSONObject i : cachedItems) {
-            if (ingredientId == i.optInt(Api.INGREDIENT_PK)) {
+        return false;
+    }
+
+    public boolean isAlreadyAddedTo(int position, JSONObject ingredient) {
+        JSONObject virtualBasket = mVirtualBaskets.get(position);
+        JSONArray items = virtualBasket.optJSONArray(VIRTUAL_BASKET_ITEMS);
+
+        JSONObject currentItem;
+        final int toCompare = ingredient.optInt(Api.INGREDIENT_PK);
+        for (int i = 0; i < items.length(); i++) {
+            currentItem = items.optJSONObject(i);
+            if (toCompare == currentItem.optInt(Api.INGREDIENT_PK)) {
                 return true;
             }
         }
@@ -98,7 +149,32 @@ public class VirtualBasketManager {
     }
 
     public void deleteAll() {
-        cachedItems.clear();
-        preferences.edit().remove(PERSISTENT_VIRTUAL_BASKET_ITEMS).apply();
+        mVirtualBaskets.clear();
+        preferences.edit().remove(PERSISTENT_VIRTUAL_BASKETS).apply();
+    }
+
+    public void delete(JSONObject virtualBasket) {
+        int virtualBasketIndex = indexOf(virtualBasket);
+        if (virtualBasketIndex != -1) {
+            mVirtualBaskets.remove(virtualBasketIndex);
+            persist();
+        }
+    }
+
+    private int indexOf(JSONObject virtualBasket) {
+        String name = virtualBasket.optString(VIRTUAL_BASKET_NAME);
+
+        JSONObject each;
+        String eachName;
+        for (int i = 0; i < mVirtualBaskets.size(); i++) {
+            each = mVirtualBaskets.get(i);
+
+            eachName = each.optString(VIRTUAL_BASKET_NAME);
+            if (name.equals(eachName)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }
