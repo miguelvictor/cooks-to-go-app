@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Set;
 
 import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.JSONGrabber;
@@ -36,6 +37,11 @@ public class IngredientManager {
      * The prefix of each ingredient that was cached
      */
     private static final String INGREDIENT_CACHE_PREFIX = "ingredient";
+
+    /**
+     * The key of the saved ingredient. Used in saving the last selected ingredient in which the user hasn't created any virtual baskets yet
+     */
+    private static final String SAVED_INGREDIENT = "saved_ingredient";
 
     /**
      * Singleton instance
@@ -216,6 +222,52 @@ public class IngredientManager {
                 }
             }
         }.execute();
+    }
+
+    /**
+     * Removes all ingredients from the cache
+     */
+    public void clearCachedIngredients() {
+        final char firstChar = INGREDIENT_CACHE_PREFIX.charAt(0);
+        final Set<String> keys = preferences.getAll().keySet();
+
+        if (keys.size() > 1) {
+            SharedPreferences.Editor editor = preferences.edit();
+
+            for (String key : keys) {
+                if (firstChar == key.charAt(0)) {
+                    editor.remove(key);
+                }
+            }
+
+            editor.apply();
+        }
+    }
+
+    /**
+     * Saves the ingredient
+     */
+    public void saveIngredient(JSONObject ingredient) {
+        preferences.edit().putString(SAVED_INGREDIENT, ingredient.toString()).apply();
+    }
+
+    /**
+     * Returns the saved ingredient
+     *
+     * @return the saved ingredient or null if it doesn't exist
+     */
+    public JSONObject getSavedIngredient() {
+        String savedIngredientAsString = preferences.getString(SAVED_INGREDIENT, null);
+        try {
+            return new JSONObject(savedIngredientAsString);
+        } catch (JSONException e) {
+            Log.e(TAG, "Exception while parsing the saved ingredient : " + savedIngredientAsString, e);
+            return null;
+        }
+    }
+
+    public void forgetSavedIngredient() {
+        preferences.edit().remove(SAVED_INGREDIENT).apply();
     }
 
     public interface Callbacks {

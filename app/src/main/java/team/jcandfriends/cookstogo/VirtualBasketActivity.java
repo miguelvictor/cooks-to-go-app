@@ -14,13 +14,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import team.jcandfriends.cookstogo.R.id;
 import team.jcandfriends.cookstogo.adapters.VirtualBasketItemsAdapter;
+import team.jcandfriends.cookstogo.managers.IngredientManager;
 import team.jcandfriends.cookstogo.managers.VirtualBasketManager;
 
 /**
@@ -28,11 +29,16 @@ import team.jcandfriends.cookstogo.managers.VirtualBasketManager;
  */
 public class VirtualBasketActivity extends AppCompatActivity {
 
+    public static final int ADD_INGREDIENT_REQUEST_CODE = 1;
     private static final String TAG = "VirtualBasketActivity";
+    private int mVirtualBasketPosition;
+    private VirtualBasketItemsAdapter mAdapter;
+    private JSONObject mVirtualBasket;
 
-    JSONObject virtualBasket;
-
-    private View coordinatorLayout;
+    private View mCoordinatorLayout;
+    private View mFab;
+    private View mEmptyView;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,39 +54,91 @@ public class VirtualBasketActivity extends AppCompatActivity {
                 return;
             }
 
-            virtualBasket = new JSONObject(virtualBasketAsString);
+            mVirtualBasketPosition = data.getIntExtra(Extras.VIRTUAL_BASKET_POSITION_EXTRA, -1);
+            mVirtualBasket = new JSONObject(virtualBasketAsString);
 
-            coordinatorLayout = findViewById(id.coordinator_layout);
-            View fab = findViewById(id.recommend_fab);
-            View emptyView = findViewById(id.empty_view);
+            mCoordinatorLayout = findViewById(R.id.coordinator_layout);
+            mFab = findViewById(R.id.recommend_fab);
+            mEmptyView = findViewById(R.id.empty_view);
 
-            Toolbar toolbar = (Toolbar) findViewById(id.toolbar);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
 
             ActionBar actionBar = getSupportActionBar();
             assert actionBar != null;
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(virtualBasket.optString(VirtualBasketManager.VIRTUAL_BASKET_NAME));
+            actionBar.setTitle(mVirtualBasket.optString(VirtualBasketManager.VIRTUAL_BASKET_NAME));
 
-            final JSONArray virtualBasketItems = virtualBasket.optJSONArray(VirtualBasketManager.VIRTUAL_BASKET_ITEMS);
+            final IngredientManager manager = IngredientManager.get(this);
 
-            if (virtualBasketItems.length() != 0) {
-                RecyclerView recyclerView = (RecyclerView) findViewById(id.recycler_view);
-                recyclerView.setAdapter(new VirtualBasketItemsAdapter(Utils.jsonArrayToList(virtualBasketItems)));
-                recyclerView.setClickable(true);
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(new LinearLayoutManager(this));
-                recyclerView.setVisibility(View.VISIBLE);
-                Utils.setOnItemClickListener(recyclerView, new Utils.SimpleClickListener() {
-                    @Override
-                    public void onClick(View view, int position) {
-                        JSONObject ingredient = virtualBasketItems.optJSONObject(position);
-                        Utils.startIngredientActivity(VirtualBasketActivity.this, ingredient.optInt(Api.INGREDIENT_PK), ingredient.optString(Api.INGREDIENT_NAME));
+            JSONArray virtualBasketItems = mVirtualBasket.optJSONArray(VirtualBasketManager.VIRTUAL_BASKET_ITEMS);
+            mAdapter = new VirtualBasketItemsAdapter(Utils.jsonArrayToList(virtualBasketItems));
+            mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setHasFixedSize(true);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            Utils.setOnItemClickListener(mRecyclerView, new Utils.CustomClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    final JSONObject ingredient = mAdapter.getItem(position);
+                    final int ingredientId = ingredient.optInt(Api.INGREDIENT_PK);
+
+                    if (manager.hasCachedIngredient(ingredientId)) {
+                        Utils.startIngredientActivity(VirtualBasketActivity.this, ingredientId, ingredient.optString(Api.INGREDIENT_NAME));
+                    } else {
+                        final AlertDialog dialog = new AlertDialog.Builder(VirtualBasketActivity.this)
+                                .setTitle(R.string.dialog_ingredient_loading_header)
+                                .setMessage(R.string.dialog_ingredient_loading_subheader)
+                                .setCancelable(false)
+                                .create();
+
+                        dialog.show();
+                        manager.fetch(ingredientId, new IngredientManager.Callbacks() {
+                            @Override
+                            public void onSuccess(JSONObject result) {
+                                dialog.dismiss();
+                                manager.cacheIngredient(result);
+                                Utils.startIngredientActivity(VirtualBasketActivity.this, ingredientId, ingredient.optString(Api.INGREDIENT_NAME));
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                dialog.dismiss();
+                                Toast.makeText(VirtualBasketActivity.this, "Some unexpected error occurred.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-                });
-                fab.setVisibility(View.VISIBLE);
-                emptyView.setVisibility(View.GONE);
-            }
+                }
+
+                @Override
+                public void onLongClick(View view, final int position) {
+                    final JSONObject ingredient = mAdapter.getItem(position);
+                    final String ingredientName = ingredient.optString(Api.INGREDIENT_NAME);
+
+                    new AlertDialog.Builder(VirtualBasketActivity.this)
+                            .setTitle("Delete " + ingredientName + "?")
+                            .setMessage("Are you sure you want to remove this ingredient in this virtual basket?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    VirtualBasketManager.get(VirtualBasketActivity.this).deleteFrom(mVirtualBasketPosition, position);
+                                    mAdapter.removeItem(position);
+                                    synchronizeView();
+                                    Snackbar.make(mCoordinatorLayout, "Deleted " + ingredientName, Snackbar.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                            .create()
+                            .show();
+                }
+            });
+
+            synchronizeView();
         } catch (JSONException e) {
             Log.e(TAG, "Exception while building a virtual basket json object from string extra", e);
             finish();
@@ -95,31 +153,37 @@ public class VirtualBasketActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (android.R.id.home == item.getItemId()) {
-            finish();
-            return true;
-        } else if (item.getItemId() == id.action_delete_virtual_basket) {
-            final VirtualBasketManager manager = VirtualBasketManager.get(this);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_delete_virtual_basket:
+                new AlertDialog.Builder(this)
+                        .setTitle("Delete virtual basket?")
+                        .setMessage("Are you sure you want to delete " + mVirtualBasket.optString(VirtualBasketManager.VIRTUAL_BASKET_NAME) + "?")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                VirtualBasketManager.get(VirtualBasketActivity.this).delete(mVirtualBasket);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .create()
+                        .show();
 
-            new AlertDialog.Builder(this)
-                    .setTitle("Delete virtual basket?")
-                    .setMessage("Are you sure you want to delete " + virtualBasket.optString(VirtualBasketManager.VIRTUAL_BASKET_NAME) + "?")
-                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            manager.delete(virtualBasket);
-                            finish();
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .create()
-                    .show();
-            return true;
+                return true;
+            case R.id.action_add_ingredient_to_virtual_basket:
+                Intent intent = new Intent(this, IngredientsActivity.class);
+                intent.setAction(VirtualBasketManager.ADD_INGREDIENT_TO_VIRTUAL_BASKET);
+                intent.putExtra(Extras.VIRTUAL_BASKET_POSITION_EXTRA, mVirtualBasketPosition);
+                startActivityForResult(intent, ADD_INGREDIENT_REQUEST_CODE);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -128,10 +192,37 @@ public class VirtualBasketActivity extends AppCompatActivity {
     public void recommendRecipes(View view) {
         if (Utils.hasInternet(this)) {
             Intent intent = new Intent(this, RecommendedRecipesActivity.class);
-            intent.putExtra(VirtualBasketsActivity.VIRTUAL_BASKET_EXTRA, virtualBasket.toString());
+            intent.putExtra(VirtualBasketsActivity.VIRTUAL_BASKET_EXTRA, mVirtualBasket.toString());
             startActivity(intent);
         } else {
-            Snackbar.make(coordinatorLayout, "I'm sorry but you need internet for this.", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mCoordinatorLayout, "I'm sorry but you need internet for this.", Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ADD_INGREDIENT_REQUEST_CODE && resultCode == RESULT_OK) {
+            try {
+                JSONObject ingredient = new JSONObject(data.getStringExtra(Extras.INGREDIENT_EXTRA));
+                String ingredientName = ingredient.optString(Api.INGREDIENT_NAME);
+                mAdapter.addItem(ingredient);
+                synchronizeView();
+                Snackbar.make(mCoordinatorLayout, "Added " + ingredientName, Snackbar.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing ingredientJsonAsString extra", e);
+            }
+        }
+    }
+
+    private void synchronizeView() {
+        if (mAdapter.getItemCount() == 0) {
+            mRecyclerView.setVisibility(View.GONE);
+            mFab.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.VISIBLE);
+        } else {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mFab.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.GONE);
         }
     }
 }

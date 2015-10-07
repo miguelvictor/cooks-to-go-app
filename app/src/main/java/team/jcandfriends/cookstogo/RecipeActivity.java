@@ -174,7 +174,7 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
     protected void onResume() {
         super.onResume();
 
-        if (!isSyncing) {
+        if (!isSyncing && Utils.hasInternet(this)) {
             isSyncing = false;
             new AsyncTask<Void, Void, String>() {
                 @Override

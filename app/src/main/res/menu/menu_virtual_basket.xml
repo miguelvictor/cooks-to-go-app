@@ -9,4 +9,10 @@
         android:title="@string/action_delete_virtual_basket"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_add_ingredient_to_virtual_basket"
+        android:icon="@mipmap/ic_add"
+        android:title="@string/action_add_ingredient_to_virtual_basket"
+        app:showAsAction="ifRoom" />
+
 </menu>

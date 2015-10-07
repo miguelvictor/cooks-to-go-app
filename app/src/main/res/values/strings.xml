@@ -43,7 +43,7 @@
     <string name="dialog_clear_recipes_title">Clear Recipes Cache?</string>
     <string name="dialog_clear_recipes_summary">Are you sure you want to delete the recipes cache? This action cannot be undone.</string>
     <string name="dialog_clear_ingredients_title">Clear Ingredients Cache?</string>
-    <string name="dialog_clear_ingredients_summary">Are you sure you want to delete the ingredients cache? This action cannot be undone.</string>
+    <string name="dialog_clear_ingredients_summary">Are you sure you want to delete the mIngredients cache? This action cannot be undone.</string>
     <string name="dialog_ingredient_loading_header">Loading Ingredient</string>
     <string name="dialog_ingredient_loading_subheader">Please wait while loading ingredient &#8230;</string>
     <string name="dialog_no_internet_header">No connection</string>
@@ -75,9 +75,10 @@
     <string name="preference_clear_recipes_cache_summary">This will free all the resources the recipes cache are occupying</string>
     <string name="preference_clear_ingredients_cache_key">clear_ingredients_key</string>
     <string name="preference_clear_ingredients_cache_title">Clear Ingredient Cache</string>
-    <string name="preference_clear_ingredients_cache_summary">This will free all the resources the ingredients cache are occupying</string>
+    <string name="preference_clear_ingredients_cache_summary">This will free all the resources the mIngredients cache are occupying</string>
     <string name="title_activity_test">TestActivity</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="action_add_ingredient_to_virtual_basket">Add Ingredient</string>
 
 </resources>

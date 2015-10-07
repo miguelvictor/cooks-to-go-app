@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/activity_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -17,10 +18,76 @@
             app:popupTheme="@style/PopupTheme"
             app:theme="@style/ToolbarTheme" />
 
-        <FrameLayout
-            android:id="@+id/container"
+        <!-- Container of setting items -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:text="Cache"
+                android:textColor="@color/color_primary" />
+
+            <!-- Clear Recipes Cache -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/list_selector_background"
+                android:clickable="true"
+                android:onClick="onClearRecipesCache"
+                android:orientation="vertical"
+                android:paddingBottom="16dp"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:paddingTop="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/preference_clear_recipes_cache_title"
+                    android:textColor="@color/black87"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/preference_clear_recipes_cache_summary" />
+
+            </LinearLayout>
+
+            <!-- Clear Ingredients Cache -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/list_selector_background"
+                android:clickable="true"
+                android:onClick="onClearIngredientsCache"
+                android:orientation="vertical"
+                android:paddingBottom="16dp"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:paddingTop="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/preference_clear_ingredients_cache_title"
+                    android:textColor="@color/black87"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/preference_clear_ingredients_cache_summary" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 

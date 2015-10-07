@@ -16,57 +16,56 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
-import team.jcandfriends.cookstogo.R.id;
-import team.jcandfriends.cookstogo.R.layout;
+import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
 
 /**
- * IngredientAdapter is used to display all the ingredients in the RecyclerView.
+ * IngredientAdapter is used to display all the mIngredients in the RecyclerView.
  * <p/>
  * Subordinates: item_ingredient.xml, IngredientViewHolder
  */
 public class IngredientAdapter extends Adapter<IngredientAdapter.IngredientViewHolder> {
 
-    private final JSONArray ingredients;
+    private final JSONArray mIngredients;
 
-    public IngredientAdapter(JSONArray ingredients) {
-        this.ingredients = ingredients;
+    public IngredientAdapter(JSONArray mIngredients) {
+        this.mIngredients = mIngredients;
     }
 
     @Override
     public IngredientAdapter.IngredientViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(layout.item_ingredient, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ingredient, parent, false);
         return new IngredientAdapter.IngredientViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final IngredientAdapter.IngredientViewHolder holder, int position) {
-        JSONObject ingredient = this.ingredients.optJSONObject(position);
+        JSONObject ingredient = mIngredients.optJSONObject(position);
 
-        holder.name.setText(ingredient.optString(Api.INGREDIENT_NAME));
+        holder.mName.setText(ingredient.optString(Api.INGREDIENT_NAME));
         ImageLoader.getInstance().loadImage(ingredient.optString(Api.INGREDIENT_ICON), new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                holder.avatar.setImageBitmap(Utils.getRoundedBitmap(loadedImage));
+                holder.mAvatar.setImageBitmap(Utils.getRoundedBitmap(loadedImage));
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return this.ingredients.length();
+        return mIngredients.length();
     }
 
     public static class IngredientViewHolder extends ViewHolder {
 
-        ImageView avatar;
-        TextView name;
+        ImageView mAvatar;
+        TextView mName;
 
         public IngredientViewHolder(View itemView) {
             super(itemView);
 
-            this.avatar = (ImageView) itemView.findViewById(id.avatar);
-            this.name = (TextView) itemView.findViewById(id.primary_text);
+            mAvatar = (ImageView) itemView.findViewById(R.id.avatar);
+            mName = (TextView) itemView.findViewById(R.id.primary_text);
 
             itemView.setClickable(true);
         }

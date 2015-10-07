@@ -67,6 +67,8 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
         toolbar = (Toolbar) findViewById(id.toolbar);
         setSupportActionBar(toolbar);
 
+        manager = IngredientManager.get(this);
+
         ActionBar actionBar = getSupportActionBar();
         if (null != actionBar) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -141,7 +143,7 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
     protected void onResume() {
         super.onResume();
 
-        if (!isSyncing) {
+        if (!isSyncing && Utils.hasInternet(this)) {
             isSyncing = true;
             new AsyncTask<Void, Void, String>() {
                 @Override

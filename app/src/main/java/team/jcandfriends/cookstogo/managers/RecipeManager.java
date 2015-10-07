@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Set;
 
 import team.jcandfriends.cookstogo.Api;
 import team.jcandfriends.cookstogo.Constants;
@@ -365,6 +366,23 @@ public class RecipeManager {
                 }
             }
         }.execute();
+    }
+
+    public void clearCachedRecipes() {
+        final char firstChar = RECIPE_CACHE_PREFIX.charAt(0);
+        final Set<String> keys = preferences.getAll().keySet();
+
+        if (keys.size() > 1) {
+            SharedPreferences.Editor editor = preferences.edit();
+
+            for (String key : keys) {
+                if (firstChar == key.charAt(0)) {
+                    editor.remove(key);
+                }
+            }
+
+            editor.apply();
+        }
     }
 
     public interface Callbacks {

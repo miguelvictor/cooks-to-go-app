@@ -36,6 +36,7 @@ public class RecipesActivity extends BaseActivity {
 
     private boolean isSyncing = false;
 
+    private RecipeTypesAdapter adapter;
     private ViewPager viewPager;
     private TabLayout tabLayout;
 
@@ -86,7 +87,7 @@ public class RecipesActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        if (!isSyncing) {
+        if (!isSyncing && Utils.hasInternet(this)) {
             isSyncing = true;
             new AsyncTask<Void, Void, String>() {
                 @Override
@@ -119,8 +120,6 @@ public class RecipesActivity extends BaseActivity {
 
                 @Override
                 protected void onPostExecute(String result) {
-                    super.onPostExecute(result);
-
                     if (null != result && !result.equalsIgnoreCase(cachedRecipeTypes.toString())) {
                         try {
                             Log.i(TAG, "Got updated data. Updating recipes activity");
@@ -137,7 +136,9 @@ public class RecipesActivity extends BaseActivity {
     }
 
     private void synchronize(JSONArray cachedRecipeTypes) {
-        RecipeTypesAdapter adapter = new RecipeTypesAdapter(getSupportFragmentManager(), cachedRecipeTypes);
+        if (adapter == null) {
+            adapter = new RecipeTypesAdapter(getSupportFragmentManager(), cachedRecipeTypes);
+        }
 
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);

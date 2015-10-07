@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
@@ -40,6 +39,7 @@ public class IngredientsActivity extends BaseActivity {
     private JSONArray cachedIngredientTypes;
     private IngredientManager manager;
 
+    private IngredientTypesAdapter adapter;
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
@@ -88,7 +88,7 @@ public class IngredientsActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        if (!isSyncing) {
+        if (!isSyncing && Utils.hasInternet(this)) {
             Log.i(TAG, "Starting to fetch latest ingredient types");
             isSyncing = true;
             new AsyncTask<Void, Void, String>() {
@@ -142,7 +142,9 @@ public class IngredientsActivity extends BaseActivity {
     }
 
     private void synchronize(JSONArray cachedIngredientTypes) {
-        FragmentStatePagerAdapter adapter = new IngredientTypesAdapter(getSupportFragmentManager(), cachedIngredientTypes);
+        if (adapter == null) {
+            adapter = new IngredientTypesAdapter(getSupportFragmentManager(), cachedIngredientTypes);
+        }
 
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);

@@ -27,10 +27,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import team.jcandfriends.cookstogo.R.anim;
-import team.jcandfriends.cookstogo.R.id;
-import team.jcandfriends.cookstogo.R.layout;
-import team.jcandfriends.cookstogo.R.string;
 import team.jcandfriends.cookstogo.Utils.SimpleClickListener;
 import team.jcandfriends.cookstogo.adapters.RecipeAdapter;
 import team.jcandfriends.cookstogo.managers.RecipeManager;
@@ -42,67 +38,63 @@ import team.jcandfriends.cookstogo.managers.RecipeSearchManager;
  */
 public class RecipeSearchActivity extends AppCompatActivity implements TextWatcher, OnEditorActionListener {
 
-    private RecipeSearchManager searchManager;
+    private RecipeSearchManager mSearchManager;
 
-    private SearchResultsAdapter adapter;
-    private ArrayList<String> searchHistoryList;
+    private SearchResultsAdapter mAdapter;
+    private ArrayList<String> mSearchHistoryList;
 
-    private RecyclerView searchHistoryView;
-    private RecyclerView searchResultsView;
-    private EditText searchField;
-    private View progressBar;
-    private View noResultsView;
+    private RecyclerView mSearchHistoryView;
+    private RecyclerView mSearchResultsView;
+    private EditText mSearchField;
+    private View mProgressBar;
+    private View mNoResultsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(layout.activity_search);
+        setContentView(R.layout.activity_search);
 
         // Toolbar initialization
-        Toolbar toolbar = (Toolbar) this.findViewById(id.toolbar);
-        this.setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        ActionBar actionBar = this.getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         // Views initialization
-        this.searchHistoryView = (RecyclerView) this.findViewById(id.recycler_view);
-        this.searchResultsView = (RecyclerView) this.findViewById(id.results_view);
-        this.searchField = (EditText) this.findViewById(id.search_field);
-        this.progressBar = this.findViewById(id.progress_bar);
-        this.noResultsView = this.findViewById(id.no_results_found);
+        mSearchHistoryView = (RecyclerView) findViewById(R.id.recycler_view);
+        mSearchResultsView = (RecyclerView) findViewById(R.id.results_view);
+        mSearchField = (EditText) findViewById(R.id.search_field);
+        mProgressBar = findViewById(R.id.progress_bar);
+        mNoResultsView = findViewById(R.id.no_results_found);
 
-        // adapter boilerplate initialization
-        this.searchHistoryView.setLayoutManager(new LinearLayoutManager(this));
-        this.searchHistoryView.setClickable(true);
-        this.searchHistoryView.setHasFixedSize(true);
-        this.searchResultsView.setHasFixedSize(true);
-        this.searchResultsView.setClickable(true);
-        this.searchResultsView.setLayoutManager(new LinearLayoutManager(this));
+        // mAdapter boilerplate initialization
+        mSearchHistoryView.setLayoutManager(new LinearLayoutManager(this));
+        mSearchHistoryView.setClickable(true);
+        mSearchHistoryView.setHasFixedSize(true);
+        mSearchResultsView.setHasFixedSize(true);
+        mSearchResultsView.setClickable(true);
+        mSearchResultsView.setLayoutManager(new LinearLayoutManager(this));
 
-        this.searchManager = RecipeSearchManager.get(this);
+        mSearchManager = RecipeSearchManager.get(this);
 
-        this.searchHistoryList = this.searchManager.getAll();
-        this.adapter = new SearchResultsAdapter(this.searchHistoryList);
-        this.searchHistoryView.setAdapter(this.adapter);
-        Utils.setOnItemClickListener(searchHistoryView, new SimpleClickListener() {
+        mSearchHistoryList = mSearchManager.getAll();
+        mAdapter = new SearchResultsAdapter(mSearchHistoryList);
+        mSearchHistoryView.setAdapter(mAdapter);
+        Utils.setOnItemClickListener(mSearchHistoryView, new SimpleClickListener() {
             @Override
             public void onClick(View view, int position) {
-                String query = RecipeSearchActivity.this.searchHistoryList.get(position);
-                View currentFocus = RecipeSearchActivity.this.getCurrentFocus();
-                if (null != currentFocus) {
-                    InputMethodManager imeManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imeManager.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
-                }
-                RecipeSearchActivity.this.searchField.setText(query);
+                String query = RecipeSearchActivity.this.mSearchHistoryList.get(position);
+                Utils.closeKeyboard(RecipeSearchActivity.this);
+                RecipeSearchActivity.this.mSearchField.setText(query);
                 RecipeSearchActivity.this.showResults(query);
             }
         });
 
-        this.searchField.setOnEditorActionListener(this);
-        this.searchField.addTextChangedListener(this);
+        mSearchField.setOnEditorActionListener(this);
+        mSearchField.addTextChangedListener(this);
     }
 
     @Override
@@ -110,7 +102,7 @@ public class RecipeSearchActivity extends AppCompatActivity implements TextWatch
         MenuInflater inflater = this.getMenuInflater();
         inflater.inflate(R.menu.menu_recipes_search, menu);
 
-        menu.findItem(id.action_clear_search_text).getIcon().setColorFilter(Colors.BLACK_54, Mode.SRC_IN);
+        menu.findItem(R.id.action_clear_search_text).getIcon().setColorFilter(Colors.BLACK_54, Mode.SRC_IN);
 
         return true;
     }
@@ -119,10 +111,10 @@ public class RecipeSearchActivity extends AppCompatActivity implements TextWatch
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.finish();
+                finish();
                 return true;
-            case id.action_clear_search_text:
-                this.searchField.setText("");
+            case R.id.action_clear_search_text:
+                mSearchField.setText("");
                 return true;
         }
 
@@ -132,7 +124,7 @@ public class RecipeSearchActivity extends AppCompatActivity implements TextWatch
     @Override
     protected void onPause() {
         super.onPause();
-        this.overridePendingTransition(anim.abc_fade_in, anim.abc_fade_out);
+        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
 
     @Override
@@ -147,10 +139,10 @@ public class RecipeSearchActivity extends AppCompatActivity implements TextWatch
 
     @Override
     public void afterTextChanged(Editable s) {
-        this.searchHistoryList = this.adapter.filter(s.toString(), this.searchManager);
-        this.searchHistoryView.setVisibility(View.VISIBLE);
-        this.noResultsView.setVisibility(View.GONE);
-        this.searchResultsView.setVisibility(View.GONE);
+        mSearchHistoryList = mAdapter.filter(s.toString(), mSearchManager);
+        mSearchHistoryView.setVisibility(View.VISIBLE);
+        mNoResultsView.setVisibility(View.GONE);
+        mSearchResultsView.setVisibility(View.GONE);
     }
 
     @Override
@@ -158,10 +150,10 @@ public class RecipeSearchActivity extends AppCompatActivity implements TextWatch
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
             // close keyboard
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(mSearchField.getWindowToken(), 0);
 
-            String query = searchField.getText().toString();
-            searchManager.add(query);
+            String query = mSearchField.getText().toString();
+            mSearchManager.add(query);
 
             // show results
             showResults(query);
@@ -173,14 +165,14 @@ public class RecipeSearchActivity extends AppCompatActivity implements TextWatch
 
     private void showResults(String query) {
         if (Utils.hasInternet(this)) {
-            this.searchHistoryView.setVisibility(View.GONE);
-            this.progressBar.setVisibility(View.VISIBLE);
-            this.searchField.clearFocus();
+            mSearchHistoryView.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.VISIBLE);
+            mSearchField.clearFocus();
 
-            this.handleRecipeSearch(query);
+            handleRecipeSearch(query);
         } else {
-            Toast.makeText(this, string.snackbar_no_internet, Toast.LENGTH_SHORT).show();
-            this.finish();
+            Toast.makeText(this, R.string.snackbar_no_internet, Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
@@ -192,15 +184,13 @@ public class RecipeSearchActivity extends AppCompatActivity implements TextWatch
                 final JSONArray results = result.optJSONArray(Api.RESULTS);
 
                 if (results.length() == 0) {
-                    RecipeSearchActivity.this.findViewById(id.no_results_found).setVisibility(View.VISIBLE);
+                    RecipeSearchActivity.this.findViewById(R.id.no_results_found).setVisibility(View.VISIBLE);
                 } else {
                     RecipeAdapter adapter = new RecipeAdapter(results);
-                    RecipeSearchActivity.this.searchResultsView.setAdapter(adapter);
-                    Utils.setOnItemClickListener(RecipeSearchActivity.this.searchResultsView, new SimpleClickListener() {
+                    RecipeSearchActivity.this.mSearchResultsView.setAdapter(adapter);
+                    Utils.setOnItemClickListener(RecipeSearchActivity.this.mSearchResultsView, new SimpleClickListener() {
                         @Override
                         public void onClick(View view, int position) {
-                            super.onClick(view, position);
-
                             JSONObject recipe = results.optJSONObject(position);
                             int recipeId = recipe.optInt(Api.RECIPE_PK);
                             String recipeName = recipe.optString(Api.RECIPE_NAME);
@@ -209,10 +199,10 @@ public class RecipeSearchActivity extends AppCompatActivity implements TextWatch
                             Utils.startRecipeActivity(RecipeSearchActivity.this, recipeId, recipeName);
                         }
                     });
-                    RecipeSearchActivity.this.searchResultsView.setVisibility(View.VISIBLE);
+                    RecipeSearchActivity.this.mSearchResultsView.setVisibility(View.VISIBLE);
                 }
 
-                RecipeSearchActivity.this.progressBar.setVisibility(View.GONE);
+                RecipeSearchActivity.this.mProgressBar.setVisibility(View.GONE);
             }
 
             @Override

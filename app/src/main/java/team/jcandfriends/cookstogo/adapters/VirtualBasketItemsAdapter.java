@@ -57,15 +57,21 @@ public class VirtualBasketItemsAdapter extends Adapter<VirtualBasketItemsAdapter
 
     @Override
     public int getItemCount() {
-        return this.items.size();
+        return items.size();
     }
 
-    public void deleteAll() {
-        this.items.clear();
+    public void addItem(JSONObject ingredient) {
+        items.add(ingredient);
+        notifyItemInserted(items.size() - 1);
     }
 
-    public void removeItem(JSONObject ingredient) {
-        this.items.remove(ingredient);
+    public JSONObject getItem(int position) {
+        return items.get(position);
+    }
+
+    public void removeItem(int position) {
+        items.remove(position);
+        notifyItemRemoved(position);
     }
 
     public static class VirtualBasketItemViewHolder extends ViewHolder {
@@ -75,8 +81,8 @@ public class VirtualBasketItemsAdapter extends Adapter<VirtualBasketItemsAdapter
 
         public VirtualBasketItemViewHolder(View itemView) {
             super(itemView);
-            this.avatar = (ImageView) itemView.findViewById(id.avatar);
-            this.ingredientName = (TextView) itemView.findViewById(id.primary_text);
+            avatar = (ImageView) itemView.findViewById(id.avatar);
+            ingredientName = (TextView) itemView.findViewById(id.primary_text);
         }
     }
 

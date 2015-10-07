@@ -16,13 +16,23 @@ import team.jcandfriends.cookstogo.Utils;
 public class VirtualBasketManager {
 
     /**
+     * Intent Actions
+     */
+    public static final String ADD_NEW_VIRTUAL_BASKET = "add_new_virtual_basket";
+    public static final String ADD_INGREDIENT_TO_VIRTUAL_BASKET = "add_ingredient_to_virtual_basket";
+
+    /**
      * Constants related to a virtual basket object
      */
     public static final String VIRTUAL_BASKET_NAME = "name";
+
     public static final String VIRTUAL_BASKET_ITEMS = "items";
     private static final String PERSISTENT_VIRTUAL_BASKETS = "persistent_virtual_baskets";
+
     private static final String TAG = "VirtualBasketManager";
+
     private static VirtualBasketManager SOLE_INSTANCE;
+
     private SharedPreferences preferences;
     private ArrayList<JSONObject> mVirtualBaskets;
 
@@ -176,5 +186,16 @@ public class VirtualBasketManager {
         }
 
         return -1;
+    }
+
+    public void deleteFrom(int virtualBasketPosition, int ingredientPosition) {
+        try {
+            JSONObject virtualBasket = mVirtualBaskets.get(virtualBasketPosition);
+            ArrayList<JSONObject> ingredients = Utils.jsonArrayToList(virtualBasket.optJSONArray(VIRTUAL_BASKET_ITEMS));
+            ingredients.remove(ingredientPosition);
+            virtualBasket.put(VIRTUAL_BASKET_ITEMS, Utils.listToJsonArray(ingredients));
+        } catch (JSONException e) {
+            Log.e(TAG, "Error while deleting ingredient(" + ingredientPosition + ") from virtualBasket(" + virtualBasketPosition + ")", e);
+        }
     }
 }

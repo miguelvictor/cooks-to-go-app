@@ -2,22 +2,10 @@
 <items version="2" >
 
     <item
-        jar="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/libs/jackson-all-1.9.0.jar"
-        jumboMode="false" revision="23.0.1" sha1="b9c011c6e816af0eb462770d92a278b728071d31">
-        <dex
-            dex="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/pre-dexed/debug/jackson-all-1.9.0-1f40ebf65f26b6ae14fc74aec66f4379b8f97966.jar" />
-    </item>
-    <item
         jar="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/exploded-aar/com.android.support/design/23.0.1/jars/classes.jar"
         jumboMode="false" revision="23.0.1" sha1="e5c61a3169221a89654ffcaaed47bba51cf071ad">
         <dex
             dex="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/pre-dexed/debug/classes-a5e2a36ee7e5eb068243b5692f06cab5022181f6.jar" />
-    </item>
-    <item
-        jar="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.0.1/jars/classes.jar"
-        jumboMode="false" revision="23.0.1" sha1="4356e230a981d1bbf047d848b91bc0d9b7c5bacc">
-        <dex
-            dex="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/pre-dexed/debug/classes-d7ccafad0bc9e03f8ac35a27b787146b50db4bd8.jar" />
     </item>
     <item
         jar="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/libs/internal_impl-23.0.1.jar"
@@ -44,22 +32,28 @@
             dex="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/pre-dexed/debug/classes-748fafc0ecdab8ca7a3adecf442ef656e73593cf.jar" />
     </item>
     <item
-        jar="/home/johnlibron/.gradle/caches/modules-2/files-2.1/com.nostra13.universalimageloader/universal-image-loader/1.9.4/dd9eeb557650c4ad7394df23f0f5cf27a7cfc697/universal-image-loader-1.9.4.jar"
-        jumboMode="false" revision="23.0.1" sha1="dd9eeb557650c4ad7394df23f0f5cf27a7cfc697">
-        <dex
-            dex="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/pre-dexed/debug/universal-image-loader-1.9.4-9a9d2294b45972cf5fdc9e534809a4aa2d1c8394.jar" />
-    </item>
-    <item
         jar="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/exploded-aar/com.android.support/palette-v7/23.0.1/jars/classes.jar"
         jumboMode="false" revision="23.0.1" sha1="a527cd5d9aa10f1a387cbd1c4c426fff5022a376">
         <dex
             dex="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/pre-dexed/debug/classes-7cbcbdb897ec4c29150c297a253865b3bcf42f78.jar" />
     </item>
     <item
+        jar="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.0.1/jars/classes.jar"
+        jumboMode="false" revision="23.0.1" sha1="4356e230a981d1bbf047d848b91bc0d9b7c5bacc">
+        <dex
+            dex="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/pre-dexed/debug/classes-d7ccafad0bc9e03f8ac35a27b787146b50db4bd8.jar" />
+    </item>
+    <item
         jar="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/exploded-aar/com.android.support/cardview-v7/23.0.1/jars/classes.jar"
         jumboMode="false" revision="23.0.1" sha1="39ae02ce40c3ac828abbf780ce0ff5d7a28b7d6a">
         <dex
             dex="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/pre-dexed/debug/classes-bbb7bb2d3a8c91b6e62056535eaf699fb5dc2c2b.jar" />
+    </item>
+    <item
+        jar="/home/johnlibron/.gradle/caches/modules-2/files-2.1/com.nostra13.universalimageloader/universal-image-loader/1.9.4/dd9eeb557650c4ad7394df23f0f5cf27a7cfc697/universal-image-loader-1.9.4.jar"
+        jumboMode="false" revision="23.0.1" sha1="dd9eeb557650c4ad7394df23f0f5cf27a7cfc697">
+        <dex
+            dex="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/pre-dexed/debug/universal-image-loader-1.9.4-9a9d2294b45972cf5fdc9e534809a4aa2d1c8394.jar" />
     </item>
 
 </items>
