@@ -21,14 +21,18 @@ public final class Constants {
     public static final int READ_TIMEOUT = 0;
     public static final boolean DO_INPUT = true;
 
+    /**
+     * RecipeActivity
+     */
     public static final String[] RECIPE_COMPONENTS = {
             "Summary",
             "Ingredients",
             "Steps"
     };
 
-    public static final String EXTRA_RECIPE_ID = "recipe_id";
-
+    /**
+     * RecommendRecipesActivity
+     */
     public static final String RECOMMEND_RECIPES_EXACT = "Recipes";
     public static final String RECOMMEND_RECIPES_NEARLY_THERE = "Nearly There";
     public static final String RECOMMEND_RECIPE_FRAGMENT_POSITION = "fragment_position";

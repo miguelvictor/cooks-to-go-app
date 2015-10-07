@@ -46,15 +46,15 @@ public class IngredientManager {
     /**
      * Singleton instance
      */
-    private static IngredientManager ourInstance;
+    private static IngredientManager SOLE_INSTANCE;
 
     /**
      * The SharedPreferences that contains the caches of this class
      */
-    private final SharedPreferences preferences;
+    private final SharedPreferences mPreferences;
 
     private IngredientManager(Context context) {
-        this.preferences = context.getSharedPreferences(IngredientManager.INGREDIENT_CACHE, Context.MODE_PRIVATE);
+        mPreferences = context.getSharedPreferences(IngredientManager.INGREDIENT_CACHE, Context.MODE_PRIVATE);
     }
 
     /**
@@ -64,10 +64,10 @@ public class IngredientManager {
      * @return the singleton instance
      */
     public static IngredientManager get(Context context) {
-        if (IngredientManager.ourInstance == null) {
-            IngredientManager.ourInstance = new IngredientManager(context);
+        if (SOLE_INSTANCE == null) {
+            SOLE_INSTANCE = new IngredientManager(context);
         }
-        return IngredientManager.ourInstance;
+        return SOLE_INSTANCE;
     }
 
     /**
@@ -76,7 +76,7 @@ public class IngredientManager {
      * @return true if recipe types cache is not empty, false otherwise
      */
     public boolean hasCachedIngredientTypes() {
-        return this.preferences.getAll().containsKey(IngredientManager.PERSISTENT_INGREDIENT_TYPES);
+        return mPreferences.getAll().containsKey(IngredientManager.PERSISTENT_INGREDIENT_TYPES);
     }
 
     /**
@@ -85,7 +85,7 @@ public class IngredientManager {
      * @param recipeTypes the JSONArray to cache
      */
     public void cacheIngredientTypes(JSONArray recipeTypes) {
-        this.preferences.edit().putString(IngredientManager.PERSISTENT_INGREDIENT_TYPES, recipeTypes.toString()).apply();
+        mPreferences.edit().putString(IngredientManager.PERSISTENT_INGREDIENT_TYPES, recipeTypes.toString()).apply();
     }
 
     /**
@@ -94,12 +94,11 @@ public class IngredientManager {
      * @return the cached recipe types as JSONArray
      */
     public JSONArray getCachedIngredientTypes() {
-        String ingredientTypesAsString = this.preferences.getString(IngredientManager.PERSISTENT_INGREDIENT_TYPES, "");
+        String ingredientTypesAsString = mPreferences.getString(IngredientManager.PERSISTENT_INGREDIENT_TYPES, "");
         try {
             return new JSONArray(ingredientTypesAsString);
         } catch (JSONException e) {
-            Log.e(IngredientManager.TAG, "JSONException : The ingredientTypesAsString can't be parsed as a valid JSONArray");
-            e.printStackTrace();
+            Log.e(IngredientManager.TAG, "JSONException : The ingredientTypesAsString can't be parsed as a valid JSONArray", e);
             throw new RuntimeException("Cannot proceed anymore");
         }
     }
@@ -108,7 +107,7 @@ public class IngredientManager {
      * Removes the cached recipe types
      */
     public void clearCachedIngredientTypes() {
-        this.preferences.edit().remove(IngredientManager.PERSISTENT_INGREDIENT_TYPES).apply();
+        mPreferences.edit().remove(IngredientManager.PERSISTENT_INGREDIENT_TYPES).apply();
     }
 
     /**
@@ -118,7 +117,7 @@ public class IngredientManager {
      * @return true if the recipe is found, false otherwise
      */
     public boolean hasCachedIngredient(int recipeId) {
-        return this.preferences.getAll().containsKey(IngredientManager.INGREDIENT_CACHE_PREFIX + recipeId);
+        return mPreferences.getAll().containsKey(IngredientManager.INGREDIENT_CACHE_PREFIX + recipeId);
     }
 
     /**
@@ -128,10 +127,9 @@ public class IngredientManager {
      */
     public void cacheIngredient(JSONObject ingredient) {
         try {
-            this.preferences.edit().putString(IngredientManager.INGREDIENT_CACHE_PREFIX + ingredient.getInt(Api.INGREDIENT_PK), ingredient.toString()).apply();
+            mPreferences.edit().putString(IngredientManager.INGREDIENT_CACHE_PREFIX + ingredient.getInt(Api.INGREDIENT_PK), ingredient.toString()).apply();
         } catch (JSONException e) {
-            Log.e(IngredientManager.TAG, "JSONException : The passed JSONObject ingredient doesn't contain a '" + Api.INGREDIENT_PK + "'");
-            e.printStackTrace();
+            Log.e(IngredientManager.TAG, "JSONException : The passed JSONObject ingredient doesn't contain a '" + Api.INGREDIENT_PK + "'", e);
             throw new RuntimeException("Cannot proceed anymore");
         }
     }
@@ -143,12 +141,11 @@ public class IngredientManager {
      * @return the recipe
      */
     public JSONObject getCachedIngredient(int ingredientId) {
-        String ingredientAsString = this.preferences.getString(IngredientManager.INGREDIENT_CACHE_PREFIX + ingredientId, "");
+        String ingredientAsString = mPreferences.getString(IngredientManager.INGREDIENT_CACHE_PREFIX + ingredientId, "");
         try {
             return new JSONObject(ingredientAsString);
         } catch (JSONException e) {
-            Log.e(IngredientManager.TAG, "JSONException : The ingredientAsString can't be parsed as a valid JSONObject");
-            e.printStackTrace();
+            Log.e(IngredientManager.TAG, "JSONException : The ingredientAsString can't be parsed as a valid JSONObject", e);
             throw new RuntimeException("Cannot proceed anymore");
         }
     }
@@ -159,7 +156,7 @@ public class IngredientManager {
      * @param ingredientId the id of the recipe to remove
      */
     public void clearCachedIngredient(int ingredientId) {
-        this.preferences.edit().remove(IngredientManager.INGREDIENT_CACHE_PREFIX + ingredientId).apply();
+        mPreferences.edit().remove(IngredientManager.INGREDIENT_CACHE_PREFIX + ingredientId).apply();
     }
 
     public void fetch(final int ingredientId, final IngredientManager.Callbacks callbacks) {
@@ -170,14 +167,15 @@ public class IngredientManager {
                     JSONGrabber grabber = new JSONGrabber(Api.INGREDIENTS + ingredientId);
                     return grabber.grab();
                 } catch (IOException | JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "IOException | JSONException", e);
+                    return null;
                 }
-                return null;
             }
 
             @Override
             protected void onPostExecute(JSONObject result) {
                 super.onPostExecute(result);
+
                 if (null == result) {
                     callbacks.onFailure();
                 } else {
@@ -207,14 +205,15 @@ public class IngredientManager {
                     JSONGrabber grabber = new JSONGrabber(Api.INGREDIENTS + "?search=" + URLEncoder.encode(query, "UTF-8"));
                     return grabber.grab();
                 } catch (IOException | JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "IOException | JSONException", e);
+                    return null;
                 }
-                return null;
             }
 
             @Override
             protected void onPostExecute(JSONObject jsonObject) {
                 super.onPostExecute(jsonObject);
+
                 if (jsonObject == null) {
                     callbacks.onFailure();
                 } else {
@@ -229,10 +228,10 @@ public class IngredientManager {
      */
     public void clearCachedIngredients() {
         final char firstChar = INGREDIENT_CACHE_PREFIX.charAt(0);
-        final Set<String> keys = preferences.getAll().keySet();
+        final Set<String> keys = mPreferences.getAll().keySet();
 
         if (keys.size() > 1) {
-            SharedPreferences.Editor editor = preferences.edit();
+            SharedPreferences.Editor editor = mPreferences.edit();
 
             for (String key : keys) {
                 if (firstChar == key.charAt(0)) {
@@ -248,7 +247,7 @@ public class IngredientManager {
      * Saves the ingredient
      */
     public void saveIngredient(JSONObject ingredient) {
-        preferences.edit().putString(SAVED_INGREDIENT, ingredient.toString()).apply();
+        mPreferences.edit().putString(SAVED_INGREDIENT, ingredient.toString()).apply();
     }
 
     /**
@@ -257,7 +256,7 @@ public class IngredientManager {
      * @return the saved ingredient or null if it doesn't exist
      */
     public JSONObject getSavedIngredient() {
-        String savedIngredientAsString = preferences.getString(SAVED_INGREDIENT, null);
+        String savedIngredientAsString = mPreferences.getString(SAVED_INGREDIENT, null);
         try {
             return new JSONObject(savedIngredientAsString);
         } catch (JSONException e) {
@@ -267,7 +266,7 @@ public class IngredientManager {
     }
 
     public void forgetSavedIngredient() {
-        preferences.edit().remove(SAVED_INGREDIENT).apply();
+        mPreferences.edit().remove(SAVED_INGREDIENT).apply();
     }
 
     public interface Callbacks {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" >
+<mItems version="2">
 
     <item
         jar="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/exploded-aar/com.android.support/design/23.0.1/jars/classes.jar"
@@ -56,4 +56,4 @@
             dex="/home/johnlibron/AndroidStudioProjects/cooks-to-go-app/app/build/intermediates/pre-dexed/debug/universal-image-loader-1.9.4-9a9d2294b45972cf5fdc9e534809a4aa2d1c8394.jar" />
     </item>
 
-</items>
+</mItems>

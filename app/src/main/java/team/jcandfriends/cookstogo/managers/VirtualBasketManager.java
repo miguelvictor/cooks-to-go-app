@@ -20,25 +20,19 @@ public class VirtualBasketManager {
      */
     public static final String ADD_NEW_VIRTUAL_BASKET = "add_new_virtual_basket";
     public static final String ADD_INGREDIENT_TO_VIRTUAL_BASKET = "add_ingredient_to_virtual_basket";
-
-    /**
-     * Constants related to a virtual basket object
-     */
     public static final String VIRTUAL_BASKET_NAME = "name";
-
     public static final String VIRTUAL_BASKET_ITEMS = "items";
-    private static final String PERSISTENT_VIRTUAL_BASKETS = "persistent_virtual_baskets";
-
     private static final String TAG = "VirtualBasketManager";
+    private static final String PERSISTENT_VIRTUAL_BASKETS = "persistent_virtual_baskets";
 
     private static VirtualBasketManager SOLE_INSTANCE;
 
-    private SharedPreferences preferences;
+    private SharedPreferences mPreferences;
     private ArrayList<JSONObject> mVirtualBaskets;
 
     private VirtualBasketManager(Context context) {
-        this.preferences = context.getSharedPreferences(PERSISTENT_VIRTUAL_BASKETS, Context.MODE_PRIVATE);
-        String virtualBasketsAsString = preferences.getString(PERSISTENT_VIRTUAL_BASKETS, null);
+        mPreferences = context.getSharedPreferences(PERSISTENT_VIRTUAL_BASKETS, Context.MODE_PRIVATE);
+        String virtualBasketsAsString = mPreferences.getString(PERSISTENT_VIRTUAL_BASKETS, null);
 
         if (virtualBasketsAsString != null) {
             try {
@@ -129,7 +123,7 @@ public class VirtualBasketManager {
     }
 
     private void persist() {
-        preferences.edit().putString(PERSISTENT_VIRTUAL_BASKETS, Utils.listToJsonArray(mVirtualBaskets).toString()).apply();
+        mPreferences.edit().putString(PERSISTENT_VIRTUAL_BASKETS, Utils.listToJsonArray(mVirtualBaskets).toString()).apply();
     }
 
     public boolean isAlreadyAdded(String virtualBasketName) {
@@ -160,7 +154,7 @@ public class VirtualBasketManager {
 
     public void deleteAll() {
         mVirtualBaskets.clear();
-        preferences.edit().remove(PERSISTENT_VIRTUAL_BASKETS).apply();
+        mPreferences.edit().remove(PERSISTENT_VIRTUAL_BASKETS).apply();
     }
 
     public void delete(JSONObject virtualBasket) {

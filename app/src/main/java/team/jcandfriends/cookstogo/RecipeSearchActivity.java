@@ -1,6 +1,5 @@
 package team.jcandfriends.cookstogo;
 
-import android.content.Context;
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -16,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -59,9 +57,8 @@ public class RecipeSearchActivity extends AppCompatActivity implements TextWatch
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Views initialization
         mSearchHistoryView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -72,11 +69,9 @@ public class RecipeSearchActivity extends AppCompatActivity implements TextWatch
 
         // mAdapter boilerplate initialization
         mSearchHistoryView.setLayoutManager(new LinearLayoutManager(this));
-        mSearchHistoryView.setClickable(true);
         mSearchHistoryView.setHasFixedSize(true);
-        mSearchResultsView.setHasFixedSize(true);
-        mSearchResultsView.setClickable(true);
         mSearchResultsView.setLayoutManager(new LinearLayoutManager(this));
+        mSearchResultsView.setHasFixedSize(true);
 
         mSearchManager = RecipeSearchManager.get(this);
 
@@ -148,9 +143,7 @@ public class RecipeSearchActivity extends AppCompatActivity implements TextWatch
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-            // close keyboard
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mSearchField.getWindowToken(), 0);
+            Utils.closeKeyboard(this, mSearchField);
 
             String query = mSearchField.getText().toString();
             mSearchManager.add(query);

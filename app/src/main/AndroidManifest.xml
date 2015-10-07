@@ -34,12 +34,6 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
-            android:name=".HelpActivity"
-            android:label="@string/title_activity_help" />
-        <activity
-            android:name=".FeedbackActivity"
-            android:label="@string/title_activity_feedback" />
-        <activity
             android:name=".RecipeSearchActivity"
             android:label="@string/title_activity_recipe_search" />
         <activity

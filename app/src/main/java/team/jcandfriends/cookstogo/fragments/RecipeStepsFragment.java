@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
-import team.jcandfriends.cookstogo.Constants;
+import team.jcandfriends.cookstogo.Extras;
 import team.jcandfriends.cookstogo.R.id;
 import team.jcandfriends.cookstogo.R.layout;
 import team.jcandfriends.cookstogo.adapters.RecipeStepsAdapter;
@@ -25,17 +25,19 @@ import team.jcandfriends.cookstogo.managers.RecipeManager;
 public class RecipeStepsFragment extends Fragment {
 
     public static RecipeStepsFragment newInstance(int recipeId) {
-        RecipeStepsFragment fragment = new RecipeStepsFragment();
         Bundle args = new Bundle();
-        args.putInt(Constants.EXTRA_RECIPE_ID, recipeId);
+        args.putInt(Extras.RECIPE_ID_EXTRA, recipeId);
+
+        RecipeStepsFragment fragment = new RecipeStepsFragment();
         fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle args = this.getArguments();
-        JSONObject recipe = RecipeManager.get(this.getActivity()).getCachedRecipe(args.getInt(Constants.EXTRA_RECIPE_ID));
+        JSONObject recipe = RecipeManager.get(this.getActivity()).getCachedRecipe(args.getInt(Extras.RECIPE_ID_EXTRA));
         View view = inflater.inflate(layout.fragment_recipe_methods, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(id.recycler_view);
         RecipeStepsAdapter stepsAdapter = new RecipeStepsAdapter(recipe.optJSONArray(Api.RECIPE_STEPS));

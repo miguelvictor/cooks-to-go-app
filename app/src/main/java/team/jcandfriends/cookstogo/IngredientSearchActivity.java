@@ -1,6 +1,5 @@
 package team.jcandfriends.cookstogo;
 
-import android.content.Context;
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -16,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -59,9 +57,8 @@ public class IngredientSearchActivity extends AppCompatActivity implements TextW
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Views initialization
         mSearchHistoryView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -70,18 +67,16 @@ public class IngredientSearchActivity extends AppCompatActivity implements TextW
         mProgressBar = findViewById(R.id.progress_bar);
         mNoResultsView = findViewById(R.id.no_results_found);
 
-        // mAdapter boilerplate initialization
-        mSearchHistoryView.setLayoutManager(new LinearLayoutManager(this));
-        mSearchHistoryView.setClickable(true);
-        mSearchHistoryView.setHasFixedSize(true);
-        mSearchResultsView.setHasFixedSize(true);
-        mSearchResultsView.setClickable(true);
-        mSearchResultsView.setLayoutManager(new LinearLayoutManager(this));
-
         mSearchManager = IngredientSearchManager.get(this);
-
         mSearchHistoryList = mSearchManager.getAll();
         mAdapter = new SearchResultsAdapter(mSearchHistoryList);
+
+        // mAdapter boilerplate initialization
+        mSearchHistoryView.setLayoutManager(new LinearLayoutManager(this));
+        mSearchHistoryView.setHasFixedSize(true);
+        mSearchResultsView.setLayoutManager(new LinearLayoutManager(this));
+        mSearchResultsView.setHasFixedSize(true);
+
         mSearchHistoryView.setAdapter(mAdapter);
         Utils.setOnItemClickListener(mSearchHistoryView, new SimpleClickListener() {
             @Override
@@ -124,7 +119,7 @@ public class IngredientSearchActivity extends AppCompatActivity implements TextW
     @Override
     protected void onPause() {
         super.onPause();
-        this.overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
 
     @Override
@@ -148,14 +143,11 @@ public class IngredientSearchActivity extends AppCompatActivity implements TextW
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-            // close keyboard
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mSearchField.getWindowToken(), 0);
+            Utils.closeKeyboard(IngredientSearchActivity.this, mSearchField);
 
             String query = mSearchField.getText().toString();
             mSearchManager.add(query);
 
-            // show results
             showResults(query);
             return true;
         }

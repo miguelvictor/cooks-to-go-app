@@ -34,14 +34,14 @@ public class IngredientsActivity extends BaseActivity {
 
     private static final String TAG = "IngredientsActivity";
 
-    private boolean isSyncing = false;
+    private boolean mIsSyncing = false;
 
-    private JSONArray cachedIngredientTypes;
-    private IngredientManager manager;
+    private JSONArray mCachedIngredientTypes;
+    private IngredientManager mIngredientManager;
+    private IngredientTypesAdapter mAdapter;
 
-    private IngredientTypesAdapter adapter;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,14 +50,13 @@ public class IngredientsActivity extends BaseActivity {
         setUpUI();
         setDrawerSelectedItem(id.navigation_ingredients);
 
-        manager = IngredientManager.get(this);
-        cachedIngredientTypes = manager.getCachedIngredientTypes();
+        mIngredientManager = IngredientManager.get(this);
+        mCachedIngredientTypes = mIngredientManager.getCachedIngredientTypes();
 
-        viewPager = (ViewPager) findViewById(id.view_pager);
-        tabLayout = (TabLayout) findViewById(id.tab_layout);
+        mViewPager = (ViewPager) findViewById(id.view_pager);
+        mTabLayout = (TabLayout) findViewById(id.tab_layout);
 
-        Log.i(TAG, "Initializing UI with cached ingredient types");
-        synchronize(cachedIngredientTypes);
+        synchronize(mCachedIngredientTypes);
     }
 
     @Override
@@ -88,9 +87,8 @@ public class IngredientsActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        if (!isSyncing && Utils.hasInternet(this)) {
-            Log.i(TAG, "Starting to fetch latest ingredient types");
-            isSyncing = true;
+        if (!mIsSyncing && Utils.hasInternet(this)) {
+            mIsSyncing = true;
             new AsyncTask<Void, Void, String>() {
                 @Override
                 protected String doInBackground(Void... params) {
@@ -124,11 +122,11 @@ public class IngredientsActivity extends BaseActivity {
                 protected void onPostExecute(String result) {
                     super.onPostExecute(result);
 
-                    if (null != result && !result.equalsIgnoreCase(cachedIngredientTypes.toString())) {
+                    if (null != result && !result.equalsIgnoreCase(mCachedIngredientTypes.toString())) {
                         try {
                             Log.i(TAG, "Got updated data. Replacing ingredients with fresh data.");
                             JSONArray freshIngredientTypes = new JSONObject(result).optJSONArray(Api.RESULTS);
-                            manager.cacheIngredientTypes(freshIngredientTypes);
+                            mIngredientManager.cacheIngredientTypes(freshIngredientTypes);
                             synchronize(freshIngredientTypes);
                         } catch (JSONException e) {
                             Log.e(TAG, "Error parsing response as valid JSON", e);
@@ -142,12 +140,12 @@ public class IngredientsActivity extends BaseActivity {
     }
 
     private void synchronize(JSONArray cachedIngredientTypes) {
-        if (adapter == null) {
-            adapter = new IngredientTypesAdapter(getSupportFragmentManager(), cachedIngredientTypes);
+        if (mAdapter == null) {
+            mAdapter = new IngredientTypesAdapter(getSupportFragmentManager(), cachedIngredientTypes);
         }
 
-        viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setTabsFromPagerAdapter(adapter);
+        mViewPager.setAdapter(mAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.setTabsFromPagerAdapter(mAdapter);
     }
 }

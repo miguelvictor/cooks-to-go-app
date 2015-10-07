@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/secondary_text"
             android:layout_toRightOf="@id/avatar"
-            android:text="2 items missing"
+            android:text="2 mItems missing"
             android:textColor="@color/red"
             android:textStyle="italic" />
 

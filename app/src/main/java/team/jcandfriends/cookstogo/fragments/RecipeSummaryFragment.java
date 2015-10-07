@@ -16,7 +16,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
-import team.jcandfriends.cookstogo.Constants;
+import team.jcandfriends.cookstogo.Extras;
 import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.R.id;
 import team.jcandfriends.cookstogo.Utils;
@@ -31,10 +31,12 @@ import team.jcandfriends.cookstogo.managers.RecipeManager;
 public class RecipeSummaryFragment extends Fragment {
 
     public static Fragment newInstance(int recipeId) {
-        RecipeSummaryFragment fragment = new RecipeSummaryFragment();
         Bundle args = new Bundle();
-        args.putInt(Constants.EXTRA_RECIPE_ID, recipeId);
+        args.putInt(Extras.RECIPE_ID_EXTRA, recipeId);
+
+        RecipeSummaryFragment fragment = new RecipeSummaryFragment();
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -44,7 +46,7 @@ public class RecipeSummaryFragment extends Fragment {
         final Activity activity = this.getActivity();
 
         final View summaryView = inflater.inflate(R.layout.fragment_recipe_summary, container, false);
-        JSONObject recipe = RecipeManager.get(activity).getCachedRecipe(args.getInt(Constants.EXTRA_RECIPE_ID));
+        JSONObject recipe = RecipeManager.get(activity).getCachedRecipe(args.getInt(Extras.RECIPE_ID_EXTRA));
 
         ImageLoader.getInstance().loadImage(recipe.optString(Api.RECIPE_BANNER), new SimpleImageLoadingListener() {
             @Override

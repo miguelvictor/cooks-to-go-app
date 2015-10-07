@@ -37,7 +37,7 @@ import team.jcandfriends.cookstogo.managers.RecipeManager;
 import team.jcandfriends.cookstogo.managers.RecipeManager.Callbacks;
 
 /**
- * The activity that displays the details of a recipe.
+ * The activity that displays the details of a mRecipe.
  */
 public final class RecipeActivity extends AppCompatActivity implements TabsToolbarGettable {
 
@@ -46,14 +46,14 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
 
     private static final String TAG = "RecipeActivity";
 
-    private Toolbar toolbar;
-    private View coordinatorLayout;
-    private TabLayout tabLayout;
-    private RecipeComponentsAdapter adapter;
-    private RecipeManager manager;
+    private Toolbar mToolbar;
+    private View mCoordinatorLayout;
+    private TabLayout mTabLayout;
+    private RecipeComponentsAdapter mAdapter;
+    private RecipeManager mManager;
 
-    private JSONObject recipe;
-    private boolean isSyncing = false;
+    private JSONObject mRecipe;
+    private boolean mIsSyncing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,30 +64,30 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
         int recipeId = data.getIntExtra(RecipeActivity.EXTRA_RECIPE_PK, -1);
         String recipeName = data.getStringExtra(EXTRA_RECIPE_NAME);
 
-        coordinatorLayout = findViewById(R.id.coordinator_layout);
+        mCoordinatorLayout = findViewById(R.id.coordinator_layout);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(recipeName);
 
-        manager = RecipeManager.get(this);
-        recipe = manager.getCachedRecipe(recipeId);
+        mManager = RecipeManager.get(this);
+        mRecipe = mManager.getCachedRecipe(recipeId);
 
         setupLayout(recipeId);
     }
 
     private void setupLayout(int recipeId) {
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-        adapter = new RecipeComponentsAdapter(getSupportFragmentManager(), recipeId);
-        viewPager.setAdapter(adapter);
+        mAdapter = new RecipeComponentsAdapter(getSupportFragmentManager(), recipeId);
+        viewPager.setAdapter(mAdapter);
 
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setTabsFromPagerAdapter(adapter);
+        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        mTabLayout.setupWithViewPager(viewPager);
+        mTabLayout.setTabsFromPagerAdapter(mAdapter);
     }
 
     @Override
@@ -107,22 +107,21 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                break;
+                return true;
             case R.id.action_rate_recipe:
                 if (Utils.hasInternet(this)) {
                     showRateRecipe();
                 } else {
-                    Snackbar.make(coordinatorLayout, "No connection", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(mCoordinatorLayout, "No connection", Snackbar.LENGTH_SHORT).show();
                 }
-                break;
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     private void showRateRecipe() {
-
-        View layout = this.getLayoutInflater().inflate(R.layout.dialog_rate_recipe, null);
+        View layout = getLayoutInflater().inflate(R.layout.dialog_rate_recipe, null);
         final RatingBar ratingBar = (RatingBar) layout.findViewById(R.id.rating_bar);
 
         new Builder(this)
@@ -131,20 +130,20 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
                 .setPositiveButton("Submit", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Snackbar.make(RecipeActivity.this.coordinatorLayout, "Submitting rating...", Snackbar.LENGTH_SHORT).show();
-                        RecipeManager.get(RecipeActivity.this).rate(RecipeActivity.this, RecipeActivity.this.recipe.optInt(Api.RECIPE_PK), (int) ratingBar.getRating(), new Callbacks() {
+                        Snackbar.make(RecipeActivity.this.mCoordinatorLayout, "Submitting rating...", Snackbar.LENGTH_SHORT).show();
+                        RecipeManager.get(RecipeActivity.this).rate(RecipeActivity.this, RecipeActivity.this.mRecipe.optInt(Api.RECIPE_PK), (int) ratingBar.getRating(), new Callbacks() {
                             @Override
                             public void onSuccess(JSONObject data) {
                                 double newRating = data.optDouble(Api.RECIPE_RATING);
                                 int reviewCount = data.optInt(Api.RECIPE_REVIEWS);
                                 String formattedRating = String.format("Rating: %.2f stars (%d %s)", newRating, reviewCount, English.plural("review", reviewCount));
                                 ((TextView) findViewById(R.id.recipe_rating)).setText(formattedRating);
-                                Snackbar.make(RecipeActivity.this.coordinatorLayout, "Your rating has been saved.", Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(RecipeActivity.this.mCoordinatorLayout, "Your rating has been saved.", Snackbar.LENGTH_SHORT).show();
                             }
 
                             @Override
                             public void onFailure() {
-                                Snackbar.make(RecipeActivity.this.coordinatorLayout, "Failed to submit your rating.", Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(RecipeActivity.this.mCoordinatorLayout, "Failed to submit your rating.", Snackbar.LENGTH_SHORT).show();
                             }
                         });
                         dialog.dismiss();
@@ -162,25 +161,25 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
 
     @Override
     public Toolbar getToolbar() {
-        return toolbar;
+        return mToolbar;
     }
 
     @Override
     public TabLayout getTabLayout() {
-        return tabLayout;
+        return mTabLayout;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (!isSyncing && Utils.hasInternet(this)) {
-            isSyncing = false;
+        if (!mIsSyncing && Utils.hasInternet(this)) {
+            mIsSyncing = false;
             new AsyncTask<Void, Void, String>() {
                 @Override
                 protected String doInBackground(Void... params) {
                     try {
-                        URL url = new URL(Api.RECIPES + recipe.optInt(Api.RECIPE_PK));
+                        URL url = new URL(Api.RECIPES + mRecipe.optInt(Api.RECIPE_PK));
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                         if (connection.getResponseCode() == 200) {
@@ -209,10 +208,10 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
                 protected void onPostExecute(String result) {
                     super.onPostExecute(result);
 
-                    if (null != result && !result.equalsIgnoreCase(recipe.toString())) {
+                    if (null != result && !result.equalsIgnoreCase(mRecipe.toString())) {
                         try {
                             JSONObject freshRecipe = new JSONObject(result);
-                            manager.cacheRecipe(freshRecipe);
+                            mManager.cacheRecipe(freshRecipe);
                             synchronize(freshRecipe);
                         } catch (JSONException e) {
                             Log.e(TAG, "Error parsing response as valid JSON", e);
@@ -224,7 +223,7 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
     }
 
     public void synchronize(JSONObject recipe) {
-        this.recipe = recipe;
-        adapter.notifyDataSetChanged();
+        mRecipe = recipe;
+        mAdapter.notifyDataSetChanged();
     }
 }

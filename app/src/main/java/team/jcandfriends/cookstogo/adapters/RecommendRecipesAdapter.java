@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,20 +25,20 @@ import team.jcandfriends.cookstogo.managers.RecipeManager;
 
 public class RecommendRecipesAdapter extends FragmentPagerAdapter {
 
-    private final JSONObject result;
+    private final JSONObject mResult;
 
     public RecommendRecipesAdapter(FragmentManager fm, JSONObject result) {
         super(fm);
-        this.result = result;
+        mResult = result;
     }
 
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            JSONArray exactRecipes = this.result.optJSONArray(Api.EXACT);
+            JSONArray exactRecipes = mResult.optJSONArray(Api.EXACT);
             return RecommendRecipesAdapter.RecommendRecipesFragment.newInstance(position, exactRecipes);
         } else {
-            JSONArray nearlyThereRecipes = this.result.optJSONArray(Api.NEARLY_THERE);
+            JSONArray nearlyThereRecipes = mResult.optJSONArray(Api.NEARLY_THERE);
             return RecommendRecipesAdapter.RecommendRecipesFragment.newInstance(position, nearlyThereRecipes);
         }
     }
@@ -58,23 +59,26 @@ public class RecommendRecipesAdapter extends FragmentPagerAdapter {
 
     public static class RecommendRecipesFragment extends Fragment {
 
+        private static final String TAG = "RecommendRecipesFragment";
+
         public static Fragment newInstance(int position, JSONArray recipes) {
-            Fragment fragment = new RecommendRecipesAdapter.RecommendRecipesFragment();
             Bundle bundle = new Bundle();
             bundle.putInt(Constants.RECOMMEND_RECIPE_FRAGMENT_POSITION, position);
             bundle.putString(Constants.RECIPES_IN_FRAGMENT, recipes.toString());
+
+            Fragment fragment = new RecommendRecipesAdapter.RecommendRecipesFragment();
             fragment.setArguments(bundle);
+
             return fragment;
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            Bundle arguments = this.getArguments();
+            Bundle arguments = getArguments();
             final int fragmentPosition = arguments.getInt(Constants.RECOMMEND_RECIPE_FRAGMENT_POSITION);
-            final Activity activity = this.getActivity();
+            final Activity activity = getActivity();
 
             try {
-                Utils.log(this.getArguments().getString(Constants.RECIPES_IN_FRAGMENT));
                 String recipesAsString = arguments.getString(Constants.RECIPES_IN_FRAGMENT);
                 final JSONArray recipes = new JSONArray(recipesAsString);
 
@@ -87,7 +91,6 @@ public class RecommendRecipesAdapter extends FragmentPagerAdapter {
                         list.setAdapter(new RecipeAdapterWithMissing(recipes));
                     }
 
-                    list.setClickable(true);
                     list.setHasFixedSize(true);
                     list.setLayoutManager(new LinearLayoutManager(activity));
                     Utils.setOnItemClickListener(list, new SimpleClickListener() {
@@ -106,7 +109,7 @@ public class RecommendRecipesAdapter extends FragmentPagerAdapter {
                     return list;
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, "JSONException", e);
             }
 
             return LayoutInflater.from(container.getContext()).inflate(layout.recommend_recipe_empty, container, false);

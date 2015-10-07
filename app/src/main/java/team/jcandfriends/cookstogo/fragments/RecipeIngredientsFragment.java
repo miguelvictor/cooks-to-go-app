@@ -13,7 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
-import team.jcandfriends.cookstogo.Constants;
+import team.jcandfriends.cookstogo.Extras;
 import team.jcandfriends.cookstogo.R.id;
 import team.jcandfriends.cookstogo.R.layout;
 import team.jcandfriends.cookstogo.Utils;
@@ -35,10 +35,12 @@ public class RecipeIngredientsFragment extends Fragment {
      * @return The fragment for the appropriate position
      */
     public static RecipeIngredientsFragment newInstance(int recipeId) {
-        RecipeIngredientsFragment fragment = new RecipeIngredientsFragment();
         Bundle args = new Bundle();
-        args.putInt(Constants.EXTRA_RECIPE_ID, recipeId);
+        args.putInt(Extras.RECIPE_ID_EXTRA, recipeId);
+
+        RecipeIngredientsFragment fragment = new RecipeIngredientsFragment();
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -49,7 +51,7 @@ public class RecipeIngredientsFragment extends Fragment {
         JSONObject recipe;
         View view;
 
-        recipe = RecipeManager.get(activity).getCachedRecipe(args.getInt(Constants.EXTRA_RECIPE_ID));
+        recipe = RecipeManager.get(activity).getCachedRecipe(args.getInt(Extras.RECIPE_ID_EXTRA));
         final JSONArray recipeComponents = recipe.optJSONArray(Api.RECIPE_RECIPE_COMPONENTS);
 
         view = inflater.inflate(layout.fragment_recipe_ingredients, container, false);

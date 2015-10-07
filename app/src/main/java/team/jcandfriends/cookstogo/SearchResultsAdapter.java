@@ -20,10 +20,10 @@ import team.jcandfriends.cookstogo.managers.SearchManager;
  */
 public class SearchResultsAdapter extends Adapter<SearchResultsAdapter.SearchHistoryViewHolder> {
 
-    private ArrayList<String> searchHistory;
+    private ArrayList<String> mSearchHistory;
 
     public SearchResultsAdapter(ArrayList<String> searchHistory) {
-        this.searchHistory = searchHistory;
+        mSearchHistory = searchHistory;
     }
 
     @Override
@@ -34,12 +34,12 @@ public class SearchResultsAdapter extends Adapter<SearchResultsAdapter.SearchHis
 
     @Override
     public void onBindViewHolder(SearchResultsAdapter.SearchHistoryViewHolder holder, int position) {
-        holder.text.setText(this.searchHistory.get(position));
+        holder.mText.setText(mSearchHistory.get(position));
     }
 
     public ArrayList<String> filter(final String query, SearchManager<String> searchManager) {
         if (null != query && !query.isEmpty()) {
-            this.searchHistory = Utils.filter(this.searchHistory, new FilterPredicate() {
+            mSearchHistory = Utils.filter(mSearchHistory, new FilterPredicate() {
                 final Pattern pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
 
                 @Override
@@ -48,24 +48,24 @@ public class SearchResultsAdapter extends Adapter<SearchResultsAdapter.SearchHis
                 }
             });
         } else {
-            this.searchHistory = searchManager.getAll();
+            mSearchHistory = searchManager.getAll();
         }
-        this.notifyDataSetChanged();
-        return this.searchHistory;
+        notifyDataSetChanged();
+        return mSearchHistory;
     }
 
     @Override
     public int getItemCount() {
-        return this.searchHistory.size();
+        return mSearchHistory.size();
     }
 
     public static class SearchHistoryViewHolder extends ViewHolder {
 
-        TextView text;
+        TextView mText;
 
         public SearchHistoryViewHolder(View itemView) {
             super(itemView);
-            this.text = (TextView) itemView.findViewById(id.query);
+            mText = (TextView) itemView.findViewById(id.query);
         }
     }
 }

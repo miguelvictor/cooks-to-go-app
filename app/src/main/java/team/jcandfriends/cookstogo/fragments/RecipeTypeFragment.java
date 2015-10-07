@@ -34,18 +34,20 @@ import team.jcandfriends.cookstogo.managers.RecipeManager;
 public final class RecipeTypeFragment extends Fragment {
 
     public static RecipeTypeFragment newInstance(JSONArray recipes) {
-        RecipeTypeFragment fragment = new RecipeTypeFragment();
         Bundle args = new Bundle();
         args.putString(Constants.RECIPES_IN_FRAGMENT, recipes.toString());
+
+        RecipeTypeFragment fragment = new RecipeTypeFragment();
         fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final Activity activity = this.getActivity();
+        final Activity activity = getActivity();
         final RecipeManager recipeManager = RecipeManager.get(activity);
-        Bundle args = this.getArguments();
+        Bundle args = getArguments();
         RecyclerView recipes = (RecyclerView) inflater.inflate(layout.fragment_recipe_type, container, false);
 
         try {
@@ -61,43 +63,6 @@ public final class RecipeTypeFragment extends Fragment {
                     final int recipeId = recipe.optInt(Api.RECIPE_PK);
                     final String recipeName = recipe.optString(Api.RECIPE_NAME);
 
-                    /*if (Utils.hasInternet(activity)) {
-                        final AlertDialog dialog = new Builder(activity)
-                                .setTitle(string.dialog_recipe_loading_header)
-                                .setMessage(string.dialog_recipe_loading_subheader)
-                                .setCancelable(false)
-                                .create();
-
-                        dialog.show();
-                        recipeManager.fetch(recipeId, new Callbacks() {
-                            @Override
-                            public void onSuccess(JSONObject result) {
-                                dialog.dismiss();
-                                recipeManager.cacheRecipe(result);
-                                Utils.startRecipeActivity(activity, recipeId, recipeName);
-                            }
-
-                            @Override
-                            public void onFailure() {
-                                dialog.dismiss();
-                                Toast.makeText(activity, "Some unexpected error occurred.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } else if (recipeManager.hasCachedRecipe(recipeId)) {
-                        Utils.startRecipeActivity(activity, recipeId, recipeName);
-                    } else {
-                        new Builder(activity)
-                                .setTitle(string.dialog_no_internet_header)
-                                .setMessage(string.dialog_no_internet_subheader)
-                                .setNeutralButton(string.dialog_neutral_button_label, new OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .create()
-                                .show();
-                    }*/
                     if (recipeManager.hasCachedRecipe(recipeId)) {
                         Utils.startRecipeActivity(activity, recipeId, recipeName);
                     } else if (Utils.hasInternet(activity)) {

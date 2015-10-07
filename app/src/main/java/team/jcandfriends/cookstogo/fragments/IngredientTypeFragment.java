@@ -31,8 +31,6 @@ import team.jcandfriends.cookstogo.BaseActivity;
 import team.jcandfriends.cookstogo.Constants;
 import team.jcandfriends.cookstogo.Extras;
 import team.jcandfriends.cookstogo.R;
-import team.jcandfriends.cookstogo.R.layout;
-import team.jcandfriends.cookstogo.R.string;
 import team.jcandfriends.cookstogo.Utils;
 import team.jcandfriends.cookstogo.Utils.SimpleClickListener;
 import team.jcandfriends.cookstogo.VirtualBasketsActivity;
@@ -51,10 +49,12 @@ public class IngredientTypeFragment extends Fragment {
     public static final int ADD_NEW_VIRTUAL_BASKET_REQUEST_CODE = 1;
 
     public static IngredientTypeFragment newInstance(JSONArray ingredients) {
-        IngredientTypeFragment fragment = new IngredientTypeFragment();
         Bundle args = new Bundle();
         args.putString(Constants.INGREDIENTS_IN_FRAGMENT, ingredients.toString());
+
+        IngredientTypeFragment fragment = new IngredientTypeFragment();
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -67,7 +67,7 @@ public class IngredientTypeFragment extends Fragment {
         final IngredientManager ingredientManager = IngredientManager.get(activity);
         final VirtualBasketManager virtualBasketManager = VirtualBasketManager.get(activity);
 
-        ingredients = (RecyclerView) inflater.inflate(layout.fragment_ingredient_type, container, false);
+        ingredients = (RecyclerView) inflater.inflate(R.layout.fragment_ingredient_type, container, false);
 
         try {
             final JSONArray ingredientsArray = new JSONArray(args.getString(Constants.INGREDIENTS_IN_FRAGMENT));
@@ -135,8 +135,8 @@ public class IngredientTypeFragment extends Fragment {
             Utils.startIngredientActivity(activity, ingredientId, ingredientName);
         } else if (Utils.hasInternet(activity)) {
             final AlertDialog dialog = new Builder(activity)
-                    .setTitle(string.dialog_ingredient_loading_header)
-                    .setMessage(string.dialog_ingredient_loading_subheader)
+                    .setTitle(R.string.dialog_ingredient_loading_header)
+                    .setMessage(R.string.dialog_ingredient_loading_subheader)
                     .setCancelable(false)
                     .create();
 
@@ -157,9 +157,9 @@ public class IngredientTypeFragment extends Fragment {
             });
         } else {
             new Builder(activity)
-                    .setTitle(string.dialog_no_internet_header)
-                    .setMessage(string.dialog_no_internet_subheader)
-                    .setNeutralButton(string.dialog_neutral_button_label, new OnClickListener() {
+                    .setTitle(R.string.dialog_no_internet_header)
+                    .setMessage(R.string.dialog_no_internet_subheader)
+                    .setNeutralButton(R.string.dialog_neutral_button_label, new OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -206,7 +206,7 @@ public class IngredientTypeFragment extends Fragment {
     }
 
     private void onAddToVirtualBasket(final Activity activity, final JSONObject ingredient) {
-        final View dialogNewVirtualBasketItem = activity.getLayoutInflater().inflate(layout.dialog_new_virtual_basket_item, null);
+        final View dialogNewVirtualBasketItem = activity.getLayoutInflater().inflate(R.layout.dialog_new_virtual_basket_item, null);
         final Spinner spinner = (Spinner) dialogNewVirtualBasketItem.findViewById(R.id.spinner);
         final VirtualBasketManager virtualBasketManager = VirtualBasketManager.get(activity);
 

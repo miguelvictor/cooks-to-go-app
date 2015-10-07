@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:gravity="center"
-            android:text="No items in here"
+            android:text="No mItems in here"
             android:textSize="18sp" />
 
     </LinearLayout>

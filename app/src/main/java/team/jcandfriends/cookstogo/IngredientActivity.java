@@ -40,7 +40,7 @@ import team.jcandfriends.cookstogo.managers.IngredientManager;
 import team.jcandfriends.cookstogo.managers.VirtualBasketManager;
 
 /**
- * The activity that displays the ingredient
+ * The activity that displays the mIngredient
  */
 public class IngredientActivity extends AppCompatActivity implements ToolbarGettable {
 
@@ -49,35 +49,34 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
 
     private static final String TAG = "IngredientActivity";
 
-    private boolean isSyncing = false;
+    private boolean mIsSyncing = false;
 
-    private Toolbar toolbar;
+    private JSONObject mIngredient;
+    private IngredientManager mManager;
 
-    private JSONObject ingredient;
-    private IngredientManager manager;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(layout.activity_ingredient);
+        setContentView(layout.activity_ingredient);
 
         Intent data = getIntent();
         String ingredientName = data.getStringExtra(IngredientActivity.EXTRA_INGREDIENT_NAME);
 
-        toolbar = (Toolbar) findViewById(id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(id.toolbar);
+        setSupportActionBar(mToolbar);
 
-        manager = IngredientManager.get(this);
+        mManager = IngredientManager.get(this);
 
         ActionBar actionBar = getSupportActionBar();
-        if (null != actionBar) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(Utils.capitalize(ingredientName));
-        }
+        assert null != actionBar;
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(Utils.capitalize(ingredientName));
 
-        ingredient = IngredientManager.get(this).getCachedIngredient(data.getIntExtra(IngredientActivity.EXTRA_INGREDIENT_PK, -1));
+        mIngredient = IngredientManager.get(this).getCachedIngredient(data.getIntExtra(IngredientActivity.EXTRA_INGREDIENT_PK, -1));
 
-        synchronize(ingredient);
+        synchronize(mIngredient);
     }
 
     @Override
@@ -112,11 +111,11 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 int virtualBasketPosition = spinner.getSelectedItemPosition();
-                                if (manager.isAlreadyAddedTo(virtualBasketPosition, ingredient)) {
-                                    Snackbar.make(findViewById(id.activity_parent), ingredient.optString(Api.INGREDIENT_NAME) + " was already added to " + spinner.getSelectedItem(), Snackbar.LENGTH_LONG).show();
+                                if (manager.isAlreadyAddedTo(virtualBasketPosition, mIngredient)) {
+                                    Snackbar.make(findViewById(id.activity_parent), mIngredient.optString(Api.INGREDIENT_NAME) + " was already added to " + spinner.getSelectedItem(), Snackbar.LENGTH_LONG).show();
                                 } else {
-                                    manager.addTo(virtualBasketPosition, ingredient);
-                                    Snackbar.make(findViewById(id.activity_parent), "Added " + ingredient.optString(Api.INGREDIENT_NAME) + " to " + spinner.getSelectedItem(), Snackbar.LENGTH_LONG).show();
+                                    manager.addTo(virtualBasketPosition, mIngredient);
+                                    Snackbar.make(findViewById(id.activity_parent), "Added " + mIngredient.optString(Api.INGREDIENT_NAME) + " to " + spinner.getSelectedItem(), Snackbar.LENGTH_LONG).show();
                                 }
                             }
                         })
@@ -136,20 +135,20 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
 
     @Override
     public Toolbar getToolbar() {
-        return this.toolbar;
+        return mToolbar;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (!isSyncing && Utils.hasInternet(this)) {
-            isSyncing = true;
+        if (!mIsSyncing && Utils.hasInternet(this)) {
+            mIsSyncing = true;
             new AsyncTask<Void, Void, String>() {
                 @Override
                 protected String doInBackground(Void... params) {
                     try {
-                        URL url = new URL(Api.INGREDIENTS + ingredient.optInt(Api.INGREDIENT_PK));
+                        URL url = new URL(Api.INGREDIENTS + mIngredient.optInt(Api.INGREDIENT_PK));
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                         if (connection.getResponseCode() == 200) {
@@ -178,10 +177,10 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
                 protected void onPostExecute(String result) {
                     super.onPostExecute(result);
 
-                    if (null != result && !result.equalsIgnoreCase(ingredient.toString())) {
+                    if (null != result && !result.equalsIgnoreCase(mIngredient.toString())) {
                         try {
                             JSONObject freshIngredient = new JSONObject(result);
-                            manager.cacheIngredient(freshIngredient);
+                            mManager.cacheIngredient(freshIngredient);
                             synchronize(freshIngredient);
                         } catch (JSONException e) {
                             Log.e(TAG, "Error parsing response as valid JSON", e);
@@ -193,12 +192,14 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
     }
 
     private void synchronize(JSONObject ingredient) {
-        ((TextView) findViewById(id.ingredient_description)).setText(ingredient.optString(Api.INGREDIENT_DESCRIPTION));
-        final ImageView banner = (ImageView) findViewById(id.ingredient_banner);
+        final TextView txtIngredientDescription = (TextView) findViewById(id.ingredient_description);
+        txtIngredientDescription.setText(ingredient.optString(Api.INGREDIENT_DESCRIPTION));
+
+        final ImageView imgIngredientBanner = (ImageView) findViewById(id.ingredient_banner);
         ImageLoader.getInstance().loadImage(ingredient.optString(Api.INGREDIENT_BANNER), new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                banner.setImageBitmap(loadedImage);
+                imgIngredientBanner.setImageBitmap(loadedImage);
                 Utils.decorateToolbar(IngredientActivity.this, loadedImage);
             }
         });

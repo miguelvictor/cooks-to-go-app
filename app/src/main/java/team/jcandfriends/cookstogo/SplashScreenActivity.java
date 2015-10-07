@@ -22,58 +22,45 @@ import team.jcandfriends.cookstogo.managers.RecipeManager;
  */
 public class SplashScreenActivity extends Activity {
 
-    RecipeManager recipeManager;
-    IngredientManager ingredientManager;
+    private RecipeManager mRecipeManager;
+    private IngredientManager mIngredientManager;
 
-    TextView output;
+    private TextView mOutput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(layout.activity_splash_screen);
+        setContentView(layout.activity_splash_screen);
 
-        this.recipeManager = RecipeManager.get(this);
-        this.ingredientManager = IngredientManager.get(this);
+        mRecipeManager = RecipeManager.get(this);
+        mIngredientManager = IngredientManager.get(this);
 
-        this.output = (TextView) this.findViewById(id.output);
+        mOutput = (TextView) this.findViewById(id.output);
 
-        /*if (Utils.hasInternet(this)) {
-            Utils.log("Internet available: Fetching latest Recipe and Ingredient types");
-            this.initialize();
-        } else {
-            Utils.log("Internet unavailable: Displaying cached data");
-            if (this.recipeManager.hasCachedRecipeTypes() && this.ingredientManager.hasCachedIngredientTypes()) {
-                this.startActivity(new Intent(this, RecipesActivity.class));
-                this.finish();
-            } else {
-                this.output.setText("Sorry, CooksToGo needs internet. After a first successful connection, data will be cached and can be accessed without internet.");
-            }
-        }*/
-
-        if (recipeManager.hasCachedRecipeTypes() && ingredientManager.hasCachedIngredientTypes()) {
+        if (mRecipeManager.hasCachedRecipeTypes() && mIngredientManager.hasCachedIngredientTypes()) {
             startActivity(new Intent(this, RecipesActivity.class));
             finish();
         } else if (Utils.hasInternet(this)) {
             initialize();
         } else {
-            output.setText("Sorry, CooksToGo needs internet. After a first successful connection, data will be cached and can be accessed without internet.");
+            mOutput.setText("Sorry, CooksToGo needs internet. After a first successful connection, data will be cached and can be accessed without internet.");
         }
     }
 
     private void onPostExecute(JSONObject[] jsonObjects) throws JSONException {
         if (null != jsonObjects) {
             JSONArray temp = jsonObjects[0].getJSONArray(Api.RESULTS);
-            this.recipeManager.cacheRecipeTypes(temp);
+            mRecipeManager.cacheRecipeTypes(temp);
 
             temp = jsonObjects[1].getJSONArray(Api.RESULTS);
-            this.ingredientManager.cacheIngredientTypes(temp);
+            mIngredientManager.cacheIngredientTypes(temp);
 
             Intent intent = new Intent(this, RecipesActivity.class);
-            this.startActivity(intent);
-            this.finish();
+            startActivity(intent);
+            finish();
         } else {
-            this.output.setText("Oh my god! It failed, trying again...");
-            this.initialize();
+            mOutput.setText("Oh my god! It failed, trying again...");
+            initialize();
         }
     }
 

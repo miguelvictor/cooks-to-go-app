@@ -1,6 +1,5 @@
 package team.jcandfriends.cookstogo;
 
-import android.R.id;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import team.jcandfriends.cookstogo.R.layout;
 import team.jcandfriends.cookstogo.adapters.RecommendRecipesAdapter;
 import team.jcandfriends.cookstogo.managers.RecipeManager;
 import team.jcandfriends.cookstogo.managers.RecipeManager.Callbacks;
@@ -28,17 +26,16 @@ public class RecommendedRecipesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(layout.activity_recommended_recipes);
+        setContentView(R.layout.activity_recommended_recipes);
 
         try {
-            JSONObject virtualBasket = new JSONObject(getIntent().getStringExtra(VirtualBasketsActivity.VIRTUAL_BASKET_EXTRA));
-            Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);
-            this.setSupportActionBar(toolbar);
+            JSONObject virtualBasket = new JSONObject(getIntent().getStringExtra(Extras.VIRTUAL_BASKET_EXTRA));
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-            ActionBar actionBar = this.getSupportActionBar();
+            ActionBar actionBar = getSupportActionBar();
             assert actionBar != null;
-
-            actionBar.setTitle("Results");
+            actionBar.setTitle(virtualBasket.optString(VirtualBasketManager.VIRTUAL_BASKET_NAME, "Results"));
             actionBar.setDisplayHomeAsUpEnabled(true);
 
             Utils.initializeImageLoader(this);
@@ -67,15 +64,16 @@ public class RecommendedRecipesActivity extends AppCompatActivity {
                 }
             });
         } catch (JSONException e) {
-            Log.e(TAG, "Exception while instantiating virtual basket JSONObject", e);
+            Log.e(TAG, "Error: instantiating virtual basket JSONObject", e);
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case id.home:
-                this.finish();
+            case R.id.home:
+                finish();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

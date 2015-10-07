@@ -15,7 +15,6 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.graphics.Palette;
@@ -24,7 +23,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnItemTouchListener;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
@@ -39,14 +37,12 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration.Builder;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Map;
 
 import team.jcandfriends.cookstogo.R.id;
 import team.jcandfriends.cookstogo.interfaces.TabsToolbarGettable;
@@ -57,105 +53,7 @@ import team.jcandfriends.cookstogo.interfaces.ToolbarGettable;
  */
 public final class Utils {
 
-    /**
-     * Persist a boolean to the default SharedPreferences of this app
-     *
-     * @param context The activity that requested to perform this operation
-     * @param key     The name of the boolean value that is used to retrieve this value later
-     * @param value   The boolean value that will be persisted
-     */
-    public static void persistBoolean(Context context, String key, boolean value) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putBoolean(key, value)
-                .apply();
-    }
-
-    /**
-     * Get the boolean value that was persisted.
-     *
-     * @param context      The activity that requested to perform this operation
-     * @param key          The name of the boolean value
-     * @param defaultValue Returned if the key is not found
-     * @return boolean value of the given key or the defaultValue
-     */
-    public static boolean getPersistedBoolean(Context context, String key, boolean defaultValue) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(key, defaultValue);
-    }
-
-    /**
-     * Persists a string to the default SharedPreferences
-     *
-     * @param context The activity that requested this action
-     * @param key     The key of the value
-     * @param value   The value that will be persisted
-     */
-    public static void persistString(Context context, String key, String value) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putString(key, value)
-                .apply();
-    }
-
-    /**
-     * Searches the default SharedPreferences if the given keys exist
-     *
-     * @param context The activity that requested this action
-     * @param keys    Array of keys to search
-     * @return true if and only if all keys exist otherwise false
-     */
-    public static boolean persistedKeyExists(Context context, String... keys) {
-        Map objects = (Map) PreferenceManager.getDefaultSharedPreferences(context).getAll();
-
-        for (String key : keys)
-            if (!objects.containsKey(key))
-                return false;
-
-        return true;
-    }
-
-    /**
-     * Retrieves the string with the given key on default SharedPreferences
-     *
-     * @param context      the activity that requested this action
-     * @param key          The key
-     * @param defaultValue The default value
-     * @return The value of the given key if the key exists otherwise the defaultValue
-     */
-    public static String getPersistedString(Context context, String key, String defaultValue) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(key, defaultValue);
-    }
-
-    /**
-     * Persists a JSONArray. Note that the persisted object in the default SharedPreferences
-     * is not a JSONArray but a string that represents this JSONArray.
-     *
-     * @param context   the activity that requested this action
-     * @param key       The key
-     * @param jsonArray The value that will be persisted
-     */
-    public static void persistJSONArray(Context context, String key, JSONArray jsonArray) {
-        String toPersist = jsonArray == null ? "" : jsonArray.toString();
-        Utils.persistString(context, key, toPersist);
-    }
-
-    /**
-     * Returns the persisted JSONArray. If the key is not found, null is returned.
-     *
-     * @param context Activity Context
-     * @param key     The key of the JSONArray
-     * @return The persisted JSONArray or null if key is not found
-     */
-    public static JSONArray getPersistedJSONArray(Context context, String key) {
-        String jsonArray = Utils.getPersistedString(context, key, "");
-        try {
-            return new JSONArray(jsonArray);
-        } catch (JSONException e) {
-            return null;
-        }
-    }
+    private static final String TAG = "Utils";
 
     /**
      * Checks if the device is currently connected to any network. The function name hasInternet
@@ -255,20 +153,15 @@ public final class Utils {
             Object object = tabStripField.get(tabs);
             changeIndicatorColor.invoke(object, color);
         } catch (NoSuchFieldException e) {
-            log("NoSuchFieldException : " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "NoSuchFieldException", e);
         } catch (NoSuchMethodException e) {
-            log("NoSuchMethodException : " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "NoSuchMethodException", e);
         } catch (InvocationTargetException e) {
-            log("InvocationTargetException : " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "InvocationTargetException", e);
         } catch (IllegalAccessException e) {
-            log("IllegalAccessException : " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "IllegalAccessException", e);
         } catch (ClassNotFoundException e) {
-            log("ClassNotFoundException : " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "ClassNotFoundException", e);
         }
     }
 
@@ -521,14 +414,6 @@ public final class Utils {
         }
     }
 
-    public static float dpToPixels(Context context, int dp) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
-    }
-
-    public static float pixelsToDp(Context context, int pixels) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, pixels, context.getResources().getDisplayMetrics());
-    }
-
     public static String getMacAddress(Context context) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         return wifiManager.getConnectionInfo().getMacAddress();
@@ -540,6 +425,13 @@ public final class Utils {
         if (view != null) {
             InputMethodManager manager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    public static void closeKeyboard(Activity activity, View view) {
+        if (null != view) {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 

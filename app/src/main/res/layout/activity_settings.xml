@@ -18,7 +18,7 @@
             app:popupTheme="@style/PopupTheme"
             app:theme="@style/ToolbarTheme" />
 
-        <!-- Container of setting items -->
+        <!-- Container of setting mItems -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

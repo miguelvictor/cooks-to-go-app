@@ -47,7 +47,7 @@ public class VirtualBasketActivity extends AppCompatActivity {
 
         try {
             Intent data = getIntent();
-            String virtualBasketAsString = data.getStringExtra(VirtualBasketsActivity.VIRTUAL_BASKET_EXTRA);
+            String virtualBasketAsString = data.getStringExtra(Extras.VIRTUAL_BASKET_EXTRA);
 
             if (null == virtualBasketAsString) {
                 finish();
@@ -192,7 +192,7 @@ public class VirtualBasketActivity extends AppCompatActivity {
     public void recommendRecipes(View view) {
         if (Utils.hasInternet(this)) {
             Intent intent = new Intent(this, RecommendedRecipesActivity.class);
-            intent.putExtra(VirtualBasketsActivity.VIRTUAL_BASKET_EXTRA, mVirtualBasket.toString());
+            intent.putExtra(Extras.VIRTUAL_BASKET_EXTRA, mVirtualBasket.toString());
             startActivity(intent);
         } else {
             Snackbar.make(mCoordinatorLayout, "I'm sorry but you need internet for this.", Snackbar.LENGTH_LONG).show();

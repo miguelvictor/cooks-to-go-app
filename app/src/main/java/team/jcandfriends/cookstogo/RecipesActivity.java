@@ -21,9 +21,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import team.jcandfriends.cookstogo.R.anim;
-import team.jcandfriends.cookstogo.R.id;
-import team.jcandfriends.cookstogo.R.layout;
 import team.jcandfriends.cookstogo.adapters.RecipeTypesAdapter;
 import team.jcandfriends.cookstogo.managers.RecipeManager;
 
@@ -34,27 +31,27 @@ public class RecipesActivity extends BaseActivity {
 
     private static final String TAG = "RecipesActivity";
 
-    private boolean isSyncing = false;
+    private boolean mIsSyncing = false;
 
-    private RecipeTypesAdapter adapter;
-    private ViewPager viewPager;
-    private TabLayout tabLayout;
+    private RecipeTypesAdapter mAdapter;
+    private ViewPager mViewPager;
+    private TabLayout mTabLayout;
 
-    private JSONArray cachedRecipeTypes;
-    private RecipeManager manager;
+    private JSONArray mCachedRecipeTypes;
+    private RecipeManager mManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(layout.activity_recipes);
+        setContentView(R.layout.activity_recipes);
         setUpUI();
 
-        manager = RecipeManager.get(this);
-        cachedRecipeTypes = manager.getCachedRecipeTypes();
+        mManager = RecipeManager.get(this);
+        mCachedRecipeTypes = mManager.getCachedRecipeTypes();
 
-        viewPager = (ViewPager) findViewById(id.view_pager);
-        tabLayout = (TabLayout) findViewById(id.tab_layout);
-        synchronize(cachedRecipeTypes);
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        synchronize(mCachedRecipeTypes);
 
         Utils.initializeImageLoader(this);
     }
@@ -68,10 +65,10 @@ public class RecipesActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case id.action_search:
+            case R.id.action_search:
                 Intent intent = new Intent(this, RecipeSearchActivity.class);
                 startActivity(intent);
-                overridePendingTransition(anim.abc_fade_in, anim.abc_fade_out);
+                overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
                 return true;
         }
 
@@ -80,15 +77,15 @@ public class RecipesActivity extends BaseActivity {
 
     @Override
     public boolean shouldPerformNavigationClick(MenuItem menuItem) {
-        return menuItem.getItemId() != id.navigation_recipes;
+        return menuItem.getItemId() != R.id.navigation_recipes;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (!isSyncing && Utils.hasInternet(this)) {
-            isSyncing = true;
+        if (!mIsSyncing && Utils.hasInternet(this)) {
+            mIsSyncing = true;
             new AsyncTask<Void, Void, String>() {
                 @Override
                 protected String doInBackground(Void... params) {
@@ -120,11 +117,11 @@ public class RecipesActivity extends BaseActivity {
 
                 @Override
                 protected void onPostExecute(String result) {
-                    if (null != result && !result.equalsIgnoreCase(cachedRecipeTypes.toString())) {
+                    if (null != result && !result.equalsIgnoreCase(mCachedRecipeTypes.toString())) {
                         try {
                             Log.i(TAG, "Got updated data. Updating recipes activity");
                             JSONArray freshRecipeTypes = new JSONObject(result).optJSONArray(Api.RESULTS);
-                            manager.cacheRecipeTypes(freshRecipeTypes);
+                            mManager.cacheRecipeTypes(freshRecipeTypes);
                             synchronize(freshRecipeTypes);
                         } catch (JSONException e) {
                             Log.e(TAG, "Error parsing response as valid JSON", e);
@@ -136,12 +133,12 @@ public class RecipesActivity extends BaseActivity {
     }
 
     private void synchronize(JSONArray cachedRecipeTypes) {
-        if (adapter == null) {
-            adapter = new RecipeTypesAdapter(getSupportFragmentManager(), cachedRecipeTypes);
+        if (mAdapter == null) {
+            mAdapter = new RecipeTypesAdapter(getSupportFragmentManager(), cachedRecipeTypes);
         }
 
-        viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setTabsFromPagerAdapter(adapter);
+        mViewPager.setAdapter(mAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.setTabsFromPagerAdapter(mAdapter);
     }
 }

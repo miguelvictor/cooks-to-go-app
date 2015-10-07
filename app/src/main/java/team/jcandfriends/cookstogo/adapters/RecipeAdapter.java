@@ -16,8 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import team.jcandfriends.cookstogo.Api;
-import team.jcandfriends.cookstogo.R.id;
-import team.jcandfriends.cookstogo.R.layout;
+import team.jcandfriends.cookstogo.R;
 import team.jcandfriends.cookstogo.Utils;
 
 /**
@@ -27,21 +26,21 @@ import team.jcandfriends.cookstogo.Utils;
  */
 public class RecipeAdapter extends Adapter<RecipeAdapter.RecipeViewHolder> {
 
-    private final JSONArray recipes;
+    private final JSONArray mRecipes;
 
     public RecipeAdapter(JSONArray recipes) {
-        this.recipes = recipes;
+        mRecipes = recipes;
     }
 
     @Override
     public RecipeAdapter.RecipeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(layout.item_recipe, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recipe, parent, false);
         return new RecipeAdapter.RecipeViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(final RecipeAdapter.RecipeViewHolder holder, int position) {
-        JSONObject obj = this.recipes.optJSONObject(position);
+        JSONObject obj = mRecipes.optJSONObject(position);
 
         ImageLoader.getInstance().loadImage(obj.optString(Api.RECIPE_ICON), new SimpleImageLoadingListener() {
             @Override
@@ -56,7 +55,7 @@ public class RecipeAdapter extends Adapter<RecipeAdapter.RecipeViewHolder> {
 
     @Override
     public int getItemCount() {
-        return this.recipes.length();
+        return mRecipes.length();
     }
 
     public static class RecipeViewHolder extends ViewHolder {
@@ -68,12 +67,11 @@ public class RecipeAdapter extends Adapter<RecipeAdapter.RecipeViewHolder> {
 
         public RecipeViewHolder(View itemView) {
             super(itemView);
-            view = itemView;
-            icon = (ImageView) itemView.findViewById(id.avatar);
-            name = (TextView) itemView.findViewById(id.primary_text);
-            description = (TextView) itemView.findViewById(id.secondary_text);
 
-            itemView.setClickable(true);
+            view = itemView;
+            icon = (ImageView) itemView.findViewById(R.id.avatar);
+            name = (TextView) itemView.findViewById(R.id.primary_text);
+            description = (TextView) itemView.findViewById(R.id.secondary_text);
         }
     }
 

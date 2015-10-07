@@ -2,6 +2,7 @@ package team.jcandfriends.cookstogo.managers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,55 +14,54 @@ import team.jcandfriends.cookstogo.Utils;
 public final class RecipeSearchManager implements SearchManager<String> {
 
     public static final String RECIPES_SEARCH_HISTORY = "recipes_search_history";
-    public static final String EXTRA_SEARCH_WHAT = "extra_search_what";
+    private static final String TAG = "RecipeSearchManager";
+    private static RecipeSearchManager SOLE_INSTANCE;
 
-    private static RecipeSearchManager ourInstance;
-
-    private final SharedPreferences preferences;
-    private ArrayList<String> cache;
+    private final SharedPreferences mPreferences;
+    private ArrayList<String> mCache;
 
     private RecipeSearchManager(Context context) {
-        preferences = context.getSharedPreferences(RecipeSearchManager.RECIPES_SEARCH_HISTORY, Context.MODE_PRIVATE);
+        mPreferences = context.getSharedPreferences(RecipeSearchManager.RECIPES_SEARCH_HISTORY, Context.MODE_PRIVATE);
 
-        try {
-            if (this.preferences.getAll().containsKey(RecipeSearchManager.RECIPES_SEARCH_HISTORY)) {
-                cache = Utils.toStringList(new JSONArray(this.preferences.getString(RecipeSearchManager.RECIPES_SEARCH_HISTORY, "")));
-            } else {
-                cache = new ArrayList<>();
+        if (mPreferences.getAll().containsKey(RecipeSearchManager.RECIPES_SEARCH_HISTORY)) {
+            try {
+                mCache = Utils.toStringList(new JSONArray(mPreferences.getString(RecipeSearchManager.RECIPES_SEARCH_HISTORY, "")));
+            } catch (JSONException e) {
+                Log.e(TAG, "JSONException", e);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } else {
+            mCache = new ArrayList<>();
         }
     }
 
     public static RecipeSearchManager get(Context context) {
-        if (null != RecipeSearchManager.ourInstance) {
-            return RecipeSearchManager.ourInstance;
+        if (null != SOLE_INSTANCE) {
+            return SOLE_INSTANCE;
         }
 
-        return RecipeSearchManager.ourInstance = new RecipeSearchManager(context);
+        return SOLE_INSTANCE = new RecipeSearchManager(context);
     }
 
     public void add(String query) {
-        if (this.cache.contains(query)) {
-            this.cache.remove(query);
+        if (mCache.contains(query)) {
+            mCache.remove(query);
         }
 
-        this.cache.add(0, query);
-        this.persist();
+        mCache.add(0, query);
+        persist();
     }
 
     public void deleteAll() {
-        this.cache.clear();
-        this.persist();
+        mCache.clear();
+        persist();
     }
 
     public ArrayList<String> getAll() {
-        return this.cache;
+        return mCache;
     }
 
     private void persist() {
-        this.preferences.edit().putString(RecipeSearchManager.RECIPES_SEARCH_HISTORY, Utils.stringListToJsonArray(this.cache).toString()).apply();
+        mPreferences.edit().putString(RecipeSearchManager.RECIPES_SEARCH_HISTORY, Utils.stringListToJsonArray(mCache).toString()).apply();
     }
 
 }

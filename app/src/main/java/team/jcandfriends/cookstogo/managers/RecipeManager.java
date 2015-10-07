@@ -51,15 +51,15 @@ public class RecipeManager {
     /**
      * Singleton instance
      */
-    private static RecipeManager ourInstance;
+    private static RecipeManager SOLE_INSTANCE;
 
     /**
      * The SharedPreferences that contains the caches of this class
      */
-    private final SharedPreferences preferences;
+    private final SharedPreferences mPreferences;
 
     private RecipeManager(Context context) {
-        this.preferences = context.getSharedPreferences(RecipeManager.RECIPE_CACHE, Context.MODE_PRIVATE);
+        mPreferences = context.getSharedPreferences(RecipeManager.RECIPE_CACHE, Context.MODE_PRIVATE);
     }
 
     /**
@@ -69,10 +69,10 @@ public class RecipeManager {
      * @return the singleton instance
      */
     public static RecipeManager get(Context context) {
-        if (RecipeManager.ourInstance == null) {
-            RecipeManager.ourInstance = new RecipeManager(context);
+        if (SOLE_INSTANCE == null) {
+            SOLE_INSTANCE = new RecipeManager(context);
         }
-        return RecipeManager.ourInstance;
+        return SOLE_INSTANCE;
     }
 
     /**
@@ -81,7 +81,7 @@ public class RecipeManager {
      * @return true if recipe types cache is not empty, false otherwise
      */
     public boolean hasCachedRecipeTypes() {
-        return this.preferences.getAll().containsKey(RecipeManager.PERSISTENT_RECIPE_TYPES);
+        return mPreferences.getAll().containsKey(RecipeManager.PERSISTENT_RECIPE_TYPES);
     }
 
     /**
@@ -90,7 +90,7 @@ public class RecipeManager {
      * @param recipeTypes the JSONArray to cache
      */
     public void cacheRecipeTypes(JSONArray recipeTypes) {
-        this.preferences.edit().putString(RecipeManager.PERSISTENT_RECIPE_TYPES, recipeTypes.toString()).apply();
+        mPreferences.edit().putString(RecipeManager.PERSISTENT_RECIPE_TYPES, recipeTypes.toString()).apply();
     }
 
     /**
@@ -99,12 +99,11 @@ public class RecipeManager {
      * @return the cached recipe types as JSONArray
      */
     public JSONArray getCachedRecipeTypes() {
-        String recipeTypesAsString = this.preferences.getString(RecipeManager.PERSISTENT_RECIPE_TYPES, "");
+        String recipeTypesAsString = mPreferences.getString(RecipeManager.PERSISTENT_RECIPE_TYPES, "");
         try {
             return new JSONArray(recipeTypesAsString);
         } catch (JSONException e) {
-            Log.e(RecipeManager.TAG, "JSONException : The recipeTypesAsString can't be parsed as a valid JSONArray");
-            e.printStackTrace();
+            Log.e(RecipeManager.TAG, "JSONException : The recipeTypesAsString can't be parsed as a valid JSONArray", e);
             throw new RuntimeException("Cannot proceed anymore");
         }
     }
@@ -113,7 +112,7 @@ public class RecipeManager {
      * Removes the cached recipe types
      */
     public void clearCachedRecipeTypes() {
-        this.preferences.edit().remove(RecipeManager.PERSISTENT_RECIPE_TYPES).apply();
+        mPreferences.edit().remove(RecipeManager.PERSISTENT_RECIPE_TYPES).apply();
     }
 
     /**
@@ -123,7 +122,7 @@ public class RecipeManager {
      * @return true if the recipe is found, false otherwise
      */
     public boolean hasCachedRecipe(int recipeId) {
-        return this.preferences.getAll().containsKey(RecipeManager.RECIPE_CACHE_PREFIX + recipeId);
+        return mPreferences.getAll().containsKey(RecipeManager.RECIPE_CACHE_PREFIX + recipeId);
     }
 
     /**
@@ -133,10 +132,9 @@ public class RecipeManager {
      */
     public void cacheRecipe(JSONObject recipe) {
         try {
-            this.preferences.edit().putString(RecipeManager.RECIPE_CACHE_PREFIX + recipe.getInt(Api.RECIPE_PK), recipe.toString()).apply();
+            mPreferences.edit().putString(RecipeManager.RECIPE_CACHE_PREFIX + recipe.getInt(Api.RECIPE_PK), recipe.toString()).apply();
         } catch (JSONException e) {
-            Log.e(RecipeManager.TAG, "JSONException : The passed JSONObject recipe doesn't contain a '" + Api.RECIPE_PK + "'");
-            e.printStackTrace();
+            Log.e(RecipeManager.TAG, "JSONException : The passed JSONObject recipe doesn't contain a '" + Api.RECIPE_PK + "'", e);
             throw new RuntimeException("Cannot proceed anymore");
         }
     }
@@ -148,12 +146,11 @@ public class RecipeManager {
      * @return the recipe
      */
     public JSONObject getCachedRecipe(int recipeId) {
-        String recipeAsString = this.preferences.getString(RecipeManager.RECIPE_CACHE_PREFIX + recipeId, "");
+        String recipeAsString = this.mPreferences.getString(RecipeManager.RECIPE_CACHE_PREFIX + recipeId, "");
         try {
             return new JSONObject(recipeAsString);
         } catch (JSONException e) {
-            Log.e(RecipeManager.TAG, "JSONException : The recipeAsString can't be parsed as a valid JSONObject");
-            e.printStackTrace();
+            Log.e(RecipeManager.TAG, "JSONException : The recipeAsString can't be parsed as a valid JSONObject", e);
             throw new RuntimeException("Cannot proceed anymore");
         }
     }
@@ -164,7 +161,7 @@ public class RecipeManager {
      * @param recipeId the id of the recipe to remove
      */
     public void clearCachedRecipe(int recipeId) {
-        this.preferences.edit().remove(RecipeManager.RECIPE_CACHE_PREFIX + recipeId).apply();
+        mPreferences.edit().remove(RecipeManager.RECIPE_CACHE_PREFIX + recipeId).apply();
     }
 
     /**
@@ -181,7 +178,7 @@ public class RecipeManager {
                     JSONGrabber grabber = new JSONGrabber(Api.RECIPES + recipeId);
                     return grabber.grab();
                 } catch (IOException | JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "JSONException", e);
                 }
                 return null;
             }
@@ -189,6 +186,7 @@ public class RecipeManager {
             @Override
             protected void onPostExecute(JSONObject result) {
                 super.onPostExecute(result);
+
                 if (null == result) {
                     callbacks.onFailure();
                 } else {
@@ -271,6 +269,7 @@ public class RecipeManager {
             @Override
             protected void onPostExecute(JSONObject response) {
                 super.onPostExecute(response);
+
                 if (null != response) {
                     callbacks.onSuccess(response);
                 } else {
@@ -300,7 +299,7 @@ public class RecipeManager {
                     JSONGrabber grabber = new JSONGrabber(Api.RECIPES + "?search=" + URLEncoder.encode(query, "UTF-8"));
                     return grabber.grab();
                 } catch (IOException | JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "JSONException", e);
                 }
                 return null;
             }
@@ -308,6 +307,7 @@ public class RecipeManager {
             @Override
             protected void onPostExecute(JSONObject result) {
                 super.onPostExecute(result);
+
                 if (null == result) {
                     callbacks.onFailure();
                 } else {
@@ -351,7 +351,7 @@ public class RecipeManager {
                     JSONGrabber grabber = new JSONGrabber(url);
                     return grabber.grab();
                 } catch (IOException | JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "IOException | JSONException", e);
                 }
                 return null;
             }
@@ -359,6 +359,7 @@ public class RecipeManager {
             @Override
             protected void onPostExecute(JSONObject result) {
                 super.onPostExecute(result);
+
                 if (null == result) {
                     callbacks.onFailure();
                 } else {
@@ -370,10 +371,10 @@ public class RecipeManager {
 
     public void clearCachedRecipes() {
         final char firstChar = RECIPE_CACHE_PREFIX.charAt(0);
-        final Set<String> keys = preferences.getAll().keySet();
+        final Set<String> keys = mPreferences.getAll().keySet();
 
         if (keys.size() > 1) {
-            SharedPreferences.Editor editor = preferences.edit();
+            SharedPreferences.Editor editor = mPreferences.edit();
 
             for (String key : keys) {
                 if (firstChar == key.charAt(0)) {

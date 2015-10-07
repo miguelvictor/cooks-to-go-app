@@ -22,16 +22,16 @@ import team.jcandfriends.cookstogo.R.layout;
 import team.jcandfriends.cookstogo.Utils;
 
 /**
- * VirtualBasketItemsAdapter is responsible for displaying all the items in the virtual basket.
+ * VirtualBasketItemsAdapter is responsible for displaying all the mItems in the virtual basket.
  * <p/>
  * Subordinates: VirtualBasketItemViewHolder, item_virtual_basket_item_item.xml
  */
 public class VirtualBasketItemsAdapter extends Adapter<VirtualBasketItemsAdapter.VirtualBasketItemViewHolder> {
 
-    private final ArrayList<JSONObject> items;
+    private final ArrayList<JSONObject> mItems;
 
     public VirtualBasketItemsAdapter(ArrayList<JSONObject> items) {
-        this.items = items;
+        mItems = items;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class VirtualBasketItemsAdapter extends Adapter<VirtualBasketItemsAdapter
 
     @Override
     public void onBindViewHolder(final VirtualBasketItemsAdapter.VirtualBasketItemViewHolder holder, int position) {
-        JSONObject obj = this.items.get(position);
+        JSONObject obj = mItems.get(position);
 
         String ingredientName = obj.optString(Api.INGREDIENT_NAME);
         holder.ingredientName.setText(ingredientName);
@@ -57,20 +57,20 @@ public class VirtualBasketItemsAdapter extends Adapter<VirtualBasketItemsAdapter
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return mItems.size();
     }
 
     public void addItem(JSONObject ingredient) {
-        items.add(ingredient);
-        notifyItemInserted(items.size() - 1);
+        mItems.add(ingredient);
+        notifyItemInserted(mItems.size() - 1);
     }
 
     public JSONObject getItem(int position) {
-        return items.get(position);
+        return mItems.get(position);
     }
 
     public void removeItem(int position) {
-        items.remove(position);
+        mItems.remove(position);
         notifyItemRemoved(position);
     }
 
