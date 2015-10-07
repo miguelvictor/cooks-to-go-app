@@ -74,6 +74,7 @@ public class IngredientSearchActivity extends AppCompatActivity implements TextW
         // mAdapter boilerplate initialization
         mSearchHistoryView.setLayoutManager(new LinearLayoutManager(this));
         mSearchHistoryView.setHasFixedSize(true);
+
         mSearchResultsView.setLayoutManager(new LinearLayoutManager(this));
         mSearchResultsView.setHasFixedSize(true);
 
