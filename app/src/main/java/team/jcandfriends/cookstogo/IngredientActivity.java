@@ -49,6 +49,7 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
 
     private static final String TAG = "IngredientActivity";
 
+    private boolean mIsStillHere = true;
     private boolean mIsSyncing = false;
 
     private JSONObject mIngredient;
@@ -83,6 +84,12 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
     protected void onDestroy() {
         super.onDestroy();
         Utils.setStatusBarColor(this, Colors.PRIMARY_COLOR_DARK);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mIsStillHere = false;
     }
 
     @Override
@@ -177,7 +184,7 @@ public class IngredientActivity extends AppCompatActivity implements ToolbarGett
                 protected void onPostExecute(String result) {
                     super.onPostExecute(result);
 
-                    if (null != result && !result.equalsIgnoreCase(mIngredient.toString())) {
+                    if (mIsStillHere && null != result && !result.equalsIgnoreCase(mIngredient.toString())) {
                         try {
                             JSONObject freshIngredient = new JSONObject(result);
                             mManager.cacheIngredient(freshIngredient);

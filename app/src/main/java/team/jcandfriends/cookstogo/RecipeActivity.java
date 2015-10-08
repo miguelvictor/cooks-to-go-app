@@ -53,6 +53,8 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
     private RecipeManager mManager;
 
     private JSONObject mRecipe;
+
+    private boolean mIsStillHere = true;
     private boolean mIsSyncing = false;
 
     @Override
@@ -208,7 +210,7 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
                 protected void onPostExecute(String result) {
                     super.onPostExecute(result);
 
-                    if (null != result && !result.equalsIgnoreCase(mRecipe.toString())) {
+                    if (mIsStillHere && null != result && !result.equalsIgnoreCase(mRecipe.toString())) {
                         try {
                             JSONObject freshRecipe = new JSONObject(result);
                             mManager.cacheRecipe(freshRecipe);
@@ -220,6 +222,12 @@ public final class RecipeActivity extends AppCompatActivity implements TabsToolb
                 }
             }.execute();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mIsStillHere = false;
     }
 
     public void synchronize(JSONObject recipe) {

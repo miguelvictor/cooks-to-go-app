@@ -31,6 +31,7 @@ public class RecipesActivity extends BaseActivity {
 
     private static final String TAG = "RecipesActivity";
 
+    private boolean mIsStillHere = true;
     private boolean mIsSyncing = false;
 
     private RecipeTypesAdapter mAdapter;
@@ -60,6 +61,12 @@ public class RecipesActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_recipes, menu);
         return true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mIsStillHere = false;
     }
 
     @Override
@@ -117,7 +124,7 @@ public class RecipesActivity extends BaseActivity {
 
                 @Override
                 protected void onPostExecute(String result) {
-                    if (null != result && !result.equalsIgnoreCase(mCachedRecipeTypes.toString())) {
+                    if (mIsStillHere && null != result && !result.equalsIgnoreCase(mCachedRecipeTypes.toString())) {
                         try {
                             Log.i(TAG, "Got updated data. Updating recipes activity");
                             JSONArray freshRecipeTypes = new JSONObject(result).optJSONArray(Api.RESULTS);

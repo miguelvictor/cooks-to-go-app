@@ -34,6 +34,7 @@ public class IngredientsActivity extends BaseActivity {
 
     private static final String TAG = "IngredientsActivity";
 
+    private boolean mIsStillHere = true;
     private boolean mIsSyncing = false;
 
     private JSONArray mCachedIngredientTypes;
@@ -70,6 +71,12 @@ public class IngredientsActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mIsStillHere = false;
     }
 
     @Override
@@ -122,7 +129,7 @@ public class IngredientsActivity extends BaseActivity {
                 protected void onPostExecute(String result) {
                     super.onPostExecute(result);
 
-                    if (null != result && !result.equalsIgnoreCase(mCachedIngredientTypes.toString())) {
+                    if (mIsStillHere && null != result && !result.equalsIgnoreCase(mCachedIngredientTypes.toString())) {
                         try {
                             Log.i(TAG, "Got updated data. Replacing ingredients with fresh data.");
                             JSONArray freshIngredientTypes = new JSONObject(result).optJSONArray(Api.RESULTS);
